@@ -34,7 +34,7 @@ try:
         left_sensor_values = [GPIO.input(pin) for pin in left_sensors]
         right_sensor_values = [GPIO.input(pin) for pin in right_sensors]
         if all(value == GPIO.LOW for value in left_sensor_values) and all(value == GPIO.LOW for value in right_sensor_values):
-            foward()
+            forward()
         elif any(value == GPIO.HIGH for value in left_sensor_values) and all(value == GPIO.LOW for value in right_sensor_values):
             right()
         elif all(value == GPIO.LOW for value in left_sensor_values) and any(value == GPIO.HIGH for value in right_sensor_values):
