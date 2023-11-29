@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO # remember to install
 from approxeng.input.selectbinder import ControllerResource # remember to install
 
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 
 PWMaenable = 14
 GPIO.setup(PWMaenable, GPIO.OUT)
@@ -15,7 +15,7 @@ GPIO.setup(PWMbenable, GPIO.OUT)
 PWMb= GPIO.PWM(PWMbenable, 100)
 PWMb.start(0)
 
-input1 = 17
+input1 = 16           
 GPIO.setup(input1, GPIO.OUT)
 GPIO.output(input1, GPIO.HIGH)
 
