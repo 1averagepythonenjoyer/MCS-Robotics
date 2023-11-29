@@ -8,5 +8,5 @@ with ControllerResource() as joystick:
         x, y = joystick['l']
         # We can also get values as attributes:
         x, y = joystick.l
-        print("x={x}")
-        print("y={y}")
+        print(x)
+        print(y)
