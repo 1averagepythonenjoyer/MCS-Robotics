@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO # remember to install
 from approxeng.input.selectbinder import ControllerResource # remember to install
 
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 
 PWMaenable = 12
 GPIO.setup(PWMaenable, GPIO.OUT)
