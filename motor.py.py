@@ -41,8 +41,8 @@ def set_speed(power_left, power_right):
     sleep(0.1)
 
 def mix(yaw, throttle, max_power=100):
-    left = throttle + yaw
-    right = throttle - yaw
+    left = throttle - yaw
+    right = throttle + yaw
     scale = float(max_power) / max(1, abs(left), abs(right))
     return int(left * scale), int(right * scale)
 
