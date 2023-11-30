@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO # remember to install
 from approxeng.input.selectbinder import ControllerResource # remember to install
 
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 
 PWMaenable = 12
 GPIO.setup(PWMaenable, GPIO.OUT)
@@ -52,9 +52,12 @@ def map_range(x, in_min, in_max, out_min, out_max):
 while True:
     try:
         with ControllerResource() as joystick:
-          x, y = joystick.l
-          power_left, power_right = mix(yaw=x, throttle=y)
-          set_speed(power_left, power_right)
+            while joystick.connected:
+              x, y = joystick['l']
+              power_left, power_right = mix(yaw=x, throttle=y)
+              print("x =", x)
+              print("y =", y)
+              set_speed(power_left, power_right)
     except IOError:
         print('Unable to find any joysticks')
         sleep(1.0)
