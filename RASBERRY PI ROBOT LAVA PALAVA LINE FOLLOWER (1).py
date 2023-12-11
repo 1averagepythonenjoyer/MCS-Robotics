@@ -1,7 +1,6 @@
-pip install RPi.GPIO
+
 import RPi.GPIO as GPIO
 import time
-
 
 
 Left_sensor_pin =  29    #modify for use!
