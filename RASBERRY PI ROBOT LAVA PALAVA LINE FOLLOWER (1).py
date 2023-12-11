@@ -4,13 +4,16 @@ import time
 
 
 
-Left_sensor_pin =      #modify for use!
-middle_sensor_pin = 
-right_senosr_pin =
-left_motor_pin =
-right_motor_pin  =
+Left_sensor_pin =  29    #modify for use!
+middle_sensor_pin = 31#We can just glue three jumper wires together.
+right_sensor_pin = 33
+right_motor_input_1 = 21  #same as the ones for the remote control: this makes it less confusing. It also allows us to manually override the robot 
+right_motor_input_2 = 22 # if something doesnt work
+left_motor_input_3 = 23
+left_motor_input_4 = 24
 
-GPIO.setmode(GPIO.BCM)
+
+GPIO.setmode(GPIO.BOARD)
 GPIO.setup(left_sensor_pin, GPIO.IN)
 GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
