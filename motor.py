@@ -5,21 +5,21 @@ from approxeng.input.selectbinder import ControllerResource # remember to instal
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-PWMaenable = 12
+PWMaenable = 10
 GPIO.setup(PWMaenable, GPIO.OUT)
 PWMa= GPIO.PWM(PWMaenable, 100)
 PWMa.start(0)
 
-PWMbenable = 16
+PWMbenable = 12
 GPIO.setup(PWMbenable, GPIO.OUT)
 PWMb= GPIO.PWM(PWMbenable, 100)
 PWMb.start(0)
 
-input1 = 18
+input1 = 21
 GPIO.setup(input1, GPIO.OUT)
 GPIO.output(input1, GPIO.HIGH)
 
-input2 = 19
+input2 = 22
 GPIO.setup(input2, GPIO.OUT)
 GPIO.output(input2, GPIO.LOW)
 
