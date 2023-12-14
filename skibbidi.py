@@ -24,12 +24,12 @@ GPIO.setup(input2, GPIO.OUT)
 GPIO.output(input2, GPIO.LOW)
 
 input3 = 23
-GPIO.setup(input1, GPIO.OUT)
-GPIO.output(input1, GPIO.HIGH)
+GPIO.setup(input3, GPIO.OUT)
+GPIO.output(input3, GPIO.HIGH)
 
 input4 = 24
-GPIO.setup(input2, GPIO.OUT)
-GPIO.output(input2, GPIO.LOW)
+GPIO.setup(input4, GPIO.OUT)
+GPIO.output(input4, GPIO.LOW)
 
 def set_speed(power_left, power_right):
     if y >= 0:
@@ -60,17 +60,19 @@ def mix(yaw, throttle, max_power=100):
     return int(left * scale), int(right * scale)
 
 def map_range(x, in_min, in_max, out_min, out_max):
-  return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
+    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
 while True:
     try:
         with ControllerResource() as joystick:
             while joystick.connected:
-              x, y = joystick['l']
-              power_left, power_right = mix(yaw=x, throttle=y)
-              print("x =", x)
-              print("y =", y)
-              set_speed(power_left, power_right)
+                x, y = joystick['l']
+                power_left, power_right = mix(yaw=x, throttle=y)
+                print("x =", x)
+                print("y =", y)
+                set_speed(power_left, power_right)
     except IOError:
         print('Unable to find any joysticks')
         sleep(1.0)
+
+
