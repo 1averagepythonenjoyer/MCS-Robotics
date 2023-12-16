@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 
 
-Left_sensor_pin =  29    #modify for use!
+left_sensor_pin =  29    #modify for use!
 middle_sensor_pin = 31#We can just glue three jumper wires together.
 right_sensor_pin = 33
 right_motor_input_1 = 21  #same as the ones for the remote control: this makes it less confusing. It also allows us to manually override the robot 
