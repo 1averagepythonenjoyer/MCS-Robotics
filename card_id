@@ -1,0 +1,77 @@
+import cv2 
+import numpy as np 
+import tensorflow as tf 
+from picamera.array import PiRGBArray 
+from picamera import PiCamera 
+
+# Load the TensorFlow Lite model 
+interpreter = tf.lite.Interpreter(model_path='path/to/your/tflite/model.tflite') 
+interpreter.allocate_tensors() 
+input_details = interpreter.get_input_details() 
+output_details = interpreter.get_output_details() 
+# Initialize the PiCamera 
+camera = PiCamera() 
+camera.resolution = (640, 480) 
+camera.framerate = 30 
+rawCapture = PiRGBArray(camera, size=(640, 480)) 
+
+# Warm-up the camera 
+time.sleep(2) 
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True): 
+    image = frame.array 
+    # Preprocess the input image for the model 
+    input_image = cv2.resize(image, (input_details[0]['shape'][2], input_details[0]['shape'][1])) 
+    input_image = np.expand_dims(input_image, axis=0)
+    input_image = (np.float32(input_image) - 127.5) / 127.5 
+
+ 
+
+    # Run inference 
+
+    interpreter.set_tensor(input_details[0]['index'], input_image) 
+
+    interpreter.invoke() 
+
+    output_data = interpreter.get_tensor(output_details[0]['index']) 
+
+ 
+
+    # Post-process the output to get coordinates 
+
+    coordinates = output_data[0] 
+
+ 
+
+    # Draw bounding box on the image 
+
+    x, y, w, h = map(int, coordinates) 
+
+    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2) 
+
+ 
+
+    # Display the result 
+
+    cv2.imshow("Card Dimensions Detection", image) 
+
+    key = cv2.waitKey(1) & 0xFF 
+
+ 
+
+    # Clear the stream for the next frame 
+
+    rawCapture.truncate(0) 
+
+ 
+
+    # Break the loop if 'q' key is pressed 
+
+    if key == ord("q"): 
+
+        break 
+
+ 
+
+# Clean up 
+
+cv2.destroyAllWindows() 
