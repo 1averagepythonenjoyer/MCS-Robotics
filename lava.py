@@ -45,16 +45,20 @@ def Lava_Palava():
         
         if left_sensor and middle_sensor == 1:
             left_a_bit()
+            time.sleep(0.0001)
         elif right_sensor and middle_sensor == 1:
             right_a_bit()
+            time.sleep(0.0001)
         else:
             if middle_sensor == 0:
                 if left_sensor == 1:
                     left()
+                    time.sleep(0.0001)
                 elif right_sensor == 1:
                     right()
+                    time.sleep(0.0001)
             
             else:
                 forward(100,100)
-            time.sleep(0.1) #CUSTOMISE BUT I THINK 0.1 SECONDS PER CHECK IS GOOD ENOUGH
+                time.sleep(0.0001)
 Lava_Palava()
