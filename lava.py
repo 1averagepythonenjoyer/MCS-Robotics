@@ -74,6 +74,6 @@ def Lava_Palava():
                     forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
                     time.sleep(1)
                     break
-                    if middle_sensor == 1 and right_sensor and left_sensor == 0:
+                    if middle_sensor == 1 and right_sensor and left_sensor == 0: #When we are at the start. Robot only runs if middle sensor detects the line but left and right don't
                         Lava_Palava()
 Lava_Palava()
