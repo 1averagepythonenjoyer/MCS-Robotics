@@ -11,6 +11,7 @@ right_motor_input_2 = 22 # if something doesnt work
 left_motor_input_3 = 23
 left_motor_input_4 = 24
 
+GPIO.setwarning(False)
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(left_sensor_pin, GPIO.IN)
@@ -36,7 +37,11 @@ def right():
 def left_a_bit():
     forward(90,100) #ADJUST!!!
 def right_a_bit():
-    forward(100,90) #ADJUST!!!
+    forward(100,90) #ADJUST
+def ultimate_left(): 
+    forward(20,100) #ADJUST!!!
+def ultimate_right():
+    forward(100,20) #ADJUST!!!
 def Lava_Palava():
     while True:
         left_sensor = GPIO.input(left_sensor_pin)
@@ -54,11 +59,21 @@ def Lava_Palava():
                 if left_sensor == 1:
                     left()
                     time.sleep(0.0001)
+                    if left_sensor and right_sensor == 0:
+                        ultimate_left()
                 elif right_sensor == 1:
                     right()
                     time.sleep(0.0001)
-            
+                    if left_sensor and right_sensor == 0:
+                        ultimate_right():
             else:
-                forward(100,100)
-                time.sleep(0.0001)
+                if middle_sensor == 1 and left_sensor and right_sensor == 0:
+                    forward(100,100)
+                    time.sleep(0.0001)
+                else:
+                    forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
+                    time.sleep(1)
+                    break
+                    if middle_sensor == 1 and right_sensor and left_sensor == 0:
+                        Lava_Palava()
 Lava_Palava()
