@@ -16,9 +16,17 @@ left_sensor = DistanceSensor(echo =, trigger =)
 right_sensor = DistanceSensor(echo =, trigger =)
 back_sensor = DistanceSensor(echo =, trigger =)
 
-def forward():
+def forward_fast():
     left_motor.forward(full_speed_ahead)
     right_motor.forward(full_speed_ahead)
+    
+def forward_medium():
+    left_motor.forward(small_turn)
+    right_motor.forward(small_turn)
+
+def forward_slow():
+    left_motor.forward(medium_turn)
+    right_motor.forward(medium_turn)
     
 def left_small():
     left_motor.forward(small_turn)
@@ -44,9 +52,17 @@ def right_big():
     left_motor.forward(full_speed_ahead)
     right_motor.forward(big_turn)
     
-def backward():
+def backward_fast():
     left_motor.backward(full_speed_ahead)
     right_motor.backward(full_speed_ahead)
+
+def backward_medium():
+    left_motor.backward(small_turn)
+    right_motor.backward(small_turn)
+    
+def backward_slow():
+    left_motor.backward(medium_turn)
+    right_motor.backward(medium_turn)
     
 def backward_left_small():
     left_motor.forward(small_turn)
