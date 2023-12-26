@@ -1,0 +1,97 @@
+import cv2
+import numpy as np
+import tflite_runtime.interpreter as tflite
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+import time
+
+def load_model(model_path):
+    interpreter = tflite.Interpreter(model_path=model_path)
+    interpreter.allocate_tensors()
+    return interpreter
+
+def get_card_coordinates(output_data):
+    # Modify this based on your model's output format
+    # For simplicity, assuming it outputs [x, y, width, height]
+    return output_data[0]
+
+def run_inference(interpreter, image):
+    input_data = np.expand_dims(image, axis=0)
+    interpreter.set_tensor(interpreter.get_input_details()[0]['index'], input_data)
+    interpreter.invoke()
+    return interpreter.get_tensor(interpreter.get_output_details()[0]['index'])
+
+def calculate_pid_output(error, previous_error, integral, Kp, Ki, Kd):
+    integral += error
+    derivative = error - previous_error
+    output = Kp * error + Ki * integral + Kd * derivative
+    return output, integral
+
+def shoot_the_undead():
+    model_path = 'your_model.tflite'
+    interpreter = load_model(model_path)
+
+    Kp = 0.1
+    Ki = 0.01
+    Kd = 0.01
+
+    # Desired position (center of the frame) so guys modify this
+    desired_position_x = 320
+    desired_position_y = 240
+
+    previous_error_x = 0
+    previous_error_y = 0
+    integral_x = 0
+    integral_y = 0
+
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    raw_capture = PiRGBArray(camera)
+
+    time.sleep(0.1)
+
+    for frame in camera.capture_continuous(raw_capture, format="bgr", use_video_port=True):
+        image = frame.array
+
+        output_data = run_inference(interpreter, image)
+
+        x, y, w, h = get_card_coordinates(output_data)
+
+        error_x = desired_position_x - (x + w // 2)
+        error_y = desired_position_y - (y + h // 2)
+
+        print(f"Error X: {error_x}, Error Y: {error_y}")
+
+        output_x, integral_x = calculate_pid_output(error_x, previous_error_x, integral_x, Kp, Ki, Kd)
+        output_y, integral_y = calculate_pid_output(error_y, previous_error_y, integral_y, Kp, Ki, Kd)
+
+        previous_error_x = error_x
+        previous_error_y = error_y
+
+        center_x = int(desired_position_x + output_x)
+        center_y = int(desired_position_y + output_y)
+
+        cv2.circle(image, (center_x, center_y), radius=5, color=(0, 0, 255), thickness=-1)
+
+        if center_y < desired_position_y:
+            instructions = f"Move down to reach the red dot"
+        elif center_y > desired_position_y:
+            instructions = f"Move up to reach the red dot"
+        else:
+            instructions = "You are at the red dot's vertical position"
+
+        cv2.putText(image, instructions, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+        cv2.imshow("Card Detection", image)
+
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
+
+        raw_capture.truncate(0)
+
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    shoot_the_undead()
+
