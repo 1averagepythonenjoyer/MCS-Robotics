@@ -11,6 +11,8 @@ right_motor_input_2 = 22 # if something doesnt work
 left_motor_input_3 = 23
 left_motor_input_4 = 24
 
+n = 0 #DO NOT CHANGE!
+
 GPIO.setwarning(False)
 
 GPIO.setmode(GPIO.BOARD)
@@ -71,9 +73,11 @@ def Lava_Palava():
                     forward(100,100)
                     time.sleep(0.0001)
                 else:
-                    forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
-                    time.sleep(1)
+                    while left_sensor and right_sensor and middle_sensor == 0:
+                        forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
+                        time.sleep(0.01) #Modify if you guys want but I don't think we need to
+                        n += 1
+                    if n != 0:
+                        sleep(0.0001) #At the start n is 0 because defined it. After we start doing circuits it detects if being placed on the staright line at the start it will run so be careful not to acccidently make it run or anything
                     break
-                    if middle_sensor == 1 and right_sensor and left_sensor == 0: #When we are at the start. Robot only runs if middle sensor detects the line but left and right don't
-                        Lava_Palava()
 Lava_Palava()
