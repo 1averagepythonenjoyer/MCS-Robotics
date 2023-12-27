@@ -73,11 +73,10 @@ def Lava_Palava():
                     forward(100,100)
                     time.sleep(0.0001)
                 else:
-                    while left_sensor and right_sensor and middle_sensor == 0:
-                        forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
-                        time.sleep(0.01) #Modify if you guys want but I don't think we need to
-                        n += 1
                     if n != 0:
-                        sleep(0.0001) #At the start n is 0 because defined it. After we start doing circuits it detects if being placed on the staright line at the start it will run so be careful not to acccidently make it run or anything
-                    break
+                        while left_sensor and middle_sensor and right_sensor == 0:
+                            forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
+                            time.sleep(0.01) #Modify if you guys want but I don't think we need to
+                            sleep(0.0001) #At the start n is 0 because defined it. After we start doing circuits it detects if being placed on the staright line at the start it will run so be careful not to acccidently make it run or anything
+                break
 Lava_Palava()
