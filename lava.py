@@ -11,10 +11,10 @@ rightinput_1 = 21  #same as the ones for the remote control: this makes it less 
 rightinput_2 = 22
 leftinput_1 = 23
 leftinput_2 = 24
-GPIO.output(rightinput_1, HIGH)
-GPIO.output(rightinput_2, LOW)# if something doesnt work
-GPIO.output(leftinput_1, HIGH)
-GPIO.output(leftinput_1, LOW)
+GPIO.output(rightinput_1, GPIO.HIGH)
+GPIO.output(rightinput_2, GPIO.LOW)# if something doesnt work
+GPIO.output(leftinput_1, GPIO.HIGH)
+GPIO.output(leftinput_1, GPIO.LOW)
 
 n = 0 #DO NOT CHANGE!
 
@@ -82,5 +82,3 @@ def Lava_Palava():
                         time.sleep(0.1) #Sleep a little bit more so our hands can get off the robot
                     break
 Lava_Palava()
-
-
