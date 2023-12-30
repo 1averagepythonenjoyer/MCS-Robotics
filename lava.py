@@ -1,30 +1,35 @@
-
 import RPi.GPIO as GPIO
 import time
 
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
 
 left_sensor_pin =  29    #modify for use!
 middle_sensor_pin = 31#We can just glue three jumper wires together.
 right_sensor_pin = 33
 
+GPIO.setup(left_sensor_pin, GPIO.IN)
+GPIO.setup(middle_sensor_pin, GPIO.IN)
+GPIO.setup(right_sensor_pin, GPIO.IN)
+
+
+
 rightinput_1 = 21  #same as the ones for the remote control: this makes it less confusing. It also allows us to manually override the robot 
 rightinput_2 = 22
 leftinput_1 = 23
 leftinput_2 = 24
+
+GPIO.setup(rightinput_1,GPIO.OUT)
+GPIO.setup(rightinput_2,GPIO.OUT)
+GPIO.setup(leftinput_1,GPIO.OUT)
+GPIO.setup(leftinput_2,GPIO.OUT)
+
 GPIO.output(rightinput_1, GPIO.HIGH)
 GPIO.output(rightinput_2, GPIO.LOW)# if something doesnt work
 GPIO.output(leftinput_1, GPIO.HIGH)
 GPIO.output(leftinput_1, GPIO.LOW)
 
 n = 0 #DO NOT CHANGE!
-
-GPIO.setwarnings(False)
-
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(left_sensor_pin, GPIO.IN)
-GPIO.setup(middle_sensor_pin, GPIO.IN)
-GPIO.setup(right_sensor_pin, GPIO.IN)
-
 
 left_motor = GPIO.PWM(leftinput_1, 100)
 right_motor = GPIO.PWM(rightinput_1, 100)
@@ -37,7 +42,7 @@ def forward(left_speed, right_speed):
 def left():
     forward(70,100) #ADJUST!!!
 def right():
-    forwards(100,70) #ADJUST!!!
+    forward(100,70) #ADJUST!!!
 def left_a_bit():
     forward(90,100) #ADJUST!!!
 def right_a_bit():
@@ -51,7 +56,6 @@ def Lava_Palava():
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
         right_sensor = GPIO.input(right_sensor_pin)
-        
         if left_sensor and middle_sensor == 1:
             left_a_bit()
             time.sleep(0.0001)
