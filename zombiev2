@@ -1,97 +1,118 @@
 import cv2
 import numpy as np
-import tflite_runtime.interpreter as tflite
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+from picamera import PiCamera as camera
+from picamera.array import PiRGBArray as Pi
+import tflite_runtime.interpreter as tf
+import RPi.GPIO as GPIO
 import time
 
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+
+interpreter_model = None
+desired_position_x = 320
+desired_position_y = 240
+
+# Put Values here
+model_path = ''
+servo_pin = 
+left_motor_pin1 =
+left_motor_pin2 =
+right_motor_pin1 = 
+right_motor_pin2 =
+
+GPIO.setup(left_motor_pin1, GPIO.OUT)
+GPIO.setup(right_motor_pin1, GPIO.OUT)
+GPIO.setup(left_motor_pin2, GPIO.OUT)
+GPIO.setup(right_motor_pin2, GPIO.OUT)
+
+left_motor_pin = GPIO.output(left_motor_pin1, GPIO.HIGH)
+GPIO.output(left_motor_pin2, GPIO.LOW)
+right_motor_pin = GPIO.output(right_motor_pin1, GPIO.HIGH)
+GPIO.output(right_motor_pin2, GPIO.LOW)
+
 def load_model(model_path):
-    interpreter = tflite.Interpreter(model_path=model_path)
-    interpreter.allocate_tensors()
-    return interpreter
+    interpreter_model = tf.Interpreter(model_path=model_path)
+    interpreter_model.allocate_tensors()
+    return interpreter_model
 
-def get_card_coordinates(output_data):
-    # Modify this based on your model's output format
-    # For simplicity, assuming it outputs [x, y, width, height]
-    return output_data[0]
+def preprocess_image(image):
+    input_tensor = image.astype(np.float32)
+    input_tensor = np.expand_dims(input_tensor, axis=0)
+    return input_tensor
 
-def run_inference(interpreter, image):
-    input_data = np.expand_dims(image, axis=0)
-    interpreter.set_tensor(interpreter.get_input_details()[0]['index'], input_data)
-    interpreter.invoke()
-    return interpreter.get_tensor(interpreter.get_output_details()[0]['index'])
+def run_inference(interpreter_model, image):
+    input_data = preprocess_image(image)
+    interpreter_model.set_tensor(interpreter_model.get_input_details()[0]['index'], input_data)
+    interpreter_model.invoke()
+    return interpreter_model.get_tensor(interpreter_model.get_output_details()[0]['index'])
 
-def calculate_pid_output(error, previous_error, integral, Kp, Ki, Kd):
-    integral += error
-    derivative = error - previous_error
-    output = Kp * error + Ki * integral + Kd * derivative
-    return output, integral
+def calculate_motor_output(error_x, error_y):
 
-def shoot_the_undead():
-    model_path = 'your_model.tflite'
-    interpreter = load_model(model_path)
+    speed = 0.5  # Adjust this!
 
-    Kp = 0.1
-    Ki = 0.01
-    Kd = 0.01
+    left_motor_speed = speed
+    right_motor_speed = speed
 
-    # Desired position (center of the frame) so guys modify this
-    desired_position_x = 320
-    desired_position_y = 240
+    return left_motor_speed, right_motor_speed
 
-    previous_error_x = 0
-    previous_error_y = 0
-    integral_x = 0
-    integral_y = 0
+def move_servo(servo_pin, error_y):
+    GPIO.setup(servo_pin, GPIO.OUT)  
+    servo = GPIO.PWM(servo_pin, 50)  
 
-    camera = PiCamera()
-    camera.resolution = (640, 480)
-    raw_capture = PiRGBArray(camera)
+    servo.start(0)
+
+    duty_cycle = 7.5 + 0.05 * error_y
+    servo.ChangeDutyCycle(duty_cycle)
 
     time.sleep(0.1)
 
-    for frame in camera.capture_continuous(raw_capture, format="bgr", use_video_port=True):
-        image = frame.array
+    servo.stop()
+    GPIO.cleanup()
 
-        output_data = run_inference(interpreter, image)
+def move_motor(left_motor_pin, right_motor_pin, left_motor_speed, right_motor_speed):
+    left_pwm = GPIO.PWM(left_motor_pin, 100)  
+    left_pwm.start(left_motor_speed * 100)  
 
-        x, y, w, h = get_card_coordinates(output_data)
+    right_pwm = GPIO.PWM(right_motor_pin, 100)
+    right_pwm.start(right_motor_speed * 100)
 
-        error_x = desired_position_x - (x + w // 2)
-        error_y = desired_position_y - (y + h // 2)
+    time.sleep(0.1)
 
-        print(f"Error X: {error_x}, Error Y: {error_y}")
+    left_pwm.stop()
+    right_pwm.stop()
+    GPIO.cleanup()
 
-        output_x, integral_x = calculate_pid_output(error_x, previous_error_x, integral_x, Kp, Ki, Kd)
-        output_y, integral_y = calculate_pid_output(error_y, previous_error_y, integral_y, Kp, Ki, Kd)
+def operation_kill_undead(interpreter_model, servo_pin, left_motor_pin, right_motor_pin, desired_position_x, desired_position_y):
+    camera_resolution = (640, 480)
+    cam = camera(resolution=camera_resolution)
+    cam.start_preview()
 
-        previous_error_x = error_x
-        previous_error_y = error_y
+    raw_capture = Pi(cam)
 
-        center_x = int(desired_position_x + output_x)
-        center_y = int(desired_position_y + output_y)
+    time.sleep(0.1)
 
-        cv2.circle(image, (center_x, center_y), radius=5, color=(0, 0, 255), thickness=-1)
+    interpreter_model = load_model(model_path)
 
-        if center_y < desired_position_y:
-            instructions = f"Move down to reach the red dot"
-        elif center_y > desired_position_y:
-            instructions = f"Move up to reach the red dot"
-        else:
-            instructions = "You are at the red dot's vertical position"
+    try:
+        while True:
+            image = raw_capture.array
+            output_data = run_inference(interpreter_model, image)
 
-        cv2.putText(image, instructions, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+            x, y, w, h = output_data[0]
+            error_x = desired_position_x - (x + w // 2)
+            error_y = desired_position_y - (y + h // 2)
 
-        cv2.imshow("Card Detection", image)
+            print("Error X: " + str(error_x) + ", Error Y: " + str(error_y))
 
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
-            break
+            left_motor_speed, right_motor_speed = calculate_motor_output(error_x, error_y)
 
-        raw_capture.truncate(0)
+            move_motor(left_motor_pin, right_motor_pin, left_motor_speed, right_motor_speed)
+            move_servo(servo_pin, error_y)
 
-    cv2.destroyAllWindows()
+            raw_capture.truncate(0)
+    finally:
+        raw_capture.close()
+        cam.stop_preview()
 
-if __name__ == "__main__":
-    shoot_the_undead()
-
+operation_kill_undead(interpreter_model, servo_pin, left_motor_pin, right_motor_pin, desired_position_x, desired_position_y)
