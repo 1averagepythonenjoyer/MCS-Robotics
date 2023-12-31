@@ -13,26 +13,25 @@ GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
 
 
+right_motor_input_1 = 21  #same as the ones for the remote control: this makes it less confusing. It also allows us to manually override the robot 
+right_motor_input_2 = 22
+left_motor_input_1 = 23
+left_motor_input_2 = 24
 
-rightinput_1 = 21  #same as the ones for the remote control: this makes it less confusing. It also allows us to manually override the robot 
-rightinput_2 = 22
-leftinput_1 = 23
-leftinput_2 = 24
+GPIO.setup(right_motor_input_1,GPIO.OUT)
+GPIO.setup(right_motor_input_2,GPIO.OUT)
+GPIO.setup(left_motor_input_1,GPIO.OUT)
+GPIO.setup(left_motor_input_2,GPIO.OUT)
 
-GPIO.setup(rightinput_1,GPIO.OUT)
-GPIO.setup(rightinput_2,GPIO.OUT)
-GPIO.setup(leftinput_1,GPIO.OUT)
-GPIO.setup(leftinput_2,GPIO.OUT)
-
-GPIO.output(rightinput_1, GPIO.HIGH)
-GPIO.output(rightinput_2, GPIO.LOW)# if something doesnt work
-GPIO.output(leftinput_1, GPIO.HIGH)
-GPIO.output(leftinput_1, GPIO.LOW)
+GPIO.output(right_motor_input_1, GPIO.HIGH)
+GPIO.output(right_motor_input_2, GPIO.LOW)# if something doesnt work
+GPIO.output(left_motor_input_1, GPIO.HIGH)
+GPIO.output(left_motor_input_1, GPIO.LOW)
 
 n = 0 #DO NOT CHANGE!
 
-left_motor = GPIO.PWM(leftinput_1, 100)
-right_motor = GPIO.PWM(rightinput_1, 100)
+left_motor = GPIO.PWM(left_motor_input_1, 100)
+right_motor = GPIO.PWM(right_motor_input_1, 100)
 left_motor.start(0)
 right_motor.start(0)
 
@@ -86,3 +85,4 @@ def Lava_Palava():
                         time.sleep(0.1) #Sleep a little bit more so our hands can get off the robot
                     break
 Lava_Palava()
+
