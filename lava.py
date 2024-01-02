@@ -55,7 +55,9 @@ def Lava_Palava():
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
         right_sensor = GPIO.input(right_sensor_pin)
-        if left_sensor and middle_sensor == 1:
+        if left_sensor and middle_sensor and right_sensor == 1:
+            sleep(0.1)
+        elif left_sensor and middle_sensor == 1:
             left_a_bit()
             time.sleep(0.0001)
         elif right_sensor and middle_sensor == 1:
@@ -84,5 +86,6 @@ def Lava_Palava():
                             time.sleep(0.01) #Modify if you guys want but I don't think we need to
                         time.sleep(0.1) #Sleep a little bit more so our hands can get off the robot
                     break
+                    
 Lava_Palava()
 
