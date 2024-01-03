@@ -56,7 +56,7 @@ def Lava_Palava():
         middle_sensor = GPIO.input(middle_sensor_pin)
         right_sensor = GPIO.input(right_sensor_pin)
         
-        if n >= 2:
+        if n == 0 or 1:
             n += 1
         
         if left_sensor and middle_sensor and right_sensor == 0:
