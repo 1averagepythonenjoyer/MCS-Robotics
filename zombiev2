@@ -65,10 +65,13 @@ def move_motor(left_motor_pin, right_motor_pin, left_motor_speed, right_motor_sp
     GPIO.setup(right_motor_pin_1, GPIO.OUT)
     GPIO.setup(right_motor_pin_2, GPIO.OUT)
 
-    left_motor_pin = GPIO.output(left_motor_pin_1, GPIO.HIGH)
+    GPIO.output(left_motor_pin_1, GPIO.HIGH)
     GPIO.output(left_motor_pin_2, GPIO.LOW)
-    right_motor_pin = GPIO.output(right_motor_pin_1, GPIO.HIGH)
+    GPIO.output(right_motor_pin_1, GPIO.HIGH)
     GPIO.output(right_motor_pin_2, GPIO.LOW)
+
+    left_motor_pin = left_motor_pin_1
+    right_motor_pin = right_motor_pin_1
 
     left_pwm = GPIO.PWM(left_motor_pin, 100) 
     left_pwm.start(left_motor_speed * 100)  
