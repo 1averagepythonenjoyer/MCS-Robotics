@@ -27,8 +27,8 @@ def load_model(model_path):
     return interpreter_model
 
 def preprocess_image(image):
-    input_tensor = image.astype(np.float32)
-    input_tensor = np.expand_dims(input_tensor, axis=0)
+    tensor_input = image.astype(np.float32)
+    input_tensor = np.expand_dims(tensor_input, axis=0)
     return input_tensor
 
 def run_inference(interpreter_model, image):
