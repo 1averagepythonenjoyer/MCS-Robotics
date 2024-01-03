@@ -4,8 +4,8 @@ import time
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-left_sensor_pin =  29    #modify for use!
-middle_sensor_pin = 31#We can just glue three jumper wires together.
+left_sensor_pin =  29    
+middle_sensor_pin = 31 #We can just glue three jumper wires together.
 right_sensor_pin = 33
 
 GPIO.setup(left_sensor_pin, GPIO.IN)
@@ -38,17 +38,17 @@ def forward(left_speed, right_speed):
     left_motor.ChangeDutyCycle(left_speed)
     right_motor.ChangeDutyCycle(right_speed)
 def left():
-    forward(70,100) #ADJUST!!!
+    forward(70,100)
 def right():
-    forward(100,70) #ADJUST!!!
+    forward(100,70) 
 def left_a_bit():
-    forward(90,100) #ADJUST!!!
+    forward(90,100) 
 def right_a_bit():
-    forward(100,90) #ADJUST
+    forward(100,90) 
 def ultimate_left(): 
-    forward(20,100) #ADJUST!!!
+    forward(20,100)
 def ultimate_right():
-    forward(100,20) #ADJUST!!!
+    forward(100,20) 
 def Lava_Palava():
     while True:
         global n
