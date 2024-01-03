@@ -13,23 +13,11 @@ interpreter_model = None
 desired_position_x = 320
 desired_position_y = 240
 
-# Put Values here
+#Change these to fit our design
 model_path = ''
-servo_pin = 
-left_motor_pin1 =
-left_motor_pin2 =
-right_motor_pin1 = 
-right_motor_pin2 =
-
-GPIO.setup(left_motor_pin1, GPIO.OUT)
-GPIO.setup(right_motor_pin1, GPIO.OUT)
-GPIO.setup(left_motor_pin2, GPIO.OUT)
-GPIO.setup(right_motor_pin2, GPIO.OUT)
-
-left_motor_pin = GPIO.output(left_motor_pin1, GPIO.HIGH)
-GPIO.output(left_motor_pin2, GPIO.LOW)
-right_motor_pin = GPIO.output(right_motor_pin1, GPIO.HIGH)
-GPIO.output(right_motor_pin2, GPIO.LOW)
+servo_pin = 11
+left_motor_pin = 12
+right_motor_pin = 16
 
 def load_model(model_path):
     interpreter_model = tf.Interpreter(model_path=model_path)
@@ -48,8 +36,7 @@ def run_inference(interpreter_model, image):
     return interpreter_model.get_tensor(interpreter_model.get_output_details()[0]['index'])
 
 def calculate_motor_output(error_x, error_y):
-
-    speed = 0.5  # Adjust this!
+    speed = 1.0 
 
     left_motor_speed = speed
     right_motor_speed = speed
@@ -71,17 +58,14 @@ def move_servo(servo_pin, error_y):
     GPIO.cleanup()
 
 def move_motor(left_motor_pin, right_motor_pin, left_motor_speed, right_motor_speed):
-    left_pwm = GPIO.PWM(left_motor_pin, 100)  
+    GPIO.setup(left_motor_pin, GPIO.OUT)
+    GPIO.setup(right_motor_pin, GPIO.OUT)
+
+    left_pwm = GPIO.PWM(left_motor_pin, 100) 
     left_pwm.start(left_motor_speed * 100)  
 
     right_pwm = GPIO.PWM(right_motor_pin, 100)
     right_pwm.start(right_motor_speed * 100)
-
-    time.sleep(0.1)
-
-    left_pwm.stop()
-    right_pwm.stop()
-    GPIO.cleanup()
 
 def operation_kill_undead(interpreter_model, servo_pin, left_motor_pin, right_motor_pin, desired_position_x, desired_position_y):
     camera_resolution = (640, 480)
@@ -93,6 +77,8 @@ def operation_kill_undead(interpreter_model, servo_pin, left_motor_pin, right_mo
     time.sleep(0.1)
 
     interpreter_model = load_model(model_path)
+
+    highest_card_y = float('inf') 
 
     try:
         while True:
@@ -106,6 +92,10 @@ def operation_kill_undead(interpreter_model, servo_pin, left_motor_pin, right_mo
             print("Error X: " + str(error_x) + ", Error Y: " + str(error_y))
 
             left_motor_speed, right_motor_speed = calculate_motor_output(error_x, error_y)
+
+            if y < highest_card_y:
+                highest_card_y = y
+                desired_position_y = y
 
             move_motor(left_motor_pin, right_motor_pin, left_motor_speed, right_motor_speed)
             move_servo(servo_pin, error_y)
