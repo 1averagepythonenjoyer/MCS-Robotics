@@ -101,9 +101,9 @@ def stop():
     right_motor.stop()
     
 while True:
-    forward_distance = forward_sensor.distance() #LOOK HERE I DON'T KNOW IF THERE IS A BRACKET HERE MAYBE YES MAYBE NO
-    left_distance = left_sensor.distance()
-    right_distance = right_senor.distance()
+    forward_distance = forward_sensor.distance #LOOK HERE I DON'T KNOW IF THERE IS A BRACKET HERE MAYBE YES MAYBE NO
+    left_distance = left_sensor.distance
+    right_distance = right_senor.distance
     back_distance
     
 
