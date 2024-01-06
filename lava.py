@@ -84,7 +84,7 @@ def Lava_Palava():
                     forward(100,100)
                     time.sleep(0.0001)
                 else:
-                    if n ！= 0:
+                    if n != 0:
                         while left_sensor and middle_sensor and right_sensor == 0:
                             forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
                             time.sleep(0.01) #Modify if you guys want but I don't think we need to
