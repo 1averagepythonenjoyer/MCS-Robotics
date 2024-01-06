@@ -10,10 +10,9 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 interpreter_model = None
-desired_position_x = 320
-desired_position_y = 240
-
 #Change these to fit our design
+desired_position_x = 
+desired_position_y = 
 model_path = ''
 servo_pin = 
 left_motor_pin_1 =
