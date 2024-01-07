@@ -17,7 +17,7 @@ servo_pin =
 left_motor_pin_1 = 
 right_motor_pin_1 = 
 left_motor_pin_2 =
-right_motor_pin_2
+right_motor_pin_2 =
 
 prev_positions = []
 
