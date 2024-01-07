@@ -53,12 +53,12 @@ def Lava_Palava():
     while True:
         global n
         if n == 3:
-            exit(0)
+            quit()
+        n+=1
+        
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
         right_sensor = GPIO.input(right_sensor_pin)
-
-        n ++
         
         if left_sensor and middle_sensor and right_sensor == 0:
             sleep(0.0001)
@@ -91,7 +91,6 @@ def Lava_Palava():
                         forward(100,100) #We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
                         time.sleep(0.8) #Modify if you guys want but I don't think we need to
                         break
-
 
 if left_sensor and right_sensor == 0 and middle_sensor = 1:  
     time.sleep(0.1)#So our hands can get off robot
