@@ -18,7 +18,7 @@ def zombie():
                 print('Fire request given waiting 1second...') #waiting is just for now: REMEMBER TO REMOVE BEFORE COMPETITION: DEAD TIME
                 time.sleep(1)
                 GPIO.output(sol_ctrl, GPIO.HIGH)
-                time.sleep(0.1) #hopefully this is enough. may need to modify. 
+                time.sleep(0.25) #hopefully this is enough. may need to modify. 
                 GPIO.output(sol_ctrl, GPIO.LOW)
 
 
