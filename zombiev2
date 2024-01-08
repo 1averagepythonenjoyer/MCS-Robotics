@@ -60,8 +60,6 @@ def move_servo(servo_pin, target_position_y):
     duty_cycle = 7.5 + 0.05 * target_position_y
     servo.ChangeDutyCycle(duty_cycle)
     time.sleep(0.1)
-    servo.stop()
-    GPIO.cleanup()
 
 def move_motor():
     GPIO.setup(left_motor_pin_1, GPIO.OUT)
