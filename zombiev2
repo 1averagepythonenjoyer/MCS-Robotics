@@ -19,7 +19,23 @@ right_motor_pin_1 =
 left_motor_pin_2 =
 right_motor_pin_2 =
 
-servo_to_camera_ratio = 6
+servo_to_camera_ratio = 0
+
+while joystick.connected:
+    joystick.check_presses()
+    print('if servo raises 90 degrees for gun to raise 15 degrees, we have a ratio of 6 but change if need be')
+    if joystick.presses.traingle #Don't know the names of the control. If I guess one wrong then change it and if you want to dangle these around then by all means do it. I avoided cross because Calvin's zombie program uses it
+        print('add one to variable "servo_to_camera_ratio"')
+        servo_to_camera_ratio += 1
+        time.sleep(0.1)
+    elif joystick.presses.square #Again, don't know if this is correct name I picked this out from Calvin's code
+        print('minus one to variable "servo_to_camera_ratio"')
+        servo_to_camera_ratio -= 1
+    elif joystick.presses.circle #Again, don't know name
+        print('Entering program with servo_to_camera_ratio of ' + str(servo_to_camera_ratio))
+    else:
+        pass #FOR NOW!
+
 
 prev_positions = []
 
