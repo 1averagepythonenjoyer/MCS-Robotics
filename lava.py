@@ -65,7 +65,7 @@ def Lava_Palava():
         middle_sensor = GPIO.input(middlesensor)
         right_sensor = GPIO.input(rightsensor)
         
-        print("left =", left_sensor)
+        print("left =", left_sensor)  #Remember to remove this in the competition
         print("middle =", middle_sensor)
         print("right =", right_sensor)
         print("-------------------------------------------")
