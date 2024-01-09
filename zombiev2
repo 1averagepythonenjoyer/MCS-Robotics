@@ -11,31 +11,32 @@ GPIO.setmode(GPIO.BOARD)
 
 interpreter_model = None
 
-#Put something here please remember to model has tp be trained to recognize cards. Also enter camera resolution on line 84
+# Put something here. Remember the model has to be trained to recognize cards.
+# Also, enter the camera resolution on line 84
 model_path = ''
-servo_pin = 
+servo_pin = 18  # replace with the correct pin number
 left_motor_pin_1 = 
 right_motor_pin_1 = 
-left_motor_pin_2 =
-right_motor_pin_2 =
+left_motor_pin_2 = 
+right_motor_pin_2 = 
 
 servo_to_camera_ratio = 0
 
-while joystick.connected:
+while joystick.connected:   #While the next section of code probably won't be used in the code it sounds like a good idea to me to write it in
     joystick.check_presses()
-    print('if servo raises 90 degrees for gun to raise 15 degrees, we have a ratio of 6 but change if need be')
-    if joystick.presses.traingle #Don't know the names of the control. If I guess one wrong then change it and if you want to dangle these around then by all means do it. I avoided cross because Calvin's zombie program uses it
+    print('if servo raises 90 degrees for the gun to raise 15 degrees, we have a ratio of 6, but change if needed')
+    if joystick.presses.triangle:
         print('add one to variable "servo_to_camera_ratio"')
         servo_to_camera_ratio += 1
         time.sleep(0.1)
-    elif joystick.presses.square #Again, don't know if this is correct name I picked this out from Calvin's code
+    elif joystick.presses.square:
         print('minus one to variable "servo_to_camera_ratio"')
         servo_to_camera_ratio -= 1
-    elif joystick.presses.circle #Again, don't know name
+    elif joystick.presses.circle:
         print('Entering program with servo_to_camera_ratio of ' + str(servo_to_camera_ratio))
+        break
     else:
-        break #FOR NOW!
-
+        break  # FOR NOW!
 
 prev_positions = []
 
@@ -59,7 +60,7 @@ def calculate_motor_output(target_position_x, target_position_y, camera_resoluti
     speed = 1.0
     center_x = camera_resolution[0] // 2
 
-    if target_position_x > center_x: # Program assumes robot is facing right
+    if target_position_x > center_x:  # Program assumes the robot is facing right
         left_motor_speed = speed
         right_motor_speed = speed  # Move forward
     elif target_position_x < center_x:
@@ -72,35 +73,35 @@ def calculate_motor_output(target_position_x, target_position_y, camera_resoluti
     return left_motor_speed, right_motor_speed
 
 def move_servo(servo_pin, target_position_y):
-    GPIO.setup(servo_pin, target_position_y)
-    servo = GPIO.PWM(servo_pin, 100) #I don't know if 100 customize I guess?
+    GPIO.setup(servo_pin, GPIO.OUT)
+    servo = GPIO.PWM(servo_pin, 100)  # I don't know if 100 customizes, I guess?
     servo.start(0)
 
-    servo movement = target_position_y / servo_to_camera_ratio
+    servo_movement = target_position_y / servo_to_camera_ratio
 
     duty_cycle = 7.5 + (0.05 * servo_movement)
     servo.ChangeDutyCycle(duty_cycle)
     time.sleep(0.1)
 
-def move_motor():
+def move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_motor_pin_1):
     GPIO.setup(left_motor_pin_1, GPIO.OUT)
     GPIO.setup(left_motor_pin_2, GPIO.OUT)
     GPIO.setup(right_motor_pin_1, GPIO.OUT)
     GPIO.setup(right_motor_pin_2, GPIO.OUT)
-    
+
     GPIO.output(left_motor_pin_1, GPIO.HIGH)
     GPIO.output(left_motor_pin_2, GPIO.LOW)
     GPIO.output(right_motor_pin_1, GPIO.HIGH)
     GPIO.output(right_motor_pin_2, GPIO.LOW)
 
-    left_pwm = GPIO.PWM(left_motor_pin_1, 100) 
-    left_pwm.start(left_motor_speed * 100)  
+    left_pwm = GPIO.PWM(left_motor_pin_1, 100)
+    left_pwm.start(left_motor_speed * 100)
 
     right_pwm = GPIO.PWM(right_motor_pin_1, 100)
     right_pwm.start(right_motor_speed * 100)
 
 def operation_kill_undead(interpreter_model, servo_pin):
-    camera_resolution = (,) #Change to suit code
+    camera_resolution = (640, 480)  # Change to suit code
     cam = camera(resolution=camera_resolution)
     cam.start_preview()
 
@@ -109,8 +110,6 @@ def operation_kill_undead(interpreter_model, servo_pin):
     time.sleep(0.1)
 
     interpreter_model = load_model(model_path)
-
-    score = 0
 
     try:
         while True:
@@ -124,18 +123,11 @@ def operation_kill_undead(interpreter_model, servo_pin):
 
                 offset = 2
                 target_position_y += offset
-                 
-                current_position = (x, y)
-                if current_position in prev_positions:
-                    pass
-                else:
-                    score += (target_position_y // 100) + 1
-                    prev_positions.append(current_position)
 
-                left_motor_speed, right_motor_speed
-= calculate_motor_output(target_position_x, target_position_y, camera_resolution)
+                left_motor_speed, right_motor_speed = calculate_motor_output(target_position_x, target_position_y,
+                                                                             camera_resolution)
 
-                move_motor()
+                move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_motor_pin_1)
                 move_servo(servo_pin, target_position_y)
 
             raw_capture.truncate(0)
@@ -143,4 +135,4 @@ def operation_kill_undead(interpreter_model, servo_pin):
         raw_capture.close()
         cam.stop_preview()
 
-operation_kill_undead(interpreter_model, servo_pin)
+        operation_kill_undead(interpreter_model, servo_pin)
