@@ -41,12 +41,12 @@ def calculate_motor_output(target_position_x, target_position_y, camera_resoluti
     speed = 1.0
     center_x = camera_resolution[0] // 2
 
-    if target_position_x > center_x:
+    if target_position_x > center_x: # Program assumes robot is facing right
         left_motor_speed = speed
-        right_motor_speed = -speed  # Move backward
+        right_motor_speed = speed  # Move forward
     elif target_position_x < center_x:
         left_motor_speed = -speed  # Move backward
-        right_motor_speed = speed
+        right_motor_speed = -speed
     else:
         left_motor_speed = 0  # Stay still
         right_motor_speed = 0
