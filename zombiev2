@@ -19,6 +19,8 @@ right_motor_pin_1 =
 left_motor_pin_2 =
 right_motor_pin_2 =
 
+servo_to_camera_ratio = 6
+
 prev_positions = []
 
 def load_model(model_path):
@@ -54,10 +56,13 @@ def calculate_motor_output(target_position_x, target_position_y, camera_resoluti
     return left_motor_speed, right_motor_speed
 
 def move_servo(servo_pin, target_position_y):
-    GPIO.setup(servo_pin, GPIO.OUT)  
-    servo = GPIO.PWM(servo_pin, 50)  
+    GPIO.setup(servo_pin, target_position_y)
+    servo = GPIO.PWM(servo_pin, 100) #I don't know if 100 customize I guess?
     servo.start(0)
-    duty_cycle = 7.5 + 0.05 * target_position_y
+
+    servo movement = target_position_y / servo_to_camera_ratio
+
+    duty_cycle = 7.5 + (0.05 * servo_movement)
     servo.ChangeDutyCycle(duty_cycle)
     time.sleep(0.1)
 
@@ -101,6 +106,9 @@ def operation_kill_undead(interpreter_model, servo_pin):
                 target_position_x = x + w // 2
                 target_position_y = y + h // 2
 
+                offset = 2
+                target_position_y += offset
+                 
                 current_position = (x, y)
                 if current_position in prev_positions:
                     pass
@@ -108,7 +116,8 @@ def operation_kill_undead(interpreter_model, servo_pin):
                     score += (target_position_y // 100) + 1
                     prev_positions.append(current_position)
 
-                left_motor_speed, right_motor_speed = calculate_motor_output(target_position_x, target_position_y, camera_resolution)
+                left_motor_speed, right_motor_speed
+= calculate_motor_output(target_position_x, target_position_y, camera_resolution)
 
                 move_motor()
                 move_servo(servo_pin, target_position_y)
