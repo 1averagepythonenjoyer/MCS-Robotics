@@ -102,6 +102,7 @@ def Lava_Palava():
                         time.sleep(0.1) #Sleep a little bit more so our hands can get off the robot
                         n+=1
                         break
+                        
 if left_sensor and right_sensor == 0 and middle_sensor == 1:
     time.sleep(0.1)
     Lava_Palava()
