@@ -34,7 +34,7 @@ while joystick.connected:
     elif joystick.presses.circle #Again, don't know name
         print('Entering program with servo_to_camera_ratio of ' + str(servo_to_camera_ratio))
     else:
-        pass #FOR NOW!
+        break #FOR NOW!
 
 
 prev_positions = []
