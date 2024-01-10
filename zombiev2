@@ -12,7 +12,7 @@ GPIO.setmode(GPIO.BOARD)
 interpreter_model = None
 
 # Put something here. Remember the model has to be trained to recognize cards.
-# Also, enter the camera resolution on line 84
+# Also, enter the camera resolution on line 104
 model_path = ''
 servo_pin = 18  # replace with the correct pin number
 left_motor_pin_1 = 
@@ -20,23 +20,7 @@ right_motor_pin_1 =
 left_motor_pin_2 = 
 right_motor_pin_2 = 
 
-servo_to_camera_ratio = 0
-
-while joystick.connected:   #While the next section of code probably won't be used in the code it sounds like a good idea to me to write it in
-    joystick.check_presses()
-    print('if servo raises 90 degrees for the gun to raise 15 degrees, we have a ratio of 6, but change if needed')
-    if joystick.presses.triangle:
-        print('add one to variable "servo_to_camera_ratio"')
-        servo_to_camera_ratio += 1
-        time.sleep(0.1)
-    elif joystick.presses.square:
-        print('minus one to variable "servo_to_camera_ratio"')
-        servo_to_camera_ratio -= 1
-    elif joystick.presses.circle:
-        print('Entering program with servo_to_camera_ratio of ' + str(servo_to_camera_ratio))
-        break
-    else:
-        break  # FOR NOW!
+servo_to_camera_ratio = 6
 
 prev_positions = []
 
@@ -101,7 +85,7 @@ def move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_moto
     right_pwm.start(right_motor_speed * 100)
 
 def operation_kill_undead(interpreter_model, servo_pin):
-    camera_resolution = (640, 480)  # Change to suit code
+    camera_resolution = (,)  # Change to suit code
     cam = camera(resolution=camera_resolution)
     cam.start_preview()
 
