@@ -46,8 +46,8 @@ def set_speed(power_left, power_right):
         GPIO.output(input3, GPIO.HIGH)
         GPIO.output(input4, GPIO.LOW)
         r_motor= map_range(power_right,0,-100,0,100)
-        l_motor= map_range(power_left, 0, -100, 0, 100)
-    print('Left: {}, Right: {}'.format(power_left, power_right)) # troubleshhoting
+        l_motor= map_range(power_left, 0, -100, 0, 100) #adjyst the final value in this bracket until it is straight. eg start at 90
+    print('Left: {}, Right: {}'.format(power_left, power_right))
     print('Left duty percent: {}, Right duty percent: {}'.format(l_motor, r_motor))
     PWMa.ChangeDutyCycle(l_motor) 
     PWMb.ChangeDutyCycle(r_motor)
