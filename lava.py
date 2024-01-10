@@ -40,21 +40,6 @@ input4 = 24
 GPIO.setup(input2, GPIO.OUT)
 GPIO.output(input2, GPIO.LOW)
 
-def forward(left_speed, right_speed):
-    PWMb.ChangeDutyCycle(left_speed)
-    PWMa.ChangeDutyCycle(right_speed)
-def left():
-    forward(70,100)
-def right():
-    forward(100,70) 
-def left_a_bit():
-    forward(90,100) 
-def right_a_bit():
-    forward(100,90) 
-def ultimate_left(): 
-    forward(20,100)
-def ultimate_right():
-    forward(100,20) 
 def Lava_Palava():
     while True:
         global n
@@ -71,7 +56,7 @@ def Lava_Palava():
         print("-------------------------------------------")
         
         if left_sensor and middle_sensor and right_sensor == 0:
-            sleep(0.0001)
+            mix()
         elif left_sensor and middle_sensor == 1:
             left_a_bit()
             time.sleep(0.0001)
