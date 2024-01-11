@@ -39,7 +39,7 @@ def set_speed(power_left, power_right):
         GPIO.output(input3, GPIO.HIGH)
         GPIO.output(input4, GPIO.LOW)
         r_motor= map_range(power_right,0,100,0,100) # add gpio out analog with duty cycle 0-100
-        l_motor= map_range(power_left,0,100,0,100)
+        l_motor= map_range(power_left,0,100,0,80)
     elif y < 0:
         GPIO.output(input1, GPIO.LOW)
         GPIO.output(input2, GPIO.HIGH)
