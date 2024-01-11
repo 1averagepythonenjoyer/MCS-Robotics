@@ -14,7 +14,7 @@ interpreter_model = None
 # Put something here. Remember the model has to be trained to recognize cards.
 # Also, enter the camera resolution on line 104
 model_path = ''
-servo_pin = 18  # replace with the correct pin number
+servo_pin =   # replace with the correct pin number
 left_motor_pin_1 = 
 right_motor_pin_1 = 
 left_motor_pin_2 = 
