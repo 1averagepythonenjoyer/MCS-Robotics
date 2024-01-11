@@ -56,7 +56,6 @@ def Lava_Palava():
         print("-------------------------------------------")
         
         if left_sensor and middle_sensor and right_sensor == 0:
-            mix()
             time.sleep(0.0001)
         elif left_sensor and middle_sensor == 1:
             mix()
