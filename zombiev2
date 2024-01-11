@@ -58,7 +58,7 @@ def calculate_motor_output(target_position_x, target_position_y, camera_resoluti
 
 def move_servo(servo_pin, target_position_y):
     GPIO.setup(servo_pin, GPIO.OUT)
-    servo = GPIO.PWM(servo_pin, 100)  # I don't know if 100 customizes, I guess?
+    servo = GPIO.PWM(servo_pin, 100)  # I don't know if 100 is good. customizes, I guess?
     servo.start(0)
 
     servo_movement = target_position_y / servo_to_camera_ratio
