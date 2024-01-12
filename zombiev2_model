@@ -20,7 +20,6 @@ def get_zombiev2_model(shape):
 shape = (None, None, None)
 
 zombiev2_model = get_zombiev2_model(shape)
-zombiev2_model.summary()
 model_path = ''
 zombiev2_model.save(model_path)
 
