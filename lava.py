@@ -55,12 +55,12 @@ def Lava_Palava():
         print("right =", right_sensor)
         print("-------------------------------------------")
         
-        if left_sensor and middle_sensor and right_sensor == 0:
+        if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
             time.sleep(0.0001)
-        elif left_sensor and middle_sensor == 1:
+        elif left_sensor == 1 and middle_sensor == 1:
             mix()
             time.sleep(0.0001)
-        elif right_sensor and middle_sensor == 1:
+        elif right_sensor ==1  and middle_sensor == 1:
             mix()
             time.sleep(0.0001)
         else:
@@ -78,22 +78,19 @@ def Lava_Palava():
                         mix()
                         time.sleep(0.0001)
             else:
-                if middle_sensor == 1 and left_sensor and right_sensor == 0:
+                if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
                     mix()
                     time.sleep(0.0001)
                 else:
-                    if n != 0:
-                        while True:
-                            if left_sensor and middle_sensor and right_sensor == 0:
-                                mix()#We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
-                                time.sleep(1.2) #Modify if you guys want but I don't think we need to
-                                break
+                        if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
+                            mix()#We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
+                            time.sleep(1.2) #Modify if you guys want but I don't think we need to
                             
                         time.sleep(0.01) #Sleep a little bit more so our hands can get off the robot
                         n+=1
                         break
                         
-if left_sensor and right_sensor == 0 and middle_sensor == 1:
+if left_sensor == 0 and right_sensor == 0 and middle_sensor == 1:
     Lava_Palava()
     
 
