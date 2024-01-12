@@ -4,13 +4,13 @@ import time
 GPIO.setmode(BOARD)
 GPIO.setwarnings(False)
 
-left_sensor = 29
-middle_sensor = 31
-right_sensor = 33
+left_sensor_pin = 29
+middle_sensor_pin = 31
+right_sensor_pin = 33
 
-GPIO.setup(left_sensor, GPIO.IN)
-GPIO.setup(middle_sensor, GPIO.IN)
-GPIO.setup(right_sensor, GPIO.IN)
+GPIO.setup(left_sensor_pin, GPIO.IN)
+GPIO.setup(middle_sensor_pin, GPIO.IN)
+GPIO.setup(right_sensor_pin, GPIO.IN)
 
 #motor enable pins
 PWMaenable = 10
@@ -46,9 +46,9 @@ def Lava_Palava():
         if n == 3:
             quit()
         
-        left_sensor = GPIO.input(left_sensor)
-        middle_sensor = GPIO.input(middle_sensor)
-        right_sensor = GPIO.input(right_sensor)
+        left_sensor = GPIO.input(left_sensor_pin)
+        middle_sensor = GPIO.input(middle_sensor_pin)
+        right_sensor = GPIO.input(right_sensor_pin)
         
         print("left =", left_sensor)  #Remember to remove this in the competition
         print("middle =", middle_sensor)
@@ -65,16 +65,16 @@ def Lava_Palava():
             time.sleep(0.0001)
         else:
             if middle_sensor == 0:
-                if left_sensor == 1:
+                if left_sensor == 1 and right_sensor == 0:
                     mix()
                     time.sleep(0.0001)
-                    if left_sensor and right_sensor == 0:
+                    if left_sensor == 0 and right_sensor == 0:
                         mix()
                         time.sleep(0.0001)
                 elif right_sensor == 1:
                     mix()
                     time.sleep(0.0001)
-                    if left_sensor and right_sensor == 0:
+                    if left_sensor == 0 and right_sensor == 0:
                         mix()
                         time.sleep(0.0001)
             else:
@@ -82,13 +82,14 @@ def Lava_Palava():
                     mix()
                     time.sleep(0.0001)
                 else:
-                        if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                            mix()#We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
-                            time.sleep(1.2) #Modify if you guys want but I don't think we need to
+                    if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
+                        mix()#We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
+                        time.sleep(1.2) #Modify if you guys want but I don't think we need to
                             
                         time.sleep(0.01) #Sleep a little bit more so our hands can get off the robot
                         n+=1
                         break
+                    break
                         
 if left_sensor == 0 and right_sensor == 0 and middle_sensor == 1:
     Lava_Palava()
