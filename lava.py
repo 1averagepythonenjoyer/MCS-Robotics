@@ -4,13 +4,13 @@ import time
 GPIO.setmode(BOARD)
 GPIO.setwarnings(False)
 
-leftsensor = 29
-middlesensor = 31
-rightsensor = 33
+left_sensor = 29
+middle_sensor = 31
+right_sensor = 33
 
-GPIO.setup(leftsensor, GPIO.IN)
-GPIO.setup(middlesensor, GPIO.IN)
-GPIO.setup(rightsensor, GPIO.IN)
+GPIO.setup(left_sensor, GPIO.IN)
+GPIO.setup(middle_sensor, GPIO.IN)
+GPIO.setup(right_sensor, GPIO.IN)
 
 #motor enable pins
 PWMaenable = 10
@@ -46,9 +46,9 @@ def Lava_Palava():
         if n == 3:
             quit()
         
-        left_sensor = GPIO.input(leftsensor)
-        middle_sensor = GPIO.input(middlesensor)
-        right_sensor = GPIO.input(rightsensor)
+        left_sensor = GPIO.input(left_sensor)
+        middle_sensor = GPIO.input(middle_sensor)
+        right_sensor = GPIO.input(right_sensor)
         
         print("left =", left_sensor)  #Remember to remove this in the competition
         print("middle =", middle_sensor)
@@ -57,10 +57,10 @@ def Lava_Palava():
         
         if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
             time.sleep(0.0001)
-        elif left_sensor == 1 and middle_sensor == 1:
+        elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
             mix()
             time.sleep(0.0001)
-        elif right_sensor ==1  and middle_sensor == 1:
+        elif right_sensor ==1  and middle_sensor == 1 and left_sensor == 0:
             mix()
             time.sleep(0.0001)
         else:
