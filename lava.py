@@ -43,25 +43,18 @@ GPIO.output(input2, GPIO.LOW)
 
 def start_mechanism():
     joystick.check_presses()
-    if joystick.presses.cross
+    if joystick.presses.cross: #If active
         return True
-    elif joystick.presses.triangle()
+    elif joystick.presses.triangle: # If not active
         time.sleep(0.1)
-    else:
-        pass
-    
-        
-def check_kill_switch():
-    while joystick.connected:
-        joystick.check_presses()
-        if joystick.presses.circle: #kill switch so cross seems good but change but circle
+    elif joystick.presses.circle:
             GPIO.output(input1, GPIO.LOW)
             GPIO.output(input2, GPIO.LOW)
             GPIO.output(input3, GPIO.LOW)
             GPIO.output(input4, GPIO.LOW)
             quit()
-        else:
-            return
+    else:                        # Same as triangle but not sure what to even put here so I just put this
+        time.sleep(0.1)
 
 def Lava_Palava():
     while True:
@@ -83,66 +76,68 @@ def Lava_Palava():
             print("right =", right_sensor)
             print("-------------------------------------------")
     
-            check_kill_switch()
+            start_mechanism():
             
             if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                check_kill_switch()
+                start_mechanism():
                 time.sleep(0.0001)
             elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-                check_kill_switch()
+                start_mechanism():
                 mix()
                 time.sleep(0.0001)
             elif right_sensor ==1  and middle_sensor == 1 and left_sensor == 0:
-                check_kill_switch()
+                start_mechanism():
                 mix()
                 time.sleep(0.0001)
             else:
                 if middle_sensor == 0:
                     if left_sensor == 1 and right_sensor == 0:
-                        check_kill_switch()
+                        start_mechanism():
                         mix()
                         time.sleep(0.0001)
                         if left_sensor == 0 and right_sensor == 0:
-                            check_kill_switch()
+                            start_mechanism():
                             mix()
                             time.sleep(0.0001)
                     elif right_sensor == 1:
-                        check_kill_switch()
+                        start_mechanism():
                         mix()
                         time.sleep(0.0001)
                         if left_sensor == 0 and right_sensor == 0:
-                            check_kill_switch()
+                            start_mechanism():
                             mix()
                             time.sleep(0.0001)
                 else:
                     if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                        check_kill_switch()
+                        start_mechanism():
                         mix()
                         time.sleep(0.0001)
                     else:
                         if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                            check_kill_switch()
+                            start_mechanism():
                             mix()#We are at the finish. Robot needs to cross finish line to count as a win so we still have to forwards a bit
                             time.sleep(0.2)  #These add up to 1.2 seconds excluding sleeping extra 0.1 seconds. I did this so there would be as little delay for kill switch as possible. Maximum of 0.2 seconds delay is not too bad.
-                            check_kill_switch()
+                            start_mechanism():
                             time.sleep(0.2)
-                            check_kill_switch()
+                            start_mechanism():
                             time.sleep(0.2)
-                            check_kill_switch()
+                            start_mechanism():
                             time.sleep(0.2)
-                            check_kill_switch()
+                            start_mechanism():
                             time.sleep(0.2)
-                            check_kill_switch()
+                            start_mechanism():
                             time.sleep(0.2)
-                            check_kill_switch()
+                            start_mechanism():
                             time.sleep(0.1) #Sleep a little bit more so our hands can get off the robot
                             n+=1
                             break
-                        check_kill_switch()
+                        start_mechanism():
                         break
                         
+        else: 
+            
 if left_sensor == 0 and right_sensor == 0 and middle_sensor == 1:
-    check_kill_switch()
+    start_mechanism():
     Lava_Palava()
     
 
