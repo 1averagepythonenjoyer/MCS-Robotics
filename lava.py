@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time
+import threading
+from approxeng.input.selectbinder import ControllerResource
 
 GPIO.setmode(BOARD)
 GPIO.setwarnings(False)
@@ -40,10 +42,24 @@ input4 = 24
 GPIO.setup(input2, GPIO.OUT)
 GPIO.output(input2, GPIO.LOW)
 
+def kill_switch():
+    while joystick.connected:
+        joystick.check_presses()
+        if joystick.presses.cross: #kill switch so cross seems good but change if you want to
+            GPIO.output(input1, GPIO.LOW)
+            GPIO.output(input2, GPIO.LOW)
+            GPIO.output(input3, GPIO.LOW)
+            GPIO.output(input4, GPIO.LOW)
+            quit()
+
 def Lava_Palava():
     while True:
         global n
         if n == 3:
+            GPIO.output(input1, GPIO.LOW)
+            GPIO.output(input2, GPIO.LOW)
+            GPIO.output(input3, GPIO.LOW)
+            GPIO.output(input4, GPIO.LOW)
             quit()
         
         left_sensor = GPIO.input(left_sensor_pin)
