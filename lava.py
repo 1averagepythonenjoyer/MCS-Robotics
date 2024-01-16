@@ -46,18 +46,18 @@ GPIO.output(input2, GPIO.LOW)
 def start_mechanism():
     while joystick.connected: 
         joystick.check_presses()
-        if joystick.presses.cross: #If active
+        if joystick.presses.cross and n == 0: #If active
             return True
         elif joystick.presses.triangle: # If not active
             time.sleep(0.1)
         elif joystick.presses.circle:
-                GPIO.output(input1, GPIO.LOW)
-                GPIO.output(input2, GPIO.LOW)
-                GPIO.output(input3, GPIO.LOW)
-                GPIO.output(input4, GPIO.LOW)
-                quit()
-    else:                        # Same as triangle but not sure what to even put here so I just put this
-        time.sleep(0.1)
+            GPIO.output(input1, GPIO.LOW)
+            GPIO.output(input2, GPIO.LOW)
+            GPIO.output(input3, GPIO.LOW)
+            GPIO.output(input4, GPIO.LOW)
+            quit()
+    `   else:                       # Same as triangle but not sure what to even put here so I just put this
+            time.sleep(0.1)
 
 def Lava_Palava():
     while True:
