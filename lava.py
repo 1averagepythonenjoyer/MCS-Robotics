@@ -9,6 +9,8 @@ left_sensor_pin = 29
 middle_sensor_pin = 31
 right_sensor_pin = 33
 
+n = 0
+
 GPIO.setup(left_sensor_pin, GPIO.IN)
 GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
@@ -59,7 +61,7 @@ def start_mechanism():
 
 def Lava_Palava():
     while True:
-        if start_mechanism() != True:
+        if start_mechanism() == True:
             global n
             if n == 3:
                 GPIO.output(input1, GPIO.LOW)
@@ -134,7 +136,7 @@ def Lava_Palava():
                             break
                         start_mechanism():
                         break
-
+                        
 if left_sensor == 0 and right_sensor == 0 and middle_sensor == 1:
     start_mechanism():
     Lava_Palava()
