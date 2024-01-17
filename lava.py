@@ -44,6 +44,7 @@ GPIO.setup(input2, GPIO.OUT)
 GPIO.output(input2, GPIO.LOW)
 
 def start_mechanism():
+    # check if active here
     while joystick.connected: 
         joystick.check_presses()
         if joystick.presses.cross #If active
