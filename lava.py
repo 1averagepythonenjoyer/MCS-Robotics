@@ -46,7 +46,7 @@ GPIO.output(input2, GPIO.LOW)
 def start_mechanism():
     while joystick.connected: 
         joystick.check_presses()
-        if joystick.presses.cross and n == 0: #If active
+        if joystick.presses.cross #If active
             GPIO.output(input1, GPIO.HIGH)
             GPIO.output(input2, GPIO.LOW)
             GPIO.output(input3, GPIO.HIGH)
@@ -58,7 +58,7 @@ def start_mechanism():
             GPIO.output(input3, GPIO.LOW)
             GPIO.output(input4, GPIO.LOW)
             time.sleep(0.1)
-        elif joystick.presses.circle:
+        elif joystick.presses.circle:   # Kill switch. Difference between kill switch and 'not active' button is that kill switch ends the code whereas 'not active' just deactiavtes it for the time being.
             GPIO.output(input1, GPIO.LOW)
             GPIO.output(input2, GPIO.LOW)
             GPIO.output(input3, GPIO.LOW)
