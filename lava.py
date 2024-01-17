@@ -64,8 +64,8 @@ def start_mechanism():
             GPIO.output(input3, GPIO.LOW)
             GPIO.output(input4, GPIO.LOW)
             quit()
-    `   else:                       # Same as triangle but not sure what to even put here so I just put this
-            time.sleep(0.1)
+    `   else:                      
+            pass
 
 def Lava_Palava():
     while True:
