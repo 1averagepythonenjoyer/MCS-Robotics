@@ -12,7 +12,6 @@ GPIO.setmode(GPIO.BOARD)
 interpreter_model = None
 
 # Put something here. Remember the model has to be trained to recognize cards.
-# Also, enter the camera resolution on line 104
 model_path = ''
 servo_pin =   # replace with the correct pin number
 left_motor_pin_1 = 
@@ -20,6 +19,7 @@ right_motor_pin_1 =
 left_motor_pin_2 = 
 right_motor_pin_2 = 
 
+camera_resolution = [,]
 servo_to_camera_ratio = 6
 
 prev_positions = []
@@ -85,7 +85,7 @@ def move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_moto
     right_pwm.start(right_motor_speed * 100)
 
 def operation_kill_undead(interpreter_model, servo_pin):
-    camera_resolution = (,)  # Change to suit code
+    global camera_resolution
     cam = camera(resolution=camera_resolution)
     cam.start_preview()
 
