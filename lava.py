@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-from approxeng.input.selectbinder import ControllerResource
 
 GPIO.setmode(BOARD)
 GPIO.setwarnings(False)
