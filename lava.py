@@ -100,6 +100,3 @@ def Lava_Palava():
                         
 if left_sensor == 0 and right_sensor == 0 and middle_sensor == 1:
     Lava_Palava()
-    
-
-
