@@ -67,31 +67,33 @@ def Lava_Palava():
         if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
             time.sleep(0.0001)
         elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
+            set(95,100)
             time.sleep(0.0001)
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
+            set(100,95)
             time.sleep(0.0001)
         else:
             if middle_sensor == 0:
                 if left_sensor == 1 and right_sensor == 0:
+                    set(80,100)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
+                        set(50,100)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
+                    set(100,80)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
+                        set(100,50)
                         time.sleep(0.0001)
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
+                    set(100,100)
                     time.sleep(0.0001)
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        time.sleep(0.2)  #These add up to 1.2 seconds excluding sleeping extra 0.1 seconds. I did this so there would be as little delay for kill switch as possible. Maximum of 0.2 seconds delay is not too bad.
-                        time.sleep(0.2)
-                        time.sleep(0.2)
-                        time.sleep(0.2)
-                        time.sleep(0.2)
-                        time.sleep(0.2)
-                        time.sleep(0.1) #Sleep a little bit more so our hands can get off the robot
+                        set(100,100)
+                        time.sleep(1.2)  
                         n+=1
                         break
                     break
