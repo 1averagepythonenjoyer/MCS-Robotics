@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-from picamera import PiCamera as camera
-from picamera.array import PiRGBArray as Pi
 import tflite_runtime.interpreter as tf
 import RPi.GPIO as GPIO
 import time
@@ -11,7 +9,7 @@ GPIO.setmode(GPIO.BOARD)
 
 interpreter_model = None
 
-# Put something here. Remember the model has to be trained to recognize cards.
+# Put something here. Remember the model has to be trained to recognize cards. Remember also camera index line 86
 model_path = ''
 servo_pin =   # replace with the correct pin number
 left_motor_pin_1 = 
@@ -85,20 +83,15 @@ def move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_moto
     right_pwm.start(right_motor_speed * 100)
 
 def operation_kill_undead(interpreter_model, servo_pin):
-    global camera_resolution
-    cam = camera(resolution=camera_resolution)
-    cam.start_preview()
-
-    raw_capture = Pi(cam)
-
-    time.sleep(0.1)
-
+    cap = cv2.VideoCapture(0)  # Enter in camera index
+    
     interpreter_model = load_model(model_path)
 
     try:
         while True:
-            image = raw_capture.array
-            output_data = run_inference(interpreter_model, image)
+            ret, frame = cap.read()
+            
+            output_data = run_inference(interpreter_model, frame)
 
             if output_data:
                 x, y, w, h = output_data[0]
@@ -108,15 +101,12 @@ def operation_kill_undead(interpreter_model, servo_pin):
                 offset = 2
                 target_position_y += offset
 
-                left_motor_speed, right_motor_speed = calculate_motor_output(target_position_x, target_position_y,
-                                                                             camera_resolution)
+                left_motor_speed, right_motor_speed = calculate_motor_output(target_position_x, target_position_y, camera_resolution)
 
                 move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_motor_pin_1)
                 move_servo(servo_pin, target_position_y)
 
-            raw_capture.truncate(0)
     finally:
-        raw_capture.close()
-        cam.stop_preview()
+        cap.release()
 
-        operation_kill_undead(interpreter_model, servo_pin)
+operation_kill_undead(interpreter_model, servo_pin)
