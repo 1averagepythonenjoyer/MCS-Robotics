@@ -3,7 +3,7 @@ from tensorflow.keras import layers, models
 import numpy as np
 
 
-split_ratio = 0.8
+split_ratio = 0.8 #can be adjusted
 num_samples = len(X)
 split_index = int(num_samples * split_ratio)
 
@@ -31,5 +31,7 @@ model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
 test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0) #We don't need verbose =1 or 2
 
 model.save() #fill in
+
+
 
 
