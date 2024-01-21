@@ -66,32 +66,32 @@ def Lava_Palava():
         if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
             time.sleep(0.0001)
         elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-            set(95,100)
+            mix(-0.95,1)
             time.sleep(0.0001)
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
-            set(100,95)
+            mix(0.95,1)
             time.sleep(0.0001)
         else:
             if middle_sensor == 0:
                 if left_sensor == 1 and right_sensor == 0:
-                    set(80,100)
+                    mix(-0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        set(50,100)
+                        mix(-50,100)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
-                    set(100,80)
+                    mix(0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        set(100,50)
+                        mix(0.5,1)
                         time.sleep(0.0001)
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                    set(100,100)
+                    mix(0,100)
                     time.sleep(0.0001)
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        set(100,100)
+                        mix(0,100)
                         time.sleep(1.2)  
                         n+=1
                         break
