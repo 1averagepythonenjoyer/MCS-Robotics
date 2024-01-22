@@ -46,10 +46,6 @@ def Lava_Palava():
     while True:
         global n
         if n == 3:
-            GPIO.output(input1, GPIO.LOW)
-            GPIO.output(input2, GPIO.LOW)
-            GPIO.output(input3, GPIO.LOW)
-            GPIO.output(input4, GPIO.LOW)
             quit()
             
         left_sensor = GPIO.input(left_sensor_pin)
