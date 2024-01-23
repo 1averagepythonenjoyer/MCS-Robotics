@@ -1,10 +1,10 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(BOARD)
-GPIO.setwarnings(False)
+#exec(open('')) 
+#enter file path
 
-left_sensor_pin = 29
+left_sensor_pin = 29 #Use Nicky's newmotor.py there is input 1-4 and that stuff in his code. I just need to set up sensors
 middle_sensor_pin = 31
 right_sensor_pin = 33
 
@@ -13,34 +13,6 @@ n = 0
 GPIO.setup(left_sensor_pin, GPIO.IN)
 GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
-
-#motor enable pins
-PWMaenable = 10
-GPIO.setup(PWMaenable, GPIO.OUT)
-PWMa= GPIO.PWM(PWMaenable, 100)
-PWMa.start(0)
-
-PWMbenable = 12
-GPIO.setup(PWMbenable, GPIO.OUT)
-PWMb= GPIO.PWM(PWMbenable, 100)
-PWMb.start(0)
-
-#motor pins
-input1 = 21
-GPIO.setup(input1, GPIO.OUT)
-GPIO.output(input1, GPIO.HIGH)
-
-input2 = 22
-GPIO.setup(input2, GPIO.OUT)
-GPIO.output(input2, GPIO.LOW)
-
-input3 = 23
-GPIO.setup(input1, GPIO.OUT)
-GPIO.output(input1, GPIO.HIGH)
-
-input4 = 24
-GPIO.setup(input2, GPIO.OUT)
-GPIO.output(input2, GPIO.LOW)
 
 def Lava_Palava():
     while True:
