@@ -9,18 +9,12 @@ GPIO.setmode(GPIO.BOARD)
 
 interpreter_model = None
 
-# Put something here. Remember the model has to be trained to recognize cards. Remember also camera index line 86
-model_path = ''
-servo_pin =   # replace with the correct pin number
-left_motor_pin_1 = 
-right_motor_pin_1 = 
-left_motor_pin_2 = 
-right_motor_pin_2 = 
+# Put camera reolution and servo to camera ratio I think it is 15 degrees gun = 90 degrees servo
 
 camera_resolution = [,]
 servo_to_camera_ratio = 6
 
-prev_positions = []
+prev_positions = [] # Please do not change this must be empty list
 
 def load_model(model_path):
     interpreter_model = tf.Interpreter(model_path=model_path)
@@ -61,7 +55,7 @@ def move_servo(servo_pin, target_position_y):
 
     servo_movement = target_position_y / servo_to_camera_ratio
 
-    duty_cycle = 7.5 + (0.05 * servo_movement)
+    duty_cycle = 7.5 + (0.05 * servo_movement) #This line check servo registartion and documentry see what value PWM it wants
     servo.ChangeDutyCycle(duty_cycle)
     time.sleep(0.1)
 
