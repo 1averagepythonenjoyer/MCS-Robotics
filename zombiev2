@@ -12,7 +12,7 @@ interpreter_model = None
 # Put camera reolution and servo to camera ratio I think it is 15 degrees gun = 90 degrees servo
 
 camera_resolution = [,]
-servo_to_camera_ratio = 6
+servo_to_camera_ratio = 90 / 15 #Ratio of gun and servo. Can be changed depending on design
 
 prev_positions = [] # Please do not change this must be empty list
 
