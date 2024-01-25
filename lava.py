@@ -1,8 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-
-#exec(open('')) 
-#enter file path
+import newmotor
 
 left_sensor_pin = 29 #Use Nicky's newmotor.py there is input 1-4 and that stuff in his code. I just need to set up sensors
 middle_sensor_pin = 31
@@ -34,32 +32,32 @@ def Lava_Palava():
         if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
             time.sleep(0.0001)
         elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-            mix(-0.95,1)
+            newmotor.mix(-0.95,1)
             time.sleep(0.0001)
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
-            mix(0.95,1)
+            newmotor.mix(0.95,1)
             time.sleep(0.0001)
         else:
             if middle_sensor == 0:
                 if left_sensor == 1 and right_sensor == 0:
-                    mix(-0.8,1)
+                    newmotor.mix(-0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        mix(-50,100)
+                        newmotor.mix(-50,100)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
-                    mix(0.8,1)
+                    newmotor.mix(0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        mix(0.5,1)
+                        newmotor.mix(0.5,1)
                         time.sleep(0.0001)
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                    mix(0,100)
+                    newmotor.mix(0,100)
                     time.sleep(0.0001)
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        mix(0,100)
+                        newmotor.mix(0,100)
                         time.sleep(1.2)  
                         n+=1
                         break
