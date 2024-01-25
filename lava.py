@@ -31,9 +31,7 @@ def Lava_Palava():
     
 
             
-        if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-            time.sleep(0.0001)
-        elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
+        if left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
             newmotor.mix(-0.95,1)
             time.sleep(0.0001)
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
@@ -45,7 +43,7 @@ def Lava_Palava():
                     newmotor.mix(-0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        newmotor.mix(-50,100)
+                        newmotor.mix(-50,1)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
                     newmotor.mix(0.8,1)
@@ -55,11 +53,11 @@ def Lava_Palava():
                         time.sleep(0.0001)
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                    newmotor.mix(0,100)
+                    newmotor.mix(0,1)
                     time.sleep(0.0001)
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        newmotor.mix(0,100)
+                        newmotor.mix(0,1)
                         time.sleep(1.2)  
                         n+=1
                         break
