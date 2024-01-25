@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-import newmotor、
+import newmotor
 
 
 #CHANGE PINS ON PI
