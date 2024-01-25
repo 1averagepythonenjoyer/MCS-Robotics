@@ -64,4 +64,5 @@ def Lava_Palava():
                     break
                         
 if left_sensor == 0 and right_sensor == 0 and middle_sensor == 1:
+    time.sleep(0.1)
     Lava_Palava()
