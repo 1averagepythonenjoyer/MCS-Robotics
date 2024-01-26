@@ -44,7 +44,7 @@ def Lava_Palava():
                     newmotor.mix(-0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        newmotor.mix(-50,1)
+                        newmotor.mix(-0.5,1)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
                     newmotor.mix(0.8,1)
