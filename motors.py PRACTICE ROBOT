@@ -2,10 +2,10 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD) # function based port numbers
 GPIO.setwarnings(False)
 
-LmotorF = 25
-LmotorR = 18
-RmotorF = 24
-RmotorR = 23
+LmotorF = 22
+LmotorR = 12
+RmotorF = 18
+RmotorR = 16
 
 # Use values bettwen 0 and 1, lowering value slows down the motion
 LmotorF_correction = 1.0
