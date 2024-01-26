@@ -3,8 +3,8 @@ import numpy as np
 import tflite_runtime.interpreter as tf
 import RPi.GPIO as GPIO
 import time
+import newmotor
 
-# exec(open().read()) put file name in .open()
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
