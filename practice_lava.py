@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from motors import *
+from practicemotors import *
 
 #customize
 left_sensor_pin = 
