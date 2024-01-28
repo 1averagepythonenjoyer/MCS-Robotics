@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
-import newmotor
+from newmotor import * #this is a very useful function: imports all classes, variables, functions etc to your main file. 
+#also means you don't have to do newmotor.(whateverfunction) every time
 
 
 #CHANGE PINS ON PI
@@ -33,35 +34,35 @@ def Lava_Palava():
 
             
         if left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-            newmotor.mix(-0.95,1)
+            mix(-0.95,1)
             time.sleep(0.0001)
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
-            newmotor.mix(0.95,1)
+            mix(0.95,1)
             time.sleep(0.0001)
         else:
             if middle_sensor == 0:
                 if left_sensor == 1 and right_sensor == 0:
-                    newmotor.mix(-0.8,1)
+                    mix(-0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        newmotor.mix(-0.5,1)
+                        mix(-0.5,1)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
-                    newmotor.mix(0.8,1)
+                    mix(0.8,1)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        newmotor.mix(0.5,1)
+                        mix(0.5,1)
                         time.sleep(0.0001)
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                    newmotor.mix(0,1)
+                    mix(0,1)
                     time.sleep(0.0001)
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        newmotor.mix(0,1)
+                        mix(0,1)
                         time.sleep(1.2)
                         n+=1
-                        newmotor.mix(0,0)
+                        mix(0,0)
                         break
                     break
                         
