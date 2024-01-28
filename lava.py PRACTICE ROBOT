@@ -1,12 +1,11 @@
 import RPi.GPIO as GPIO
 import time
-import motors
+from motors import *
 
-
-#CHANGE PINS ON PI
-left_sensor_pin = 8 #Use Nicky's newmotor.py there is input 1-4 and that stuff in his code. I just need to set up sensors
-middle_sensor_pin = 10
-right_sensor_pin = 12
+#customize
+left_sensor_pin = 
+middle_sensor_pin = 
+right_sensor_pin = 
 
 n = 0
 
@@ -33,35 +32,35 @@ def Lava_Palava():
 
             
         if left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-            motors.set(95,100)
+            set(95,100)
             time.sleep(0.0001)
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
-            motors.set(100,95)
+            set(100,95)
             time.sleep(0.0001)
         else:
             if middle_sensor == 0:
                 if left_sensor == 1 and right_sensor == 0:
-                    motors.set(80,100)
+                    set(80,100)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        motors.set(50,100)
+                        set(50,100)
                         time.sleep(0.0001)
                 elif right_sensor == 1:
-                    motors.set(100,80)
+                    set(100,80)
                     time.sleep(0.0001)
                     if left_sensor == 0 and right_sensor == 0:
-                        motors.set(100,50)
+                        set(100,50)
                         time.sleep(0.0001)
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                    motors.set(100,100)
+                    set(100,100)
                     time.sleep(0.0001)
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        motors.set(100,100)
+                        set(100,100)
                         time.sleep(1.2)
                         n+=1
-                        motors.set(0,0)
+                        set(0,0)
                         break
                     break
                         
