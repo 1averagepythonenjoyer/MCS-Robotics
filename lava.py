@@ -11,10 +11,18 @@ middle_sensor_pin = 10
 right_sensor_pin = 12
 
 n = 0
+presses = joystick.check_presses()
 
 GPIO.setup(left_sensor_pin, GPIO.IN)
 GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
+
+def stop():
+    global presses
+    if presses[''] #stop button
+        mix(0,0)
+        n = 3
+        return
 
 def Lava_Palava():
     while True:
@@ -65,12 +73,14 @@ def Lava_Palava():
                     break
                         
 while n <= 3:
+    global presses
     try:
         with ControllerResource() as joystick:
             while joystick.connected:
-                if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1:
-                    time.sleep(0.1)
-                    Lava_Palava()
+                if presses[''] #start code button
+                    if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1:
+                        time.sleep(0.1)
+                        Lava_Palava()
     except IOError:
         #print('unable to find any joysticks')
         #Don't know what to put here
