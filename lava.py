@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from approxeng.input.selectbinder import ControllerResource
 from newmotor import * #this is a very useful function: imports all classes, variables, functions etc to your main file. 
 #also means you don't have to do newmotor.(whateverfunction) every time
 
@@ -18,10 +19,6 @@ GPIO.setup(right_sensor_pin, GPIO.IN)
 def Lava_Palava():
     while True:
         global n
-        if n == 3:
-            GPIO.cleanup()
-            return
-            quit()
             
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
@@ -67,6 +64,13 @@ def Lava_Palava():
                         break
                     break
                         
-if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1 and n <= 3:
-    time.sleep(0.1)
-    Lava_Palava()
+while n <= 3:
+    try:
+        with ControllerResource() as joystick:
+            while joystick.connected:
+                if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1:
+                    time.sleep(0.1)
+                    Lava_Palava()
+    except IOError:
+        #print('unable to find any joysticks')
+        #Don't know what to put here
