@@ -21,8 +21,8 @@ def stop():
     global presses
     if presses[''] #stop button
         mix(0,0)
-        n = 3
-        return
+        #quit()
+        #exit()
 
 def Lava_Palava():
     while True:
@@ -42,31 +42,49 @@ def Lava_Palava():
         if left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
             mix(-0.95,1)
             time.sleep(0.0001)
+            stop()
         elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
             mix(0.95,1)
             time.sleep(0.0001)
+            stop()
         else:
             if middle_sensor == 0:
                 if left_sensor == 1 and right_sensor == 0:
                     mix(-0.8,1)
                     time.sleep(0.0001)
+                    stop()
                     if left_sensor == 0 and right_sensor == 0:
                         mix(-0.5,1)
                         time.sleep(0.0001)
+                        stop()
                 elif right_sensor == 1:
                     mix(0.8,1)
                     time.sleep(0.0001)
+                    stop()
                     if left_sensor == 0 and right_sensor == 0:
                         mix(0.5,1)
                         time.sleep(0.0001)
+                        stop()
             else:
                 if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
                     mix(0,1)
                     time.sleep(0.0001)
+                    stop()
                 else:
                     if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
                         mix(0,1)
-                        time.sleep(1.2)
+                        time.sleep(0.2)
+                        stop()
+                        time.sleep(0.2)
+                        stop()
+                        time.sleep(0.2)
+                        stop()
+                        time.sleep(0.2)
+                        stop()
+                        time.sleep(0.2)
+                        stop()
+                        time.sleep(0.2)
+                        stop()
                         n+=1
                         mix(0,0)
                         break
@@ -80,6 +98,7 @@ while n <= 3:
                 if presses[''] #start code button
                     if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1:
                         time.sleep(0.1)
+                        stop()
                         Lava_Palava()
     except IOError:
         #print('unable to find any joysticks')
