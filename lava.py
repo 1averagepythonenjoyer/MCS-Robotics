@@ -95,7 +95,7 @@ while n <= 3:
     try:
         with ControllerResource() as joystick:
             while joystick.connected:
-                if 'L1 Trigger' in presses: #start code button
+                if 'L1 Trigger' in presses or n > 0: #start code button
                     if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1:
                         time.sleep(0.1)
                         stop()
