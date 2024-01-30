@@ -11,6 +11,7 @@ middle_sensor_pin = 10
 right_sensor_pin = 12
 
 n = 0
+m = False
 presses = joystick.check_presses()
 
 GPIO.setup(left_sensor_pin, GPIO.IN)
@@ -18,11 +19,11 @@ GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
 
 def stop():
+    global m
     global presses #VERY IMPORTNAT LOOK HERE!!!
     if '' in presses: #stop button whatever it may be
-        mix(0,0)
-        #quit()
-        #exit()
+        m = True
+        if
 
 def Lava_Palava():
     while True:
