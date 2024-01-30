@@ -18,8 +18,8 @@ GPIO.setup(middle_sensor_pin, GPIO.IN)
 GPIO.setup(right_sensor_pin, GPIO.IN)
 
 def stop():
-    global presses
-    if presses[''] #stop button
+    global presses #VERY IMPORTNAT LOOK HERE!!!
+    if '' in presses: #stop button whatever it may be
         mix(0,0)
         #quit()
         #exit()
@@ -95,7 +95,7 @@ while n <= 3:
     try:
         with ControllerResource() as joystick:
             while joystick.connected:
-                if presses[''] #start code button
+                if 'L1 Trigger' in presses: #start code button
                     if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1:
                         time.sleep(0.1)
                         stop()
