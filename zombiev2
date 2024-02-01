@@ -18,6 +18,7 @@ servo_to_camera_ratio = 90 / 15 #Ratio of gun and servo. Can be changed dependin
 prev_positions = [] # Please do not change this must be empty list
 
 def load_model(model_path):
+    global interpreter_model
     interpreter_model = tf.Interpreter(model_path=model_path)
     interpreter_model.allocate_tensors()
     return interpreter_model
