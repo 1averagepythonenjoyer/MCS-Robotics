@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-from approxeng.input.selectbinder import ControllerResource
 from newmotor import * #this is a very useful function: imports all classes, variables, functions etc to your main file. 
 #also means you don't have to do newmotor.(whateverfunction) every time
 
