@@ -104,4 +104,4 @@ def operation_kill_undead(interpreter_model, servo_pin):
     finally:
         cap.release()
 
-operation_kill_undead(interpreter_model, servo_pin)n_inference, calcu
+operation_kill_undead(interpreter_model, servo_pin)
