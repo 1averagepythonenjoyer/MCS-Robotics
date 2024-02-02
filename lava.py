@@ -17,8 +17,7 @@ GPIO.setup(right_sensor_pin, GPIO.IN)
 
 def Lava_Palava():
     while True:
-        global n
-            
+
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
         right_sensor = GPIO.input(right_sensor_pin)
