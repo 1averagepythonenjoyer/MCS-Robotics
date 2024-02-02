@@ -73,3 +73,4 @@ while n <= 3:
         time.sleep(0.1)
         Lava_Palava()
     
+GPIO.cleanup()
