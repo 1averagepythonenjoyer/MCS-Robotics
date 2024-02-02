@@ -15,11 +15,6 @@ GPIO.setup(right_sensor_pin, GPIO.IN)
 
 def Lava_Palava():
     while True:
-        global n
-        if n == 3:
-            GPIO.cleanup()
-            return
-            quit()
             
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
@@ -64,7 +59,8 @@ def Lava_Palava():
                         set(0,0)
                         break
                     break
-                        
-if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1 and n <= 3:
-    time.sleep(0.1)
-    Lava_Palava()
+while n <= 3:                        
+    if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1 and n <= 3:
+        time.sleep(0.1)
+        Lava_Palava()
+GPIO.cleanup()
