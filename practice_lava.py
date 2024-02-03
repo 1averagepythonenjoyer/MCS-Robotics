@@ -3,9 +3,9 @@ import time
 from practicemotors import *
 
 #customize
-left_sensor_pin = 
-middle_sensor_pin = 
-right_sensor_pin = 
+left_sensor_pin = 8
+middle_sensor_pin = 10
+right_sensor_pin = 12
 
 n = 0
 
