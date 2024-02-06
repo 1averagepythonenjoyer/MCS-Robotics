@@ -5,7 +5,7 @@ from newmotor import * #this is a very useful function: imports all classes, var
 
 
 #CHANGE PINS ON PI
-left_sensor_pin = 8 #Use Nicky's newmotor.py there is input 1-4 and that stuff in his code. I just need to set up sensors
+left_sensor_pin = 11#Use Nicky's newmotor.py there is input 1-4 and that stuff in his code. I just need to set up sensors
 middle_sensor_pin = 10
 right_sensor_pin = 12
 
