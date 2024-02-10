@@ -3,19 +3,18 @@ import numpy as np
 import tflite_runtime.interpreter as tf
 import RPi.GPIO as GPIO
 import time
-
+from newmotor import * #remember on last line and line 46 for more filling in stuff
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 interpreter_model = None
+pwm_speed = None
 
-# Put camera reolution and servo to camera ratio I think it is 15 degrees gun = 90 degrees servo
+camera_resolution = [ , ]  # enter in stuff
+servo_to_camera_ratio = 90 / 15  # Ratio of gun and servo. Can be changed depending on design
 
-camera_resolution = [,]
-servo_to_camera_ratio = 90 / 15 #Ratio of gun and servo. Can be changed depending on design
-
-prev_positions = [] # Please do not change this must be empty list
+prev_positions = []  # DO NOT CHNGE
 
 def load_model(model_path):
     interpreter_model = tf.Interpreter(model_path=model_path)
@@ -27,27 +26,20 @@ def preprocess_image(image):
     input_tensor = np.expand_dims(tensor_input, axis=0)
     return input_tensor
 
-def run_inference(interpreter_model, image):
+def run_inference(image):
     input_data = preprocess_image(image)
     interpreter_model.set_tensor(interpreter_model.get_input_details()[0]['index'], input_data)
     interpreter_model.invoke()
     return interpreter_model.get_tensor(interpreter_model.get_output_details()[0]['index'])
 
-def calculate_motor_output(target_position_x, target_position_y, camera_resolution):
-    speed = 1.0
-    center_x = camera_resolution[0] // 2
-
-    if target_position_x > center_x:  # Program assumes the robot is facing right
-        left_motor_speed = speed
-        right_motor_speed = speed  # Move forward
-    elif target_position_x < center_x:
-        left_motor_speed = -speed  # Move backward
-        right_motor_speed = -speed
-    else:
-        left_motor_speed = 0  # Stay still
-        right_motor_speed = 0
-
-    return left_motor_speed, right_motor_speed
+def calculate_motor_output(target_position_x):
+    image_width = camera_resolution[0]  # Get the width of the image
+    distance_from_center = target_position_x - image_width / 2
+    min_speed = 0.3  # Minimum speed when the target is close
+    max_speed = 1.0  # Maximum speed when the target is far away
+    scaled_speed = max(min_speed, max_speed - abs(distance_from_center) / (image_width / 2) * (max_speed - min_speed))
+    pwm_range = 100
+    return int(scaled_speed * pwm_range)
 
 def move_servo(servo_pin, target_position_y):
     GPIO.setup(servo_pin, GPIO.OUT)
@@ -56,37 +48,24 @@ def move_servo(servo_pin, target_position_y):
 
     servo_movement = target_position_y / servo_to_camera_ratio
 
-    duty_cycle = 7.5 + (0.05 * servo_movement) #This line check servo registartion and documentry see what value PWM it wants
+    duty_cycle = 7.5 + (0.05 * servo_movement) Check some servo docs
     servo.ChangeDutyCycle(duty_cycle)
     time.sleep(0.1)
 
-def move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_motor_pin_1):
-    GPIO.setup(left_motor_pin_1, GPIO.OUT)
-    GPIO.setup(left_motor_pin_2, GPIO.OUT)
-    GPIO.setup(right_motor_pin_1, GPIO.OUT)
-    GPIO.setup(right_motor_pin_2, GPIO.OUT)
+def move_motor(yaw, pwm_speed):
+    mix(yaw, pwm_speed)
 
-    GPIO.output(left_motor_pin_1, GPIO.HIGH)
-    GPIO.output(left_motor_pin_2, GPIO.LOW)
-    GPIO.output(right_motor_pin_1, GPIO.HIGH)
-    GPIO.output(right_motor_pin_2, GPIO.LOW)
-
-    left_pwm = GPIO.PWM(left_motor_pin_1, 100)
-    left_pwm.start(left_motor_speed * 100)
-
-    right_pwm = GPIO.PWM(right_motor_pin_1, 100)
-    right_pwm.start(right_motor_speed * 100)
-
-def operation_kill_undead(interpreter_model, servo_pin):
-    cap = cv2.VideoCapture(0)  # Enter in camera index
-    
+def operation_kill_undead(model_path, servo_pin):
     interpreter_model = load_model(model_path)
+
+    cap = cv2.VideoCapture(0)  
+    camera_resolution = [cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)]
 
     try:
         while True:
             ret, frame = cap.read()
             
-            output_data = run_inference(interpreter_model, frame)
+            output_data = run_inference(frame)
 
             if output_data:
                 x, y, w, h = output_data[0]
@@ -96,12 +75,11 @@ def operation_kill_undead(interpreter_model, servo_pin):
                 offset = 2
                 target_position_y += offset
 
-                left_motor_speed, right_motor_speed = calculate_motor_output(target_position_x, target_position_y, camera_resolution)
-
-                move_motor(left_motor_speed, right_motor_speed, left_motor_pin_1, right_motor_pin_1)
+                pwm_speed = calculate_motor_output(target_position_x)
+                move_motor(0, pwm_speed)
                 move_servo(servo_pin, target_position_y)
 
     finally:
         cap.release()
 
-operation_kill_undead(interpreter_model, servo_pin)
+operation_kill_undead( , servo_pin) #put model path
