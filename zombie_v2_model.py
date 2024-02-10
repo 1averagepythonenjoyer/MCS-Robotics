@@ -35,7 +35,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 train_datagen = ImageDataGenerator(rescale=1./255)
 
 train_generator = train_datagen.flow_from_directory(
-    'path_to_card10k_dataset/images/',
+    '',
     target_size=(height_pixels, width_pixels),
     batch_size=32,
     class_mode='binary')
