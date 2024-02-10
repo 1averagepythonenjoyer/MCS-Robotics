@@ -19,7 +19,7 @@ def create_card_detection_model(input_shape):
     
     return model
 
-# Placeholder values for pixels-to-mm conversion ratio
+# Pixels-to-mm conversion ratio DO NOT ENTER WRONG WAY ROUND!
 pixels_to_mm_ratio =  /
 
 # Dimensions piwars gave
