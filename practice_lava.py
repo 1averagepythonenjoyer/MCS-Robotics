@@ -1,66 +1,91 @@
-import RPi.GPIO as GPIO
-import time
-from practicemotors import *
+try:    
+    import RPi.GPIO
+    from practicemotors import *
+    from time import sleep
 
-#customize
-left_sensor_pin = 11
-middle_sensor_pin = 10
-right_sensor_pin = 12
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
 
-n = 0
+    left_sensor_pin = 11
+    middle_sensor_pin = 10
+    right_sensor_pin = 12
 
-GPIO.setup(left_sensor_pin, GPIO.IN)
-GPIO.setup(middle_sensor_pin, GPIO.IN)
-GPIO.setup(right_sensor_pin, GPIO.IN)
+    GPIO.setup(left_sensor_pin, GPIO.IN)
+    GPIO.setup(middle_sensor_pin, GPIO.IN)
+    GPIO.setup(right_sensor_pin, GPIO.IN)
 
-def Lava_Palava():
-    while True:
-            
+    def go(left_speed, right_speed):
+        try:
+            set(50,0)
+            print('step after 0,50 set reached')
+            sleep(0.102)
+            set(left_speed+2, right_speed)
+            print('step after left_speed right_speed-1 reached')
+            sleep(10)
+            set(0,0)
+        except KeyboardInterrupt:
+            print("Keyboard Interrupt while forwards")
+            quit()
+
+    def check():
+        global left_sensor, middle_sensor, right_sensor
         left_sensor = GPIO.input(left_sensor_pin)
         middle_sensor = GPIO.input(middle_sensor_pin)
         right_sensor = GPIO.input(right_sensor_pin)
-            
-        print("left =", left_sensor)  #Remember to remove this in the competition
-        print("middle =", middle_sensor)
-        print("right =", right_sensor)
-        print("-------------------------------------------")
-    
 
-            
-        if left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-            set(95,100)
-            time.sleep(0.0001)
-        elif right_sensor == 1  and middle_sensor == 1 and left_sensor == 0:
-            set(100,95)
-            time.sleep(0.0001)
-        else:
-            if middle_sensor == 0:
-                if left_sensor == 1 and right_sensor == 0:
-                    set(80,100)
-                    time.sleep(0.0001)
-                    if left_sensor == 0 and right_sensor == 0:
-                        set(50,100)
-                        time.sleep(0.0001)
-                elif right_sensor == 1:
-                    set(100,80)
-                    time.sleep(0.0001)
-                    if left_sensor == 0 and right_sensor == 0:
-                        set(100,50)
-                        time.sleep(0.0001)
+    while True:
+        try:   
+            n = 0
+                
+            check()
+                
+            if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
+                go(30,30)
+                sleep(0.0001)
+                    
+            elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
+                go(0,0)
+                sleep(0.0001)
+                
+            elif right_sensor == 1 and middle_sensor == 1 and left_sensor == 0:
+                go(15,11)
+                sleep(0.0001)
+
             else:
-                if middle_sensor == 1 and left_sensor == 0 and right_sensor == 0:
-                    set(100,100)
-                    time.sleep(0.0001)
-                else:
-                    if left_sensor == 0 and middle_sensor == 0 and right_sensor == 0:
-                        set(100,100)
-                        time.sleep(1.2)
-                        n+=1
-                        set(0,0)
-                        break
-                    break
-while n <= 3:                        
-    if left_sensor == 1 or right_sensor == 1 or middle_sensor == 1 and n <= 3:
-        time.sleep(0.1)
-        Lava_Palava()
-GPIO.cleanup()
+                if middle_sensor == 0 and left_sensor == 0 and right_sensor == 1:
+                    go(30,11)
+                    sleep(0.0001)
+                    check()
+                    
+                    if middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
+                        go(50,11)
+                        sleep(0.0001)
+                            
+                elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
+                    go(11,30)
+                    sleep(0.0001)
+                    check()
+                    
+                    if middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
+                        go(11,50)
+                        sleep(0.0001)
+                        
+                else: #no sensors
+                    if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
+                        go(11,11)
+                        sleep(0.6)
+                        check()
+                        if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
+                            go(0,0)
+                            n+=1
+                            check()
+                            while left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
+                                check()
+                            
+                                
+        except KeyboardInterrupt:
+            print("Manual stop on computer")
+            quit()
+        
+except ModuleNotFoundError:
+    print('Library not installed and/or not installed correctly!')
