@@ -18,7 +18,6 @@ try:
         try:
             set(left_speed, right_speed-1.5)
             time.sleep(0.1)
-            set(0,0)
         except KeyboardInterrupt:
             print("Keyboard Interrupt while forwards")
             quit()
@@ -65,9 +64,11 @@ try:
                         set(0,0)
                         check()
                         if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
+                            set(30,30)
                             time.sleep(1)
                             check()
                             while left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
+                                set(0,0)
                                 check()
                                 time.sleep(0.01)
                             
