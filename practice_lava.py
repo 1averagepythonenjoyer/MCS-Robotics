@@ -1,7 +1,7 @@
 try:    
     import RPi.GPIO
     from practicemotors import *
-    from time import sleep
+    import time
 
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
@@ -16,12 +16,8 @@ try:
 
     def go(left_speed, right_speed):
         try:
-            set(50,0)
-            print('step after 0,50 set reached')
-            sleep(0.102)
-            set(left_speed+2, right_speed)
-            print('step after left_speed right_speed-1 reached')
-            sleep(10)
+            set(left_speed, right_speed-1.5)
+            time.sleep(0.1)
             set(0,0)
         except KeyboardInterrupt:
             print("Keyboard Interrupt while forwards")
@@ -35,52 +31,45 @@ try:
 
     while True:
         try:   
-            n = 0
-                
             check()
                 
             if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
                 go(30,30)
-                sleep(0.0001)
                     
             elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-                go(0,0)
-                sleep(0.0001)
+                go(30,40)
                 
             elif right_sensor == 1 and middle_sensor == 1 and left_sensor == 0:
-                go(15,11)
-                sleep(0.0001)
+                go(40,30)
 
             else:
                 if middle_sensor == 0 and left_sensor == 0 and right_sensor == 1:
-                    go(30,11)
-                    sleep(0.0001)
+                    go(50,30)
                     check()
-                    
-                    if middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        go(50,11)
-                        sleep(0.0001)
-                            
+                    while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
+                        go(60,30)
+                        check()
+                                
                 elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
-                    go(11,30)
-                    sleep(0.0001)
+                    go(30,50)
                     check()
                     
-                    if middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
-                        go(11,50)
-                        sleep(0.0001)
+                    while middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
+                        go(30,60)
+                        check()
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                        go(11,11)
-                        sleep(0.6)
+                        set(30,28.5)
+                        time.sleep(10)
+                        set(0,0)
                         check()
                         if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                            go(0,0)
-                            n+=1
+                            time.sleep(1)
                             check()
                             while left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
                                 check()
+                                time.sleep(0.01)
                             
                                 
         except KeyboardInterrupt:
@@ -89,3 +78,4 @@ try:
         
 except ModuleNotFoundError:
     print('Library not installed and/or not installed correctly!')
+    quit()
