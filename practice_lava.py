@@ -61,7 +61,7 @@ try:
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
                         set(30,28.5)
-                        time.sleep(10)
+                        time.sleep(3)
                         set(0,0)
                         check()
                         if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
