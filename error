@@ -1,0 +1,58 @@
+pi@raspberrypi:~/tflite1 $ sudo pip3 install virtualenv
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting virtualenv
+Exception:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/pip/_internal/cli/base_command.py", line 143, in main
+    status = self.run(options, args)
+  File "/usr/lib/python3/dist-packages/pip/_internal/commands/install.py", line 338, in run
+    resolver.resolve(requirement_set)
+  File "/usr/lib/python3/dist-packages/pip/_internal/resolve.py", line 102, in resolve
+    self._resolve_one(requirement_set, req)
+  File "/usr/lib/python3/dist-packages/pip/_internal/resolve.py", line 256, in _resolve_one
+    abstract_dist = self._get_abstract_dist_for(req_to_install)
+  File "/usr/lib/python3/dist-packages/pip/_internal/resolve.py", line 209, in _get_abstract_dist_for
+    self.require_hashes
+  File "/usr/lib/python3/dist-packages/pip/_internal/operations/prepare.py", line 218, in prepare_linked_requirement
+    req.populate_link(finder, upgrade_allowed, require_hashes)
+  File "/usr/lib/python3/dist-packages/pip/_internal/req/req_install.py", line 164, in populate_link
+    self.link = finder.find_requirement(self, upgrade)
+  File "/usr/lib/python3/dist-packages/pip/_internal/index.py", line 572, in find_requirement
+    all_candidates = self.find_all_candidates(req.name)
+  File "/usr/lib/python3/dist-packages/pip/_internal/index.py", line 530, in find_all_candidates
+    for page in self._get_pages(url_locations, project_name):
+  File "/usr/lib/python3/dist-packages/pip/_internal/index.py", line 675, in _get_pages
+    page = self._get_page(location)
+  File "/usr/lib/python3/dist-packages/pip/_internal/index.py", line 793, in _get_page
+    return _get_html_page(link, session=self.session)
+  File "/usr/lib/python3/dist-packages/pip/_internal/index.py", line 144, in _get_html_page
+    "Cache-Control": "max-age=0",
+  File "/usr/share/python-wheels/requests-2.21.0-py2.py3-none-any.whl/requests/sessions.py", line 546, in get
+    return self.request('GET', url, **kwargs)
+  File "/usr/lib/python3/dist-packages/pip/_internal/download.py", line 396, in request
+    return super(PipSession, self).request(method, url, *args, **kwargs)
+  File "/usr/share/python-wheels/requests-2.21.0-py2.py3-none-any.whl/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/share/python-wheels/requests-2.21.0-py2.py3-none-any.whl/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/share/python-wheels/CacheControl-0.11.7-py2.py3-none-any.whl/cachecontrol/adapter.py", line 47, in send
+    resp = super(CacheControlAdapter, self).send(request, **kw)
+  File "/usr/share/python-wheels/requests-2.21.0-py2.py3-none-any.whl/requests/adapters.py", line 449, in send
+    timeout=timeout
+  File "/usr/share/python-wheels/urllib3-1.24.1-py2.py3-none-any.whl/urllib3/connectionpool.py", line 600, in urlopen
+    chunked=chunked)
+  File "/usr/share/python-wheels/urllib3-1.24.1-py2.py3-none-any.whl/urllib3/connectionpool.py", line 343, in _make_request
+    self._validate_conn(conn)
+  File "/usr/share/python-wheels/urllib3-1.24.1-py2.py3-none-any.whl/urllib3/connectionpool.py", line 841, in _validate_conn
+    conn.connect()
+  File "/usr/share/python-wheels/urllib3-1.24.1-py2.py3-none-any.whl/urllib3/connection.py", line 344, in connect
+    ssl_context=context)
+  File "/usr/share/python-wheels/urllib3-1.24.1-py2.py3-none-any.whl/urllib3/util/ssl_.py", line 321, in ssl_wrap_socket
+    context.load_verify_locations(ca_certs, ca_cert_dir)
+  File "/usr/share/python-wheels/urllib3-1.24.1-py2.py3-none-any.whl/urllib3/contrib/pyopenssl.py", line 428, in load_verify_locations
+    self._ctx.load_verify_locations(cafile, capath)
+  File "/usr/lib/python3/dist-packages/OpenSSL/SSL.py", line 776, in load_verify_locations
+    _raise_current_error()
+  File "/usr/lib/python3/dist-packages/OpenSSL/_util.py", line 54, in exception_from_error_queue
+    raise exception_type(errors)
+OpenSSL.SSL.Error: [('x509 certificate routines', 'X509_load_cert_crl_file', 'no certificate or crl found')]
