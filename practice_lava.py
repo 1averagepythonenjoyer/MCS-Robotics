@@ -17,7 +17,7 @@ try:
     def go(left_speed, right_speed):
         try:
             set(left_speed, right_speed-1.5)
-            time.sleep(0.1)
+            time.sleep(0.0001)
         except KeyboardInterrupt:
             print("Keyboard Interrupt while forwards")
             quit()
@@ -46,7 +46,7 @@ try:
                     go(50,30)
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        go(60,30)
+                        go(60,10)
                         check()
                                 
                 elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
@@ -54,21 +54,19 @@ try:
                     check()
                     
                     while middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
-                        go(30,60)
+                        go(10,60)
                         check()
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                        set(30,28.5)
-                        time.sleep(3)
-                        set(0,0)
+                        set(30,29)
+                        time.sleep(2)
                         check()
                         if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                            set(30,30)
+                            set(0,0)
                             time.sleep(1)
                             check()
                             while left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                                set(0,0)
                                 check()
                                 time.sleep(0.01)
                             
