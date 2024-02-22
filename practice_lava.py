@@ -14,9 +14,14 @@ try:
     GPIO.setup(middle_sensor_pin, GPIO.IN)
     GPIO.setup(right_sensor_pin, GPIO.IN)
 
+    speed_factor = 
+    if speed_factor > 1 or speed_factor < 0:
+        print('Please give a speed_factor of value between 0 and 1 only!')
+        quit()
+    
     def go(left_speed, right_speed):
         try:
-            set(left_speed, right_speed-1.5)
+            set(left_speed*speed_factor, speed_factor*(right_speed-1.5))
             time.sleep(0.0001)
         except KeyboardInterrupt:
             print("Keyboard Interrupt while forwards")
@@ -30,10 +35,12 @@ try:
 
     while True:
         try:   
+            plus_speed = 0
+            
             check()
                 
             if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
-                go(30,30)
+                go(30*,30)
                     
             elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
                 go(30,40)
@@ -54,12 +61,13 @@ try:
                     check()
                     
                     while middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
-                        go(10,60)
+                        go(10,60+plus_speed)
+                        plus_speed+=2
                         check()
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                        set(30,29)
+                        set(30*speed_factor,29*speed_factor)
                         time.sleep(2)
                         check()
                         if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
