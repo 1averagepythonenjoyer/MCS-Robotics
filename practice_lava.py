@@ -40,7 +40,7 @@ try:
             check()
                 
             if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
-                go(30*,30)
+                go(30,30)
                     
             elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
                 go(30,40)
@@ -53,7 +53,8 @@ try:
                     go(50,30)
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        go(60,10)
+                        go(60+plus_speed,10)
+                        plus_speed+=2
                         check()
                                 
                 elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
@@ -67,7 +68,7 @@ try:
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                        set(30*speed_factor,29*speed_factor)
+                        set(30*speed_factor,29*speed_factor+1)
                         time.sleep(2)
                         check()
                         if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
