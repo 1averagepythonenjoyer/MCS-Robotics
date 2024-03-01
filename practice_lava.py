@@ -1,4 +1,4 @@
-try:    
+try:   #Right now, the deal is is that the motors are to slow moving to do +amount and -amount. Later just remove the -amount 
     import RPi.GPIO
     from practicemotors import *
     import time
@@ -13,11 +13,18 @@ try:
     GPIO.setup(left_sensor_pin, GPIO.IN)
     GPIO.setup(middle_sensor_pin, GPIO.IN)
     GPIO.setup(right_sensor_pin, GPIO.IN)
+    
+    amount = 0
+    
+    speed_factor = 1#Please enter a number from 0 to 1 inclusive
+    if speed_factor < 0 or speed_factor > 1:
+        print("Please give a speed factor of between 0 and 1")
+        quit()
+        
 
     def go(left_speed, right_speed):
         try:
-            set(left_speed, right_speed-1.5)
-            time.sleep(0.0001)
+            set(left_speed*speed_factor, (right_speed-1.5)*speed_factor)
         except KeyboardInterrupt:
             print("Keyboard Interrupt while forwards")
             quit()
@@ -46,7 +53,8 @@ try:
                     go(50,30)
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        go(60,10)
+                        go(60+amount,10)
+                        amount+=2
                         check()
                                 
                 elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
@@ -54,22 +62,14 @@ try:
                     check()
                     
                     while middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
-                        go(10,60)
+                        go(10,60+amount)
+                        amount+=2
                         check()
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
                         set(30,29)
-                        time.sleep(2)
-                        check()
-                        if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                            set(0,0)
-                            time.sleep(1)
-                            check()
-                            while left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                                check()
-                                time.sleep(0.01)
-                            
+                        
                                 
         except KeyboardInterrupt:
             print("Manual stop on computer")
