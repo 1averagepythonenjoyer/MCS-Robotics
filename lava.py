@@ -14,20 +14,20 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
     GPIO.setup(middle_sensor_pin, GPIO.IN)
     GPIO.setup(right_sensor_pin, GPIO.IN)
     
-    
+    amount = 0
     speed_factor = 1#Please enter a number from 0 to 1 inclusive
     if speed_factor < 0 or speed_factor > 1:
         print("Please give a speed factor of between 0 and 1")
         quit()
         
 
-    def go(left_speed, right_speed):
+    def forward(yaw, throttle):
         try:
-            set(left_speed*speed_factor, (right_speed-1.5)*speed_factor)
+            mix(yaw, throttle*speed_factor)
         except KeyboardInterrupt:
-            print("Keyboard Interrupt while forwards")
+            print('manual stop while moving')    
             quit()
-
+        
     def check():
         global left_sensor, middle_sensor, right_sensor
         left_sensor = GPIO.input(left_sensor_pin)
@@ -39,17 +39,17 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
             check()
                 
             if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
-                go(30,30)
+                forward(0, 0.3)
                     
             elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-                go(30,40)
+                forward(-0.15, 0.3)
                 
             elif right_sensor == 1 and middle_sensor == 1 and left_sensor == 0:
-                go(40,30)
+                forward(0.15, 0.3)
 
             else:
                 if middle_sensor == 0 and left_sensor == 0 and right_sensor == 1:
-                    go(50,30)
+                    forward()
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
                         go(60+amount,10)
