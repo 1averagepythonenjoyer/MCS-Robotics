@@ -13,8 +13,8 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
     GPIO.setup(left_sensor_pin, GPIO.IN)
     GPIO.setup(middle_sensor_pin, GPIO.IN)
     GPIO.setup(right_sensor_pin, GPIO.IN)
-    
-    amount = 0
+
+
     
     speed_factor = 1#Please enter a number from 0 to 1 inclusive
     if speed_factor < 0 or speed_factor > 1:
