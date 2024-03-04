@@ -14,12 +14,10 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
     GPIO.setup(middle_sensor_pin, GPIO.IN)
     GPIO.setup(right_sensor_pin, GPIO.IN)
     
-    amount = 0
     speed_factor = 1#Please enter a number from 0 to 1 inclusive
     if speed_factor < 0 or speed_factor > 1:
         print("Please give a speed factor of between 0 and 1")
         quit()
-        
 
     def forward(yaw, throttle):
         try:
@@ -36,6 +34,8 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
 
     while True:
         try:   
+            amount = 0
+            
             check()
                 
             if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
@@ -49,10 +49,10 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
 
             else:
                 if middle_sensor == 0 and left_sensor == 0 and right_sensor == 1:
-                    forward()
+                    forward(0.35, 0.3)
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        go(60+amount,10)
+                        forward(0.7+amount,)
                         amount+=2
                         check()
                                 
