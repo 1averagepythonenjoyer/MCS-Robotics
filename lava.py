@@ -1,7 +1,6 @@
 try:   #Right now, the deal is is that the motors are to slow moving to do +amount and -amount. Later just remove the -amount 
     import RPi.GPIO
-    from practicemotors import *
-    import time
+    from newmotor import *
 
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
@@ -52,22 +51,22 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
                     forward(0.35, 0.3)
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        forward(0.7+amount,)
+                        forward(0.7+amount, 0.3)
                         amount+=2
                         check()
                                 
                 elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
-                    go(30,50)
+                    forward(-0.35, 0.3)
                     check()
                     
                     while middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
-                        go(10,60+amount)
+                        forward(-0.7-amount, 0.3)
                         amount+=2
                         check()
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                        set(30,29)
+                        forward(0, 0.3)
                         
                                 
         except KeyboardInterrupt:
