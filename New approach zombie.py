@@ -56,28 +56,28 @@ while True:
            
            
         elif middle_point_y - target_position[-1] < 5:
-            servo.servo(current_angle-=1)
+            servo.servo(np.prod([current_angle-=1, servo_to_gun_ratio]))
    
         elif target_position[-1] - middle_point_y < 5:
-            servo.servo(current_angle+=1)
+            servo.servo(np.prod([current_angle+=1], servo_to_gun_ratio))
          
         elif target_position[-1] < middle_point_y - target_coordinate[-1]/12:
-            servo.servo(current_angle-=5)
+            servo.servo(np.prod([current_angle-=5, servo_to_gun_ratio]))
            
         elif target_position[-1] > middle_point_y + target_coordinate[-1]/12:
-            servo.servo(current_angle+=5)  
+            servo.servo(np.prod([current_angle+=5, servo_to_gun_ratio]))
            
         elif target_position[-1] < middle_point_y - target_coordinate[-1]/8:
-            servo.servo(current_angle-=10)  
+            servo.servo(np.prod([current_angle-=10, servo_to_gun_ratio])) 
        
         elif target_position[-1] > middle_point_y + target_coordinate[-1]/8:
-            servo.servo(current_angle+=10)
+            servo.servo(np.prod([current_angle+=10, servo_to_gun_ratio]))
                
         elif target_position[-1] < middle_point_y - target_coordinate[-1]/4:
-            servo.servo(current_angle-=20)
+            servo.servo(np.prod(current_angle-=20, servo_to_gun_ratio))
              
-        elif target_position[-1] > middle_point_y + target_coordinate[-1]/4: #REMEMBER TO FLIP THIS!!
-            servo.servo(current_angle+=20)    
+        elif target_position[-1] > middle_point_y + target_coordinate[-1]/4: 
+            servo.servo(np.prod(current_angle+=20, servo_to_gun_ratio))
            
            
         elif target_position[0] - middle_point_x < 5:
