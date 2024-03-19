@@ -20,8 +20,10 @@ servo = RPiservo()
 
 servo_to_gun_ratio = a/b #placeholders! A is angle servo needs to turn, and B is the angle the gun actually turns
 
-
-
+if np.char.isalpha(servo_to_gun_ratio) or servo_to_gun_ratio < 0:
+    print('Why do you not understand simple instructions? Enter servo_to_gun_ratio correctly!')
+    quit()
+    
 def model_work(numpy_array):
     model. #something here to make the model do some work
        
