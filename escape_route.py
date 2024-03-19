@@ -1,7 +1,7 @@
 # Import necessary libraries
 import time
 import RPi.GPIO as GPIO
-import motors
+import practicemotors as motors
 GPIO_TRIGGER = 18 #change
 GPIO_ECHO = 24 #change
 
