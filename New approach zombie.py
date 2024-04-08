@@ -1,7 +1,7 @@
 import cv2
 from newmotor import *
 import numpy as np
-from RPiMotorLib import RPiservo
+from RPiMotorLib import rpiservolib
 import RPi.GPIO as GPIO
 import time
 import model #Placeholder value for model. It will give us coordinates of target
@@ -11,7 +11,7 @@ GPIO.setwarnings(False)
 
 camera_resolution = [x,y] #placeholder values! Please enetr integer but there is int() later just in case
 
-solenoid_pin =
+solenoid_pin = 
 GPIO.setup(solenoid_pin, GPIO.OUT)
 
 servo_pin =
