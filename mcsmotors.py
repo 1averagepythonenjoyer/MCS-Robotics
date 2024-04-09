@@ -3,18 +3,21 @@ import RPi.GPIO as GPIO # remember to install
 from approxeng.input.selectbinder import ControllerResource # remember to install
 from mcsmotors import *
 
-
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-PWM_ENA = 13  
-GPIO.setup(PWM_ENA, GPIO.OUT)
-PWMa = GPIO.PWM(PWM_ENA, 100)
-PWMa.start(0)
+GPIO.cleanup()
 
+PWM_ENA = 13  
 PWM_ENB = 15
+
+GPIO.setup(PWM_ENA, GPIO.OUT)
 GPIO.setup(PWM_ENB, GPIO.OUT)
+
+PWMa = GPIO.PWM(PWM_ENA, 100)
 PWMb= GPIO.PWM(PWM_ENB, 100)
+
+PWMa.start(0)
 PWMb.start(0)
 
 #h bridge logic 
@@ -80,3 +83,12 @@ def remotecontrol():
     except KeyboardInterrupt:
         print("Keyboard interrupt detected: stopping")
         exit()
+
+
+
+
+        
+    
+
+
+    
