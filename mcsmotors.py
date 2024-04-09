@@ -45,38 +45,38 @@ def remotecontrol():
             try:
                 with ControllerResource as joystick:
                     while joystick.connected:
-                    global lvalue
-                    global rvalue 
-                    global lmotor
-                    global rmotor
-                    global lowspeedheld
-                    lvalue = joystick['ly'] #joystick read values
-                    rvalue = joystick['ry']
-                    #check hbridge for left motor
-                    if lvalue < 0:     #backward
-                        GPIO.output(IN1, GPIO.LOW)
-                        GPIO.output(IN2, GPIO.HIGH)
-                    elif lvalue >= 0:    #forward/neutral
-                        GPIO.output(IN1, GPIO.HIGH)
-                        GPIO.output(IN2, GPIO.LOW)
-                    #check hbridge for right motor
-                    if rvalue < 0:  #backward
-                        GPIO.output(IN3, GPIO.LOW)
-                        GPIO.output(IN4, GPIO.HIGH)
-                    elif rvalue >= 0:    #forward/neutral
-                        GPIO.output(IN3, GPIO.HIGH)
-                        GPIO.output(IN4, GPIO.LOW)
+                        global lvalue
+                        global rvalue 
+                        global lmotor
+                        global rmotor
+                        global lowspeedheld
+                        lvalue = joystick['ly'] #joystick read values
+                        rvalue = joystick['ry']
+                        #check hbridge for left motor
+                        if lvalue < 0:     #backward
+                            GPIO.output(IN1, GPIO.LOW)
+                            GPIO.output(IN2, GPIO.HIGH)
+                        elif lvalue >= 0:    #forward/neutral
+                            GPIO.output(IN1, GPIO.HIGH)
+                            GPIO.output(IN2, GPIO.LOW)
+                        #check hbridge for right motor
+                        if rvalue < 0:  #backward
+                            GPIO.output(IN3, GPIO.LOW)
+                            GPIO.output(IN4, GPIO.HIGH)
+                        elif rvalue >= 0:    #forward/neutral
+                            GPIO.output(IN3, GPIO.HIGH)
+                            GPIO.output(IN4, GPIO.LOW)
 
-                    lmotor = map_range(lvalue,0,100,0,100)   #maps joystick values to actual pwm values
-                    rmotor = map_range(rvalue,0,100,0,100)    #need to check deadzones
+                        lmotor = map_range(lvalue,0,100,0,100)   #maps joystick values to actual pwm values
+                        rmotor = map_range(rvalue,0,100,0,100)    #need to check deadzones
 
-                    lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
-                    if lowspeedheld is not None: 
-                        PWMa.ChangeDutyCycle(lmotor * LOWSPEED)
-                        PWMb.ChangeDutyCycle(rmotor * LOWSPEED)
-                    else:
-                        PWMa.ChangeDutyCycle(lmotor)
-                        PWMb.ChangeDutyCycle(rmotor)
+                        lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
+                        if lowspeedheld is not None: 
+                            PWMa.ChangeDutyCycle(lmotor * LOWSPEED)
+                            PWMb.ChangeDutyCycle(rmotor * LOWSPEED)
+                        else:
+                            PWMa.ChangeDutyCycle(lmotor)
+                            PWMb.ChangeDutyCycle(rmotor)
             except IOError:
                 print("No Controller found")
                 sleep(1)
