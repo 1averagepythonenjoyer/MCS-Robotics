@@ -2,10 +2,6 @@ from time import sleep
 import RPi.GPIO as GPIO # remember to install
 from approxeng.input.selectbinder import ControllerResource # remember to install
 from mcsmotors import *
-def checkvalues():
-    print('Left: {}, Right: {}'.format(rvalue, lvalue))
-    print('Left duty: {}, Right duty: {}'.format(rmotor, lmotor))
-    sleep(0.1)
 while True:
     try:
         with ControllerResource() as joystick:
@@ -18,7 +14,8 @@ while True:
                     else:
                         LOWSPEED = 0.0
                     setmotor(rvalue, lvalue)
-                    checkvalues()                    
+                    print('Left: {}, Right: {}'.format(rvalue, lvalue))
+                    print('Left duty: {}, Right duty: {}'.format(rmotor, lmotor))               
     except KeyboardInterrupt:
         print("Keyboard interrupt detected: stopping")
         exit()
