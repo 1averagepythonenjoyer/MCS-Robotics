@@ -6,16 +6,16 @@ while True:
     try:
         with ControllerResource() as joystick:
             while joystick.connected:
-                    rvalue = joystick['ry']
-                    lvalue = joystick['ly'] #joystick read values
-                    lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
-                    if lowspeedheld is not None: 
-                        LOWSPEED = 0.4
-                    else:
-                        LOWSPEED = 0.0
-                    setmotor(rvalue, lvalue)
-                    print('Left: {}, Right: {}'.format(rvalue, lvalue))
-                    print('Left duty: {}, Right duty: {}'.format(rmotor, lmotor))               
+                rvalue = joystick['ry']
+                lvalue = joystick['ly'] #joystick read values
+                lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
+                if lowspeedheld is not None: 
+                    LOWSPEED = 0.4
+                else:
+                    LOWSPEED = 0.0
+                setmotor(rvalue, lvalue)
+                print('Left: {}, Right: {}'.format(rvalue, lvalue))
+                print('Left duty: {}, Right duty: {}'.format(rmotor, lmotor))               
     except KeyboardInterrupt:
         print("Keyboard interrupt detected: stopping")
         exit()
