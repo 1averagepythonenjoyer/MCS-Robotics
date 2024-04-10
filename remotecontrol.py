@@ -1,7 +1,6 @@
 from time import sleep
 import RPi.GPIO as GPIO # remember to install
 from approxeng.input.selectbinder import ControllerResource # remember to install
-from mcsmotors import *
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -15,7 +14,7 @@ GPIO.setup(PWM_ENA, GPIO.OUT)
 GPIO.setup(PWM_ENB, GPIO.OUT)
 
 PWMa = GPIO.PWM(PWM_ENA, 100)
-PWMb= GPIO.PWM(PWM_ENB, 100)
+PWMb = GPIO.PWM(PWM_ENB, 100)
 
 PWMa.start(0)
 PWMb.start(0)
