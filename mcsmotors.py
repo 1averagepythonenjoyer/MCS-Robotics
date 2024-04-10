@@ -58,12 +58,6 @@ def setmotor(right_power, left_power):
     #send values to motor controller 
     PWMa.ChangeDutyCycle(abs(rmotor) * RMcorrection) #abs() always returns positive so changedutycycle doesnt give an error. 
     PWMb.ChangeDutyCycle(abs(lmotor) * LMcorrection)
-
-while True:
-    try:
-        setmotor(-50,-50)
-    except KeyboardInterrupt:
-        exit()
     
     
     
