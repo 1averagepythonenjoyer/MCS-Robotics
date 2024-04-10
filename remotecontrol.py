@@ -40,8 +40,8 @@ LMcorrection = 0.785
 LOWSPEED = 0.4
 
 def remotecontrol():
-    try:
-        while True:
+    while True:
+        try:
             with ControllerResource as joystick:
                 while joystick.connected:
                     global rvalue
@@ -79,12 +79,21 @@ def remotecontrol():
                         PWMb.ChangeDutyCycle(rmotor)
             
                 sleep(1)
-    except KeyboardInterrupt:
-        print("Keyboard interrupt detected: stopping")
-        exit()
-    except IOError:
-        print("Controller not found")
-        sleep(1)
+        except KeyboardInterrupt:
+            print("Keyboard interrupt detected: stopping")
+            exit()
+        except IOError:
+            print("Controller not found")
+            sleep(1)
 
 
 remotecontrol()
+
+
+
+
+        
+    
+
+
+    
