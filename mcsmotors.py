@@ -32,32 +32,38 @@ GPIO.setup(IN4, GPIO.OUT)
 GPIO.output(IN4, GPIO.LOW)
 
 RMcorrection = 1.0 #to offset drift of motors (1 motor spinning faster than the other: left motor spins faster than the right I think)
-LMcorrection = 0.8
+LMcorrection = 0.785
 
 def map_range(a, input_min, input_max, output_min, output_max): #nicky's function. Not entirely sure what it does. 
     return (a - input_min) * (output_max - output_min) // (input_max - input_min) + output_min #a is placeholder value
 
-def setmotor(left_power, right_power):
+def setmotor(right_power, left_power):
     #check h bridge
-    if left_power < 0:
-        GPIO.output(IN1, GPIO.LOW)
-        GPIO.output(IN2, GPIO.HIGH)
-    if left_power >= 0:
-        GPIO.output(IN1, GPIO.HIGH)
-        GPIO.output(IN2, GPIO.LOW)
     if right_power < 0:
         GPIO.output(IN1, GPIO.LOW)
         GPIO.output(IN2, GPIO.HIGH)
-    if right_power >= 0:
+    elif right_power >= 0:
         GPIO.output(IN1, GPIO.HIGH)
         GPIO.output(IN2, GPIO.LOW)
-    global lmotor 
-    global rmotor
-    lmotor = map_range(left_power,0,100,0,100) #values to be sent to motors
+    if left_power < 0:
+        GPIO.output(IN3, GPIO.LOW)
+        GPIO.output(IN4, GPIO.HIGH)
+    elif left_power >= 0:
+        GPIO.output(IN3, GPIO.HIGH)
+        GPIO.output(IN4, GPIO.LOW)
+    global rmotor 
+    global lmotor
     rmotor = map_range(right_power,0,100,0,100) 
+    lmotor = map_range(left_power,0,100,0,100) #values to be sent to motors
     #send values to motor controller 
-    PWMa.ChangeDutyCycle(lmotor * LMcorrection)
-    PWMb.ChangeDutyCycle(rmotor * RMcorrection)
+    PWMa.ChangeDutyCycle(abs(rmotor) * RMcorrection) #abs() always returns positive so changedutycycle doesnt give an error. 
+    PWMb.ChangeDutyCycle(abs(lmotor) * LMcorrection)
+
+while true:
+    try:
+        setmotor(-50,-50)
+    except KeyboardInterrupt:
+        exit()
     
     
     
