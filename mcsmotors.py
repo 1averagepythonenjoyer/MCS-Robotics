@@ -1,4 +1,3 @@
-from time import sleep
 import RPi.GPIO as GPIO # remember to install
 
 GPIO.setwarnings(False)
@@ -49,17 +48,22 @@ def setmotor(right_power, left_power):
     elif left_power >= 0:
         GPIO.output(IN3, GPIO.HIGH)
         GPIO.output(IN4, GPIO.LOW)
-    global rmotor 
-    global lmotor
-    rmotor = map_range(right_power,0,100,0,100) 
-    lmotor = map_range(left_power,0,100,0,100)
+    #rmotor = map_range(right_power,0,100,0,100) 
+    #lmotor = map_range(left_power,0,100,0,100)
      #values to be sent to motors
     #send values to motor controller 
-    PWMa.ChangeDutyCycle(abs(rmotor) * RMcorrection * LOWSPEED) #abs() always returns positive so changedutycycle doesnt give an error. 
-    PWMb.ChangeDutyCycle(abs(lmotor) * LMcorrection * LOWSPEED)
+    if -100 <= right_power <= 100:
+        PWMa.ChangeDutyCycle(abs(right_power) * RMcorrection * LOWSPEED) #abs() always returns positive so changedutycycle doesnt give an error. 
+    if -100 <= left_power <= 100:
+        PWMb.ChangeDutyCycle(abs(left_power) * LMcorrection * LOWSPEED)
+    print("Right:", abs(right_power) * RMcorrection * LOWSPEED)
+    print("Left: ", abs(left_power) * LMcorrection * LOWSPEED)
+    
+    
 
-while True:
-    try:
-        setmotor(-50,-50)
-    except KeyboardInterrupt:
-        exit()
+    
+    
+    
+
+    
+    
