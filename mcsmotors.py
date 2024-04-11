@@ -1,7 +1,5 @@
 from time import sleep
 import RPi.GPIO as GPIO # remember to install
-from approxeng.input.selectbinder import ControllerResource # remember to install
-
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -54,7 +52,8 @@ def setmotor(right_power, left_power):
     global rmotor 
     global lmotor
     rmotor = map_range(right_power,0,100,0,100) 
-    lmotor = map_range(left_power,0,100,0,100) #values to be sent to motors
+    lmotor = map_range(left_power,0,100,0,100)
+     #values to be sent to motors
     #send values to motor controller 
     PWMa.ChangeDutyCycle(abs(rmotor) * RMcorrection * LOWSPEED) #abs() always returns positive so changedutycycle doesnt give an error. 
     PWMb.ChangeDutyCycle(abs(lmotor) * LMcorrection * LOWSPEED)
@@ -64,10 +63,3 @@ while True:
         setmotor(-50,-50)
     except KeyboardInterrupt:
         exit()
-    
-    
-    
-
-    
-    
-
