@@ -1,35 +1,36 @@
 try:   #Right now, the deal is is that the motors are to slow moving to do +amount and -amount. Later just remove the -amount 
-    import RPi.GPIO
-    from newmotor import *
+    import mcsmotors
 
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setwarnings(False)
+    mcsmotors.RPi.GPIO.setmode(GPIO.BOARD)
+    mcsmotors.RPi.GPIO.setwarnings(False)
 
     left_sensor_pin = 11
     middle_sensor_pin = 10
     right_sensor_pin = 12
 
-    GPIO.setup(left_sensor_pin, GPIO.IN)
-    GPIO.setup(middle_sensor_pin, GPIO.IN)
-    GPIO.setup(right_sensor_pin, GPIO.IN)
+    mcsmotors.RPi.GPIO.setup(left_sensor_pin, GPIO.IN)
+    mcsmotors.RPi.GPIO.setup(middle_sensor_pin, GPIO.IN)
+    mcsmotors.RPi.GPIO.setup(right_sensor_pin, GPIO.IN)
     
-    speed_factor = 1#Please enter a number from 0 to 1 inclusive
+    speed_factor = 1.0#Please enter a number from 0 to 1 inclusive
     if speed_factor < 0 or speed_factor > 1:
         print("Please give a speed factor of between 0 and 1")
         quit()
 
     def forward(yaw, throttle):
         try:
-            mix(yaw, throttle*speed_factor)
+            mcsmotors.yawthrottle(yaw, throttle, speedfactor)
         except KeyboardInterrupt:
             print('manual stop while moving')    
             quit()
         
     def check():
-        global left_sensor, middle_sensor, right_sensor
-        left_sensor = GPIO.input(left_sensor_pin)
-        middle_sensor = GPIO.input(middle_sensor_pin)
-        right_sensor = GPIO.input(right_sensor_pin)
+        global left_sensor,
+        global middle_sensor
+        global right_sensor
+        left_sensor = mcsmotors.RPi.GPIO.input(left_sensor_pin)
+        middle_sensor = mcsmotors.RPi.GPIO.input(middle_sensor_pin)
+        right_sensor = mcsmotors.RPi.GPIO.input(right_sensor_pin)
 
     while True:
         try:   
