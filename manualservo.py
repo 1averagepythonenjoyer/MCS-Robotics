@@ -31,8 +31,8 @@ hservo_current = 70
 
 delay = float(0.10)
 
-vservo.write(90)  
-hservo.write(90)
+vservo.write(70)  
+hservo.write(70)
 
 
 while True:
