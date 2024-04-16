@@ -7,34 +7,36 @@ from piservo import Servo
 check = input("Have you done sudo pigpiod? y/n")
 if check is "y":
     pass
-else: 
-    print("Please type ", "sudo pigpiod", "before running this code!") #sudo pigpiod needs to be run before this code so that pigpiod is initialised. 
-    exit() 
-
+else:
+    print("Please type ", "sudo pigpiod", "before running this code!") #sudo pigpiod needs to be run before this code s>    exit()
 
 vservo = Servo(12, min_value=0, max_value=180, min_pulse=1.0, max_pulse= 2.0, frequency=50) #GPIO BCM numbers. pin 32
 hservo = Servo(13, min_value=0, max_value=180, min_pulse=1.0, max_pulse= 2.0, frequency=50) # horizontal servo pin 33
 # library auto checks if values are in range here
 vservo.start()
 hservo.start()
+def startreset():
+    check2 = input("Have you spun the servos into the guns straight position beforehand? y/n")
+    if check2 == "y":
+        vservo.write(70)
+        hservo.write(30)
+    else:
+        print("please ensure that you have otherwise the gun mechanism may break")
+        exit()
+startreset()
 global servospeedfactor
-servospeedfactor = 2.0
+servospeedfactor = 3.0
 vservo_max = 180   #change these after tuning
 vservo_min = 0    # change these after tuning
-vservo_step = 0.5
-vservo_current = 70
+vservo_step = 2.0
+vservo_current = vservo.read()
 
 hservo_max = 180  #change these after tuning
 hservo_min = 0 #change these after tuning
-hservo_step = 0.5
-hservo_current = 70
+hservo_step = 2.0
+hservo_current = hservo.read()
 
 delay = float(0.10)
-
-vservo.write(70)  
-hservo.write(70)
-
-
 while True:
     try:
         with ControllerResource() as joystick:
@@ -43,15 +45,15 @@ while True:
                 slow = joystick['l1']   #turns more slowly if l1 trigger is held
                 if slow is not None:
                     servospeedfactor = 0.3
-                else: 
+                else:
                     servospeedfactor = 1.0
-                
+
                 moveup = joystick['dup']  #dpad up button
                 movedown = joystick['ddown']  #dpad down button
-                if moveup is not None:   #checks if up button is held 
+                if moveup is not None:   #checks if up button is held
                     vservo_current = vservo_current + vservo_step * servospeedfactor #if it is we increase the angle of the servo
                 if movedown is not None:  #checks if down button is held
-                    vservo_current = vservo_current - vservo_step * servospeedfactor # if it is we decrease the angle of the servo   
+                    vservo_current = vservo_current - vservo_step * servospeedfactor # if it is we decrease the angle of the servo
 
                 if vservo_current > vservo_max:  #checking that value is in range
                     vservo_current = vservo_max
@@ -75,7 +77,7 @@ while True:
                     print("Minimum horizontal angle reached!")
                 vservo.write(vservo_current)
                 hservo.write(hservo_current)
-                
+
                 vturnrate = float(vservo_step/delay)     #DEBUG: prints turn rate of the servo
                 print("vertical turn rate:", vturnrate, "degrees per second")
                 hturnrate = float(hservo_step/delay)
@@ -91,8 +93,8 @@ while True:
     except IOError:
         print("Controller not found")
 
-                
-                
+
+
 
 
 
