@@ -1,8 +1,8 @@
 from approxeng.input.selectbinder import ControllerResource
 import time
 from piservo import Servo
+import RPi.GPIO as GPIO
 import mcsmotors
-import RPi.GPIO as GPIO 
 import blinkylights
 blinkylights.blinkylights_on()
 #"sudo pigpiod" needs to be run: this library wont work without it
@@ -43,11 +43,10 @@ hservo_step = 2.0
 hservo_current = hservo.read()
 
 delay = float(0.10)
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-gun_pin = 19
+
+gun_pin = 35
 GPIO.setup(gun_pin, GPIO.OUT)
-GPIO.output(gun_pin, GPIO.LOW)
+
 
 while True:
     try:
@@ -103,12 +102,8 @@ while True:
                 else:
                     LOWSPEED = 1.0
                 mcsmotors.yawthrottle(rvalue,lvalue, LOWSPEED)
-#                rvalue = rvalue *100
-#                lvalue = lvalue *100
-#                mcsmotors.setmotor(rvalue*LOWSPEED, lvalue*LOWSPEED)
-                #print('Left: {}, Right: {}'.format(lvalue, rvalue))
-                fire = joystick.check_presses()
-                if fire['r2']:
+                fire = joystick['r2']
+                if fire is not None:
                     print("gun firing")
                     GPIO.output(gun_pin, GPIO.HIGH)
                     time.sleep(0.25)
