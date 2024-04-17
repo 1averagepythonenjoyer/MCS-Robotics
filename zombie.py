@@ -90,7 +90,7 @@ while True:
                 hservo.write(hservo_current)
                 print("horizontal:", hservo_current)
                 print("vertical;", vservo_current)
-                
+                #motor control
                 rvalue = joystick['rx']
                 lvalue = joystick['ly'] #joystick read values
                 #lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
@@ -102,6 +102,7 @@ while True:
                 else:
                     LOWSPEED = 1.0
                 mcsmotors.yawthrottle(rvalue,lvalue, LOWSPEED)
+                #gun fire control
                 fire = joystick['r2']
                 if fire is not None:
                     print("gun firing")
