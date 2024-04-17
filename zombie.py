@@ -1,17 +1,21 @@
 from approxeng.input.selectbinder import ControllerResource
 import time
 from piservo import Servo
-
+import mcsmotors
+import RPi.GPIO as GPIO 
+import blinkylights
+blinkylights.blinkylights_on()
 #"sudo pigpiod" needs to be run: this library wont work without it
 # exits the program if it was not run
 check = input("Have you done sudo pigpiod? y/n")
 if check is "y":
     pass
-else:
-    print("Please type ", "sudo pigpiod", "before running this code!") #sudo pigpiod needs to be run before this code s>    exit()
+else: 
+    print("Please type ", "sudo pigpiod", "before running this code!") #sudo pigpiod needs to be run before this code so that pigpiod is initialised. 
+    exit() 
 
 vservo = Servo(12, min_value=0, max_value=180, min_pulse=1.0, max_pulse= 2.0, frequency=50) #GPIO BCM numbers. pin 32
-hservo = Servo(13, min_value=0, max_value=180, min_pulse=1.0, max_pulse= 2.0, frequency=50) # horizontal servo pin 33
+hservo = Servo(13, min_value=0, max_value=180, min_pulse=0.8, max_pulse= 3.0, frequency=50) # horizontal servo pin 33
 # library auto checks if values are in range here
 vservo.start()
 hservo.start()
@@ -23,20 +27,28 @@ def startreset():
     else:
         print("please ensure that you have otherwise the gun mechanism may break")
         exit()
+
 startreset()
+
 global servospeedfactor
 servospeedfactor = 3.0
-vservo_max = 180   #change these after tuning
-vservo_min = 0    # change these after tuning
+vservo_max = 150   #change these after tuning
+vservo_min = 30    # change these after tuning
 vservo_step = 2.0
 vservo_current = vservo.read()
 
-hservo_max = 180  #change these after tuning
-hservo_min = 0 #change these after tuning
+hservo_max = 120  #change these after tuning
+hservo_min = 20 #change these after tuning
 hservo_step = 2.0
 hservo_current = hservo.read()
 
 delay = float(0.10)
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+gun_pin = 19
+GPIO.setup(gun_pin, GPIO.OUT)
+GPIO.output(gun_pin, GPIO.LOW)
+
 while True:
     try:
         with ControllerResource() as joystick:
@@ -45,15 +57,15 @@ while True:
                 slow = joystick['l1']   #turns more slowly if l1 trigger is held
                 if slow is not None:
                     servospeedfactor = 0.3
-                else:
+                else: 
                     servospeedfactor = 1.0
-
+                
                 moveup = joystick['dup']  #dpad up button
                 movedown = joystick['ddown']  #dpad down button
-                if moveup is not None:   #checks if up button is held
+                if moveup is not None:   #checks if up button is held 
                     vservo_current = vservo_current + vservo_step * servospeedfactor #if it is we increase the angle of the servo
                 if movedown is not None:  #checks if down button is held
-                    vservo_current = vservo_current - vservo_step * servospeedfactor # if it is we decrease the angle of the servo
+                    vservo_current = vservo_current - vservo_step * servospeedfactor # if it is we decrease the angle of the servo   
 
                 if vservo_current > vservo_max:  #checking that value is in range
                     vservo_current = vservo_max
@@ -77,24 +89,47 @@ while True:
                     print("Minimum horizontal angle reached!")
                 vservo.write(vservo_current)
                 hservo.write(hservo_current)
-
-                vturnrate = float(vservo_step/delay)     #DEBUG: prints turn rate of the servo
-                print("vertical turn rate:", vturnrate, "degrees per second")
-                hturnrate = float(hservo_step/delay)
-                print("horizontal turn rate:", hturnrate, "degrees per second")
                 print("horizontal:", hservo_current)
                 print("vertical;", vservo_current)
+                
+                rvalue = joystick['rx']
+                lvalue = joystick['ly'] #joystick read values
+                #lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
+                #if lowspeedheld is not None:
+
+                if joystick['r1']:
+                    print("Lowspeed mode!")
+                    LOWSPEED = 0.4
+                else:
+                    LOWSPEED = 1.0
+                mcsmotors.yawthrottle(rvalue,lvalue, LOWSPEED)
+#                rvalue = rvalue *100
+#                lvalue = lvalue *100
+#                mcsmotors.setmotor(rvalue*LOWSPEED, lvalue*LOWSPEED)
+                #print('Left: {}, Right: {}'.format(lvalue, rvalue))
+                fire = joystick.check_presses()
+                if fire['r2']:
+                    print("gun firing")
+                    GPIO.output(gun_pin, GPIO.HIGH)
+                    time.sleep(0.25)
+                    GPIO.output(gun_pin, GPIO.LOW)
+
                 time.sleep(delay)
+                
+                
+                    
     except KeyboardInterrupt:
         print("Keyboard interrupt detected: stopping")
         vservo.stop()
         hservo.stop()
+        blinkylights.blinkylights_off()
         exit()
     except IOError:
         print("Controller not found")
+        blinkylights.blinkylights_off()
 
-
-
+                
+                
 
 
 
