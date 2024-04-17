@@ -6,8 +6,8 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
     GPIO.setwarnings(False)
 
     left_sensor_pin = 11
-    middle_sensor_pin = 10
-    right_sensor_pin = 12
+    middle_sensor_pin = 12
+    right_sensor_pin = 10
 
     GPIO.setup(left_sensor_pin, GPIO.IN)
     GPIO.setup(middle_sensor_pin, GPIO.IN)
