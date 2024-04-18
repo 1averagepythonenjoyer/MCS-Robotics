@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-GPIO.setmode(BOARD)
+GPIO.setmode(GPIO.BOARD)
 GPIO.setup(22, GPIO.OUT)
 def blinkylights_on():
     GPIO.output(22, GPIO.HIGH)
