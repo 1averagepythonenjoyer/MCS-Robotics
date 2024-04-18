@@ -1,3 +1,4 @@
+###########################ALL SETUP DOWN HERE####################################
 from approxeng.input.selectbinder import ControllerResource
 import time
 from piservo import Servo
@@ -46,51 +47,53 @@ delay = float(0.10)
 
 gun_pin = 35
 GPIO.setup(gun_pin, GPIO.OUT)
-
+#########################################ALL SETUP ABOVE#################################################
 
 while True:
     try:
         with ControllerResource() as joystick:
             while joystick.connected:
-                print("joystick connected")
+                ############################SERVO CONTROL############################
+                #SERVO SLOW MODE BUTTON SETUP
                 slow = joystick['l1']   #turns more slowly if l1 trigger is held
                 if slow is not None:
                     servospeedfactor = 0.3
                 else: 
                     servospeedfactor = 1.0
-                
+                #VERTICAL AXIS CONTROL
                 moveup = joystick['dup']  #dpad up button
                 movedown = joystick['ddown']  #dpad down button
                 if moveup is not None:   #checks if up button is held 
                     vservo_current = vservo_current + vservo_step * servospeedfactor #if it is we increase the angle of the servo
                 if movedown is not None:  #checks if down button is held
                     vservo_current = vservo_current - vservo_step * servospeedfactor # if it is we decrease the angle of the servo   
-
+                #CHECK CORRECT RANGE
                 if vservo_current > vservo_max:  #checking that value is in range
                     vservo_current = vservo_max
                     print("Maximum vertical angle reached!")
                 if vservo_current < vservo_min:
                     vservo_current = vservo_min
                     print("Minimum vertical angle reached!")
-
+                #HORIZONTAL AXIS CONTROL
                 moveright = joystick['dright']  #dpad right button
                 moveleft = joystick['dleft'] #dpad left button
                 if moveright is not None:
                     hservo_current = hservo_current + hservo_step * servospeedfactor  #same as before but for horizontal servo
                 if moveleft is not None:
                     hservo_current = hservo_current - hservo_step * servospeedfactor
-
+                #CHECK CORRECT RANGE
                 if hservo_current > hservo_max:
                     hservo_current = hservo_max
                     print("Maximum horizontal angle reached!")
                 if hservo_current < hservo_min:
                     hservo_current = hservo_min
                     print("Minimum horizontal angle reached!")
+                
                 vservo.write(vservo_current)
                 hservo.write(hservo_current)
                 print("horizontal:", hservo_current)
                 print("vertical;", vservo_current)
-                #motor control
+                ############################motor control#####################################################################################
                 rvalue = joystick['rx']
                 lvalue = joystick['ly'] #joystick read values
                 #lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
@@ -102,6 +105,8 @@ while True:
                 else:
                     LOWSPEED = 1.0
                 mcsmotors.yawthrottle(rvalue,lvalue, LOWSPEED)
+            
+                
                 #gun fire control
                 fire = joystick['r2']
                 if fire is not None:
