@@ -1,6 +1,6 @@
 try:   #Right now, the deal is is that the motors are to slow moving to do +amount and -amount. Later just remove the -amount 
     import RPi.GPIO as GPIO
-    from mcsmotors import *
+    from mcsmotors import yawthrottle
 
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
@@ -13,7 +13,7 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
     GPIO.setup(middle_sensor_pin, GPIO.IN)
     GPIO.setup(right_sensor_pin, GPIO.IN)
     
-    speed_factor = 1#Please enter a number from 0 to 1 inclusive
+    speed_factor = input("Please enter a speed factor from 0 to 1 inclusive. Not too low or else robot won't run")
     if speed_factor < 0 or speed_factor > 1:
         print("Please give a speed factor of between 0 and 1")
         quit()
@@ -38,35 +38,35 @@ try:   #Right now, the deal is is that the motors are to slow moving to do +amou
             check()
                 
             if left_sensor == 0 and right_sensor == 0 and middle_sensor ==1:
-                forward(0, 0.3, speed_factor)
+                forward(0, 1, speed_factor)
                     
             elif left_sensor == 1 and middle_sensor == 1 and right_sensor == 0:
-                forward(-0.15, 0.3, speed_factor)
+                forward(-0.15, 1, speed_factor)
                 
             elif right_sensor == 1 and middle_sensor == 1 and left_sensor == 0:
-                forward(0.15, 0.3, speed_factor)
+                forward(0.15, 1, speed_factor)
 
             else:
                 if middle_sensor == 0 and left_sensor == 0 and right_sensor == 1:
-                    forward(0.35, 0.3, speed_factor)
+                    forward(0.35, 1, speed_factor)
                     check()
                     while middle_sensor == 0 and left_sensor == 0 and right_sensor == 0:
-                        forward(0.7+amount, 0.3, speed_factor)
+                        forward(0.7+amount, 1, speed_factor)
                         amount+=2
                         check()
                                 
                 elif middle_sensor == 0 and right_sensor== 0 and left_sensor == 1:
-                    forward(-0.35, 0.3, speed_factor)
+                    forward(-0.35, 1, speed_factor)
                     check()
                     
                     while middle_sensor == 0 and right_sensor== 0 and left_sensor == 0:
-                        forward(-0.7-amount, 0.3, speed_factor)
+                        forward(-0.7-amount, 1, speed_factor)
                         amount+=2
                         check()
                         
                 else: #no sensors
                     if left_sensor == 0 and right_sensor == 0 and middle_sensor == 0:
-                        forward(0, 0.3, speed_factor)
+                        forward(0, 1, speed_factor)
                         
                                 
         except KeyboardInterrupt:
