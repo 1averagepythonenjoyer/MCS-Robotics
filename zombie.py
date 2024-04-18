@@ -2,8 +2,6 @@
 from approxeng.input.selectbinder import ControllerResource
 import time
 from piservo import Servo
-import RPi.GPIO as GPIO
-import mcsmotors
 import blinkylights
 blinkylights.blinkylights_on()
 #"sudo pigpiod" needs to be run: this library wont work without it
@@ -93,20 +91,6 @@ while True:
                 hservo.write(hservo_current)
                 print("horizontal:", hservo_current)
                 print("vertical;", vservo_current)
-                ############################motor control#####################################################################################
-                rvalue = joystick['rx']
-                lvalue = joystick['ly'] #joystick read values
-                #lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
-                #if lowspeedheld is not None:
-
-                if joystick['r1']:
-                    print("Lowspeed mode!")
-                    LOWSPEED = 0.4
-                else:
-                    LOWSPEED = 1.0
-                mcsmotors.yawthrottle(rvalue,lvalue, LOWSPEED)
-            
-                
                 #gun fire control
                 fire = joystick['r2']
                 if fire is not None:
