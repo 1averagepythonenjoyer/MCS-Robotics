@@ -2,6 +2,7 @@
 from approxeng.input.selectbinder import ControllerResource
 import time
 from piservo import Servo
+import RPi.GPIO as GPIO 
 import blinkylights
 blinkylights.blinkylights_on()
 #"sudo pigpiod" needs to be run: this library wont work without it
