@@ -45,6 +45,7 @@ delay = float(0.10)
 
 gun_pin = 35
 GPIO.setup(gun_pin, GPIO.OUT)
+GPIO.output(gun_pin, GPIO.HIGH)
 #########################################ALL SETUP ABOVE#################################################
 
 while True:
@@ -95,9 +96,9 @@ while True:
                 fire = joystick['r2']
                 if fire is not None:
                     print("gun firing")
-                    GPIO.output(gun_pin, GPIO.HIGH)
-                    time.sleep(0.25)
                     GPIO.output(gun_pin, GPIO.LOW)
+                    time.sleep(0.25)
+                    GPIO.output(gun_pin, GPIO.HIGH)
 
                 time.sleep(delay)
                 
