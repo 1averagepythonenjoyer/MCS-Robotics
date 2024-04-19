@@ -99,6 +99,7 @@ while True:
                     GPIO.output(gun_pin, GPIO.LOW)
                     time.sleep(0.25)
                     GPIO.output(gun_pin, GPIO.HIGH)
+                    time.sleep(2)
 
                 time.sleep(delay)
                 
