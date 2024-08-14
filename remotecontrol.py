@@ -1,5 +1,5 @@
 from approxeng.input.selectbinder import ControllerResource
-import mcsmotors
+import mcsmotors 
 from time import sleep
 import blinkylights
 blinkylights.blinkylights_on()
@@ -12,10 +12,10 @@ while True:
                 lvalue = joystick['ly'] #joystick read values
                 #lowspeedheld = joystick['r1']   #if r1 is not held, library returns value of None, so we need to check that it is not None
                 #if lowspeedheld is not None:
-
+                
                 if joystick['r1']:
-                    print("Lowspeed mode!")
-                    LOWSPEED = 0.4
+                    print("Lowspeed mode!") 
+                    LOWSPEED = 0.40
                 else:
                     LOWSPEED = 1.0
                 mcsmotors.yawthrottle(rvalue,lvalue, LOWSPEED)

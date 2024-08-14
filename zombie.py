@@ -3,12 +3,16 @@ from approxeng.input.selectbinder import ControllerResource
 import time
 from piservo import Servo
 import RPi.GPIO as GPIO 
-import blinkylights
-blinkylights.blinkylights_on()
+import blinkylightsbcm
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+blinkylightsbcm.blinkylights_on()
+
 #"sudo pigpiod" needs to be run: this library wont work without it
 # exits the program if it was not run
 check = input("Have you done sudo pigpiod? y/n")
-if check is "y":
+if check == "y":
     pass
 else: 
     print("Please type ", "sudo pigpiod", "before running this code!") #sudo pigpiod needs to be run before this code so that pigpiod is initialised. 
@@ -34,17 +38,17 @@ global servospeedfactor
 servospeedfactor = 3.0
 vservo_max = 150   #change these after tuning
 vservo_min = 30    # change these after tuning
-vservo_step = 2.0
+vservo_step = 1.5
 vservo_current = vservo.read()
 
 hservo_max = 120  #change these after tuning
 hservo_min = 20 #change these after tuning
-hservo_step = 2.0
+hservo_step = 1.5
 hservo_current = hservo.read()
 
 delay = float(0.10)
 
-gun_pin = 35
+gun_pin = 21
 GPIO.setup(gun_pin, GPIO.OUT)
 GPIO.output(gun_pin, GPIO.HIGH)
 #########################################ALL SETUP ABOVE#################################################
@@ -78,9 +82,9 @@ while True:
                 moveright = joystick['dright']  #dpad right button
                 moveleft = joystick['dleft'] #dpad left button
                 if moveright is not None:
-                    hservo_current = hservo_current + hservo_step * servospeedfactor  #same as before but for horizontal servo
+                    hservo_current = hservo_current - hservo_step * servospeedfactor  #same as before but for horizontal servo
                 if moveleft is not None:
-                    hservo_current = hservo_current - hservo_step * servospeedfactor
+                    hservo_current = hservo_current + hservo_step * servospeedfactor
                 #CHECK CORRECT RANGE
                 if hservo_current > hservo_max:
                     hservo_current = hservo_max
@@ -98,7 +102,7 @@ while True:
                 if fire is not None:
                     print("gun firing")
                     GPIO.output(gun_pin, GPIO.LOW)
-                    time.sleep(0.25)
+                    time.sleep(0.1)
                     GPIO.output(gun_pin, GPIO.HIGH)
                     time.sleep(2)
 
@@ -110,11 +114,13 @@ while True:
         print("Keyboard interrupt detected: stopping")
         vservo.stop()
         hservo.stop()
-        blinkylights.blinkylights_off()
+        blinkylightsbcm.blinkylights_off()
+        #GPIO.cleanup()
         exit()
     except IOError:
         print("Controller not found")
-        blinkylights.blinkylights_off()
+        blinkylightsbcm.blinkylights_off()
+       
 
                 
                 
