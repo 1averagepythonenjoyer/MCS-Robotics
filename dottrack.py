@@ -7,10 +7,6 @@ while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    if not ret:
-        print("Failed to grab frame")
-        break
-
     # Get the dimensions of the frame
     height, width = frame.shape[:2]
 
