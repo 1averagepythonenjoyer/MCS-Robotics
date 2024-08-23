@@ -22,10 +22,10 @@ while True:
     text_position_xleft = (0, height // 2)
     text_position_ybottom = (width // 2, height - 20)
     text_position_ytop = (width // 2, 20)
-    cv2.putText(frame, str(width), text_position_xright, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(frame, str(f"-{width}"), text_position_xleft, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(frame, str(height), text_position_ytop, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(frame, str(f"-{height}"), text_position_ybottom, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    cv2.putText(frame, str(width//2), text_position_xright, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    cv2.putText(frame, str(f"-{width//2}"), text_position_xleft, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    cv2.putText(frame, str(height//2), text_position_ytop, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    cv2.putText(frame, str(f"-{height//2}"), text_position_ybottom, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
     # Color Detection
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
