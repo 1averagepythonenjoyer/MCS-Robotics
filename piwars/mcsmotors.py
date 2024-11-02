@@ -30,12 +30,6 @@ GPIO.output(IN4, GPIO.LOW)
 
 RMcorrection = 1.0 #to offset drift of motors (1 motor spinning faster than the other: left motor spins faster than the right I think)
 LMcorrection = 0.95
-def yawthrottle(yaw, throttle, speedfactor):   #yaw and throttle need to be floats from -1.0 to 1.0
-    left = (throttle + yaw)
-    right = (throttle - yaw)
-    scale = float(100) / max(1, abs(left), abs(right))
-    setmotor(right*scale, left*scale, speedfactor)
-
 
 def setmotor(right_power, left_power, speedfactor):
     print("Right power:", right_power)
@@ -53,13 +47,7 @@ def setmotor(right_power, left_power, speedfactor):
     elif left_power >= 0:
         GPIO.output(IN3, GPIO.HIGH)
         GPIO.output(IN4, GPIO.LOW)
-    #rmotor = map_range(right_power,0,100,0,100) 
-    #lmotor = map_range(left_power,0,100,0,100)
-     #values to be sent to motors
-    #send values to motor controller
-    #print("Right power:", right_power) 
-    #print("Left power:", left_power)
-    #right_power = abs(right_power)
+    
     if -100 <= right_power <= 100:
         PWMa.ChangeDutyCycle(int(abs(right_power) * RMcorrection*speedfactor)) #abs() always returns positive so changedutycycle doesnt give an error. 
     if -100 <= left_power <= 100:
@@ -67,11 +55,8 @@ def setmotor(right_power, left_power, speedfactor):
     print("Right Duty:", abs(right_power) * RMcorrection)
     print("Left Duty: ", abs(left_power) * LMcorrection)
     
-    
-
-    
-    
-    
-
-    
-    
+def yawthrottle(yaw, throttle, speedfactor):   #yaw and throttle need to be floats from -1.0 to 1.0
+    left = (throttle + yaw)
+    right = (throttle - yaw)
+    scale = float(100) / max(1, abs(left), abs(right))
+    setmotor(right*scale, left*scale, speedfactor)
