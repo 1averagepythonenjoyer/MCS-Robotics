@@ -1,3 +1,4 @@
+#challenge details here: https://piwars.org/2024-disaster-zone/challenges/zombies/
 ###########################ALL SETUP DOWN HERE####################################
 from approxeng.input.selectbinder import ControllerResource
 import time
