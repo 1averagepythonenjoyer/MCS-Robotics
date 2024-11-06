@@ -1,3 +1,5 @@
+#challenge info: https://piwars.org/2024-disaster-zone/challenges/lava-palava/
+
 try:   #Right now, the deal is is that the motors are to slow moving to do +amount and -amount. Later just remove the -amount 
     import RPi.GPIO as GPIO
     from mcsmotors import *
