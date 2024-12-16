@@ -22,16 +22,16 @@ def turn(angle):
     r.motors[0] = 0  
     r.motors[1] = 0
 
-def move(distance, angle):
+def move(distance):
     
-    turn(angle)  
-
     moveT = distance / v  # Calculate time needed to move
     r.motors[0] = 90 
     r.motors[1] = 90
     sleep(moveT) 
     r.motors[0] = 0  
     r.motors[1] = 0
+
+
 
 
 
