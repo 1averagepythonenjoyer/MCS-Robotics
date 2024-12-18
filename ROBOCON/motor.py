@@ -13,10 +13,10 @@ def turn(angle):
     turnT = abs(angle) / t  # Calculate time needed to turn
     if angle < 0:  # Turn left
         r.motors[0] = 20  # Left motor
-        r.motors[1] = 10  # Right motor
+        r.motors[1] = -20  # Right motor
     else:  # Turn right
-        r.motors[0] = 10  # Left motor
-        r.motors[1] = 20  # Right motor
+        r.motors[0] = 20  # Left motor
+        r.motors[1] = -20  # Right motor
 
     sleep(turnT)  
     r.motors[0] = 0  
