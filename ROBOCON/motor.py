@@ -9,13 +9,13 @@ v =   #speed (centimeters per second at 90% speed)
 
 def twist(angle): 
     
-    turnT = abs(angle) / t  # Calculate time needed to turn
+    twistT = abs(angle) / t  # Calculate time needed to twist
 
     #ADJUST THESE VALUES BELOW DEPENDING ON ACCURACY OF TURN
-    if angle < 0:  # Turn left
+    if angle < 0:  # rotate left
         r.motors[0] = -15  # Left motor
         r.motors[1] = 15  # Right motor
-    else:  # Turn right
+    else:  # rotate right
         r.motors[0] = 15  # Left motor
         r.motors[1] = -15  # Right motor
 
