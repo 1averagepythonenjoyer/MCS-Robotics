@@ -1,0 +1,22 @@
+import math
+
+def determine_pos(pointA, pointB, dis_A, dis_B, bearing_A, bearing_B):
+    # Convert to radians
+    bearing_A = math.radians(bearing_A)
+    bearing_B = math.radians(bearing_B)
+    x1, y1 = pointA
+    x2, y2 = pointB
+
+    # Calc
+    x_newA = x1 + dis_A * math.cos(bearing_A)
+    x_newB = y1 + dis_A * math.sin(bearing_A)
+    y_newA = x2 + dis_B * math.cos(bearing_B)
+    y_newB = y2 + dis_B * math.sin(bearing_B)
+
+    x = (x_newA + x_newB) / 2
+    y = (y_newA + y_newB) / 2
+
+    return x, y
+
+result = determine_pos((100, 101), (200, 201), 10, 10, 74, 89)
+print(result)
