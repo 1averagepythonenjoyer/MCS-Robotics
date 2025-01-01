@@ -1,7 +1,13 @@
-def search_points():
+def search_labels():
     global sheep_dist_compare
 
+    markers = r.see()  #list of objects
+    for marker in markers:
+        
 
+
+
+    
     Gems = r.see(look_for = Gem.Team)  #looks for our gem. Placeholder var. rn because docs don't say how to reference it properly
     Sheeps = r.see(look_for = Sheep)
 
