@@ -1,7 +1,7 @@
 import robot
 from time import sleep
 
-#AS OF JANUARY 1ST 2025 THIS IS COOKED
+
 
 r = robot.Robot()
 
