@@ -3,13 +3,13 @@ from time import sleep
 
 r = robot.Robot()
 
-#t =   #Turn rate (degrees per second at full speed)  find this later 
+t = 127   #Turn rate (degrees per second at full speed)  find this later 
 v = 0.321  #speed (centimeters per second)
 
 
 def twist(angle): 
     
-    twistT = abs(angle) / t  # Calculate time needed to twist
+    twistT = (abs(angle) / t) + 0.05 # Calculate time needed to twist
 
     while angle > 360:
         angle -= 360
