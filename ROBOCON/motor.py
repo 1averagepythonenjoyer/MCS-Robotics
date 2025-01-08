@@ -4,33 +4,52 @@ from time import sleep
 r = robot.Robot()
 
 t =   #Turn rate (degrees per second at full speed)
-v =   #speed (centimeters per second at 90% speed)
+v =   #speed (centimeters per second)
 
 
 def twist(angle): 
     
     twistT = abs(angle) / t  # Calculate time needed to twist
 
+    while angle > 360:
+        angle -= 360
+    
     #ADJUST THESE VALUES BELOW DEPENDING ON ACCURACY OF TURN
     if angle < 0:  # rotate left
-        r.motors[0] = -15  # Left motor
-        r.motors[1] = 15  # Right motor
+        r.motors[0] =   # Left motor
+        r.motors[1] =   # Right motor
     else:  # rotate right
-        r.motors[0] = 15  # Left motor
-        r.motors[1] = -15  # Right motor
+        r.motors[0] =   # Left motor
+        r.motors[1] =  # Right motor
 
     sleep(turnT)  
     r.motors[0] = 0  
     r.motors[1] = 0
 
 def move(distance):
-    
+    if distance > 8:
+        distance = 8
+        
+    if distance = 0:
+        exit()
+
     moveT = distance / v  # Calculate time needed to move
-    r.motors[0] = 90 
-    r.motors[1] = 90
-    sleep(moveT) 
-    r.motors[0] = 0  
-    r.motors[1] = 0
+
+    if distance > 0:
+        r.motors[0] = 100
+        r.motors[1] = 100
+        sleep(moveT) 
+        r.motors[0] = 0  
+        r.motors[1] = 0
+
+    else:
+        r.motors[0] = -100
+        r.motors[1] = -100
+        sleep(moveT) 
+        r.motors[0] = 0  
+        r.motors[1] = 0
+
+
 
 
 
