@@ -16,11 +16,11 @@ def twist(angle):
     
     #ADJUST THESE VALUES BELOW DEPENDING ON ACCURACY OF TURN
     if angle < 0:  # rotate left
-        r.motors[0] =   # Left motor
-        r.motors[1] =   # Right motor
+        r.motors[0] =  -100 # Left motor
+        r.motors[1] =  100 # Right motor
     else:  # rotate right
-        r.motors[0] =   # Left motor
-        r.motors[1] =  # Right motor
+        r.motors[0] =  100 # Left motor
+        r.motors[1] = -100  # Right motor
 
     sleep(turnT)  
     r.motors[0] = 0  
@@ -36,15 +36,15 @@ def move(distance):
     moveT = (distance / v) + 0.07  # Calculate time needed to move
 
     if distance > 0:
-        r.motors[0] = 100
-        r.motors[1] = 100
+        r.motors[0] = -100 
+        r.motors[1] = - 90
         sleep(moveT) 
         r.motors[0] = 0  
         r.motors[1] = 0
 
     else:
-        r.motors[0] = -100
-        r.motors[1] = -100
+        r.motors[0] = 100
+        r.motors[1] = 90
         sleep(moveT) 
         r.motors[0] = 0  
         r.motors[1] = 0
