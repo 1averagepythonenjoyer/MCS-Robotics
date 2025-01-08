@@ -33,7 +33,7 @@ def move(distance):
     if distance = 0:
         exit()
 
-    moveT = (distance / v) + 0.07  # Calculate time needed to move
+    moveT = (distance / v) + 0.05  # Calculate time needed to move
 
     if distance > 0:
         r.motors[0] = -100 
