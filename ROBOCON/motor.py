@@ -3,8 +3,8 @@ from time import sleep
 
 r = robot.Robot()
 
-t =   #Turn rate (degrees per second at full speed)
-v =   #speed (centimeters per second)
+#t =   #Turn rate (degrees per second at full speed)  find this later 
+v = 0.321  #speed (centimeters per second)
 
 
 def twist(angle): 
@@ -33,7 +33,7 @@ def move(distance):
     if distance = 0:
         exit()
 
-    moveT = distance / v  # Calculate time needed to move
+    moveT = (distance / v) + 0.07  # Calculate time needed to move
 
     if distance > 0:
         r.motors[0] = 100
