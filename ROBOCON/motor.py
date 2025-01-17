@@ -22,7 +22,7 @@ def twist(angle):
         r.motors[0] =  100 # Left motor
         r.motors[1] = -100  # Right motor
 
-    sleep(turnT)  
+    sleep(twistT)  
     r.motors[0] = 0  
     r.motors[1] = 0
 
