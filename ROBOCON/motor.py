@@ -15,7 +15,10 @@ def twist(movement): #Objective of 'twist' is for movement of robot to collect b
         sleep(twist)
         r.motors[1] = 0
     elif movement == 'right':
-        pass
+        r.motors[0] = 100 #left motor running - change if necassary
+        r.motors[1] = 0 #right motor stationary
+        sleep(twist)
+        r.motors[0] = 0
     else:
         print('sorry, your commands did not match with our options, please try again or seek help')
         return
