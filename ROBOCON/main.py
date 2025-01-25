@@ -8,10 +8,10 @@ def main():
     v =  # speed (centimeters per second at 90% speed)
 
     def process_data(position, bearing, distance):
-        print("Initial constants:", constants)
-        print("Input position:", position)
-        print("Input bearing:", bearing)
-        print("Input distance:", distance)
+        print("constants:", constants)
+        print("position:", position)
+        print("bearing:", bearing)
+        print("distance:", distance)
 
     # Shared constants dictionary
     constants = {
