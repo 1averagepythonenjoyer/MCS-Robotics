@@ -52,8 +52,9 @@ def spin(angle):
 
 def move(distance):
     if distance > 2: # camera can only see objects 2m ahead
-        distance = 2
-     #what about negative distance safety check? 
+        distance = 2 
+    if distance < -2:
+        distance = -2
 
    #somewhere here we need to update position of the robot
 
@@ -71,10 +72,7 @@ def move(distance):
 
     else:
         r.motors[0] = 100 * LMC
-        r.motors[1] = 90 * RMC
+        r.motors[1] = 100 * RMC
         sleep(moveT)
         r.motors[0] = 0  
         r.motors[1] = 0
-
-
-twist(-90)
