@@ -2,9 +2,9 @@ import math
 
 selfpos = [None]*3
 
-def rotate_tags(tags):
-    rotation = (R.zone + 2) % 4
-    for i in range(rotations):
+def rotate_tags(tags, zone):
+    rotation = (zone + 2) % 4
+    for i in range(rotation):
         for tag in tags:
             x = tag[0]
             y = tag[1]
@@ -58,3 +58,5 @@ def pos_update(distance, bearing, rotation, id):
 
 #pos_update(2, 30, 60, 120)
 #print(selfpos)
+rotate_tags(wall_tags, 0)
+#print(wall_tags)
