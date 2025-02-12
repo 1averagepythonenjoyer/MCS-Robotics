@@ -3,7 +3,7 @@ import math
 selfpos = [None]*3
 
 def rotate_tags(tags):
-    rotation = (R.zone + 2) % mod 4
+    rotation = (R.zone + 2) % 4
     for i in range(rotations):
         for tag in tags:
             x = tag[0]
