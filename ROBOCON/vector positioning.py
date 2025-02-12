@@ -2,6 +2,15 @@ import math
 
 selfpos = [None]*3
 
+def rotate_tags(tags):
+    rotation = (R.zone + 2) % mod 4
+    for i in range(rotations):
+        for tag in tags:
+            x = tag[0]
+            y = tag[1]
+            tag[0] = -1*y
+            tag[1] = x
+
 wall_tags = [
     [-250, 300, 0],
     [-150, 300, 0],
