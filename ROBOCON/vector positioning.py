@@ -10,6 +10,11 @@ def rotate_tags(tags, zone):
             y = tag[1]
             tag[0] = -1*y
             tag[1] = x
+    for tag in tags:
+        tag[2] -= 90*rotation
+        tag[2] %= 360
+        if tag[2] > 180:
+            tag[2] -= 360
 
 wall_tags = [
     [-250, 300, 0],
@@ -58,5 +63,5 @@ def pos_update(distance, bearing, rotation, id):
 
 #pos_update(2, 30, 60, 120)
 #print(selfpos)
-rotate_tags(wall_tags, 0)
+#rotate_tags(wall_tags, 3)
 #print(wall_tags)
