@@ -4,13 +4,12 @@ selfpos = [None]*3
 
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
-    for i in range(rotation):
-        for tag in tags:
+    for tag in tags:
+        for i in range(rotation):
             x = tag[0]
             y = tag[1]
             tag[0] = -1*y
             tag[1] = x
-    for tag in tags:
         tag[2] -= 90*rotation
         tag[2] %= 360
         if tag[2] > 180:
