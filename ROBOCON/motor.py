@@ -8,7 +8,7 @@ t = 127   #Turn rate (degrees per second at full speed)  find this later
 twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
 #^what are we doing with this... the code won't compile if we leave it empty.
 
-v = 0.321  #speed (centimeters per second)
+v = 0.321  #speed (metres per second)
 
 LMC = #left motor compensation from 0 to 1 not including 0 but include 1
 if LMC <= 0 or LMC > 1:
