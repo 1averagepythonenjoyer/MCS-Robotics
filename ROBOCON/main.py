@@ -223,7 +223,12 @@ def move_to_sheep(num):
 swivel_ang = x
 def swiveltograb():
     spin(swivel_ang)
+    #stop spinning when IR sensor detects it. 
     ############################26/02/2025 21:50 
+def grab():
+    #lintian's code
+    pass
+
 
 def main():
     move(2)
