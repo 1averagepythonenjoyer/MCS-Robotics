@@ -237,16 +237,17 @@ def main():
     sheep_or_gem = None
     for i in range(spin_times-1):
         analyse()
-        if len(uniq_gem) == 0:
-            if len(uniq_sheep) ==0:
+        if len(uniq_gem) == 0: #check if there any gems
+            if len(uniq_sheep) ==0:  #if not, check for any sheep
                 spin(spin_incr)
 
-        elif len(uniq_gem) > 0:
-            sheep_or_gem = 0
-            break
-        elif len(uniq_sheep) > 0:
-            sheep_or_gem = 1
-            break
+        elif len(uniq_gem) > 0: #if there is a gem, 
+            sheep_or_gem = 0  #tell the robot that we are going for a gem
+            break  # break out of the for() loop
+        elif len(uniq_sheep) > 0: #if there is a sheep,
+            sheep_or_gem = 1  #tell the robot that we are going for a sheep
+            break  #break out of the for() loop
+            
     if sheep_or_gem == 0:
         move_to_gem()
     elif sheep_or_gem == 1:
