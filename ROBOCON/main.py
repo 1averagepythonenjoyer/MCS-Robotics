@@ -247,6 +247,7 @@ def main():
         elif len(uniq_sheep) > 0: #if there is a sheep,
             sheep_or_gem = 1  #tell the robot that we are going for a sheep
             break  #break out of the for() loop
+        spin(20) # prevents us checking again when we have already checked all angles, but ensures we go back to our starting angle
             
     if sheep_or_gem == 0:
         move_to_gem()
@@ -255,4 +256,3 @@ def main():
     
 
     
-spin(20) # prevents us checking again when we have already checked all angles, but ensures we go back to our starting angle
