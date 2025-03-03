@@ -1,4 +1,4 @@
-Repository for the MCS robotics team.
+Repository for the Magdalen College School robotics team.
 
 Founded in September 2023, we entered the PiWars International Robotics Competition, which took place on April 20th at the William Gates Building in Cambridge. 
 We took home first place. The code for the competition can be found in the /piwars/ folder. 
