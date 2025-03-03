@@ -135,6 +135,15 @@ def arena_update(distance, bearing, rotation, id):
     selfpos[0] = wall_tags[id][0] - vector_to_tag[0]
     selfpos[1] = wall_tags[id][1] - vector_to_tag[1]
 
+def pos_update(distance, angle):
+    coords = compute_vector(distance, selfpos[2])
+    selfpos[0] += coords[0]
+    selfpos[1] += coords[1]
+    selfpos[2] += angle
+    selfpos %= 360
+    if selfpos[2] > 180:
+            selfpos[2] -= 360
+
 markers = []
 gemlist = []
 sheeplist = []
