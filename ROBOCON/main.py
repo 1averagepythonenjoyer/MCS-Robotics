@@ -125,7 +125,7 @@ def compute_vector(dist, angle):
     vector = [round(dist * math.cos(math.radians(angle_to_x_axis)), 5), round(dist * math.cos(math.radians(angle)), 5)]
     return vector
 
-def pos_update(distance, bearing, rotation, id):
+def arena_update(distance, bearing, rotation, id):
     id -= 100
     tag_normal = wall_tags[id][2]
     global selfpos
@@ -253,6 +253,30 @@ def main():
         move_to_gem()
     elif sheep_or_gem == 1:
         move_to_sheep()
+
+
+def test1():
+    testpos = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
+    selfpos = [0,-3,0]  #x,y,orientation: what is orientation relative to though... we also need to define this relative to the camera of the brainbox 
+    
+    def move_next_pos(x,y):
+        d_x = x-selfpos[0]
+        d_y = y-selfpos[1]
+
+        d_angle = math.tan(d_x/d_y)
+        d_displacement = math.sqrt((d_x)^2 + (d_y)^2) 
+
+        spin(d_angle)
+        move(d_displacement)
+        
+        
+
+
+
+    
+        
+        
+        
     
 
     
