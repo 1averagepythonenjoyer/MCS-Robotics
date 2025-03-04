@@ -273,7 +273,9 @@ def test1():  #test function for 5th march 2025
     analyse()  #read a tag
     move_next_pos(lairpos[0], lairpos[1])  #go back home
     
-    
+
+
+test1()
     
         
         
