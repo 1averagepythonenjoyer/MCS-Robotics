@@ -4,78 +4,6 @@ from time import sleep
 
 r = robot.Robot()
 
-t = 127   #Turn rate (degrees per second at full speed) 
-twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
-#^need value for this.
-v = 0.321  #speed (centimeters per second)
-
-
-multi_L = 1.0 #left motor multiplier from 0 to 1 not including 0 but include 1
-if multi_L <= 0 or multi_L > 1:
-    exit()
-
-multi_R = 1.0 #right motor multiplier from 0 to 1 not including 0 but including 1
-if multi_R <= 0 or multi_R > 1:
-    exit()
-
-def twist(angle): #Objective of 'twist' is for movement of robot to collect box and move with the box. 
-                #If robot turns to sharply the box is not going to be with the robot
-    while angle >= 360:
-        angle -= 360  
-
-    if angle == 0:
-        exit()
-
-    if angle > 0:
-        r.motors[0] = 100 * multi_L
-        r.motors[1] = 0
-    else:
-        r.motors[0] = 0
-        r.motors[1] = 100 * multi_R
-
-    sleep((angle / 90) * twist_angle)
-
-def spin(angle): 
-    
-    spinT = (abs(angle) / t) + 0.05 # Calculate time needed to turn
-
-    while angle > 360:
-        angle -= 360
-
-    if angle < 0:  # rotate left
-        r.motors[0] =  100 * multi_L # Left motor
-        r.motors[1] =  -100 * multi_R # Right motor
-    else:  # rotate right
-        r.motors[0] =  -100 * multi_L # Left motor
-        r.motors[1] = 100 * multi_R  # Right motor
-
-    sleep(spinT)  
-    r.motors[0] = 0  
-    r.motors[1] = 0
-
-def move(distance):
-    if distance > 2:
-        distance = 2
-      
-    if distance < -2:
-        distance = -2  
-      
-    if distance == 0:
-        exit()
-
-    moveT = (distance / v) + 0.05  # Calculate time needed to move
-
-    if distance > 0:
-        r.motors[0] = 100 
-        r.motors[1] = 100
-    else:
-        r.motors[0] = -100
-        r.motors[1] = -100
-       
-    sleep(moveT) 
-    r.motors[0] = 0  
-    r.motors[1] = 0
-
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
     for i in range(rotation):
@@ -195,14 +123,84 @@ selfpos = [None]*3
 def check_wall():
     arenatags = r.see(lookfor= ARENA)
 
-default_positions = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
+t = 127   #Turn rate (degrees per second at full speed) 
+twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
+#^need value for this.
+v = 0.321  #speed (centimeters per second)
 
-#phase 1: checking pos, rotating
-#phase 2: no markers seen, moving to next pos
-#phase 3: team gem seen, moving to gem, collecting gem
-#phase 4: box collected, move back to lair, deposit box, turn to face arena again
-#phase 5: sheep seen, moving to sheep, collecting sheep
-#phase 6: arena tag seen, update position
+
+multi_L = 1.0 #left motor multiplier from 0 to 1 not including 0 but include 1
+if multi_L <= 0 or multi_L > 1:
+    exit()
+
+multi_R = 1.0 #right motor multiplier from 0 to 1 not including 0 but including 1
+if multi_R <= 0 or multi_R > 1:
+    exit()
+
+def twist(angle): #Objective of 'twist' is for movement of robot to collect box and move with the box. 
+                #If robot turns to sharply the box is not going to be with the robot
+    while angle >= 360:
+        angle -= 360  
+
+    if angle == 0:
+        exit()
+
+    if angle > 0:
+        r.motors[0] = 100 * multi_L
+        r.motors[1] = 0
+    else:
+        r.motors[0] = 0
+        r.motors[1] = 100 * multi_R
+
+    sleep((angle / 90) * twist_angle)
+
+def spin(angle): 
+    
+    spinT = (abs(angle) / t) + 0.05 # Calculate time needed to turn
+
+    while angle > 360:
+        angle -= 360
+
+    if angle < 0:  # rotate left
+        r.motors[0] =  100 * multi_L # Left motor
+        r.motors[1] =  -100 * multi_R # Right motor
+    else:  # rotate right
+        r.motors[0] =  -100 * multi_L # Left motor
+        r.motors[1] = 100 * multi_R  # Right motor
+
+    sleep(spinT)  
+    r.motors[0] = 0  
+    r.motors[1] = 0
+    pos_update(0, angle) #update orientation of robot 
+
+
+def move(distance):
+    if distance > 2:
+        distance = 2
+      
+    if distance < -2:
+        distance = -2  
+      
+    if distance == 0:
+        exit()
+
+    moveT = (distance / v) + 0.05  # Calculate time needed to move
+
+    if distance > 0:
+        r.motors[0] = 100 
+        r.motors[1] = 100
+    else:
+        r.motors[0] = -100
+        r.motors[1] = -100
+       
+    sleep(moveT) 
+    r.motors[0] = 0  
+    r.motors[1] = 0
+
+    pos_update(distance, 0) #update position of the robot
+
+
+default_positions = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
 
 spin_incr = 20 #degrees
 spin_times = int(360/spin_incr)
@@ -229,16 +227,6 @@ def move_to_sheep(num):
         spin(gemlist[num].bearing_y)
         move((gemlist[num].dist - 0.3)/adj_times)
 
-swivel_ang = x
-def swiveltograb():
-    spin(swivel_ang)
-    #stop spinning when IR sensor detects it. 
-    ############################26/02/2025 21:50 
-def grab():
-    #lintian's code
-    pass
-
-
 def main():
     move(2)
     move(2)
@@ -263,12 +251,7 @@ def main():
     elif sheep_or_gem == 1:
         move_to_sheep()
 
-
-def test1():
-    testpos = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
-    selfpos = [0,-3,0]  #x,y,orientation: what is orientation relative to though... we also need to define this relative to the camera of the brainbox 
-    
-    def move_next_pos(x,y):
+def move_next_pos(x,y):
         d_x = x-selfpos[0]
         d_y = y-selfpos[1]
 
@@ -277,6 +260,21 @@ def test1():
 
         spin(d_angle)
         move(d_displacement)
+
+def test1():  #test function for 5th march 2025
+    testpos = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
+    selfpos = [0,-3,0]  #x,y,orientation: what is orientation relative to though... we also need to define this relative to the camera of the brainbox 
+
+    lairpos = [0,-3]
+    move_next_pos(testpos[0][0], testpos[0][1]) #move to first test position
+    sleep(1)
+    move_next_pos(testpos[1][0], testpos[1][1])  #move to second test position
+    sleep(1)
+    analyse()  #read a tag
+    move_next_pos(lairpos[0], lairpos[1])  #go back home
+    
+    
+    
         
         
 
