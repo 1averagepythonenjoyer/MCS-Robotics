@@ -56,7 +56,6 @@ def compute_vector(dist, angle):
 def arena_update(distance, bearing, rotation, id):
     id -= 100
     tag_normal = wall_tags[id][2]
-    global selfpos
     selfpos[2] = tag_normal + rotation - bearing
     vector_to_tag = compute_vector(distance, tag_normal + bearing)
     #print(vector_to_tag)
