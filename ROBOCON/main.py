@@ -6,13 +6,12 @@ r = robot.Robot()
 
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
-    for i in range(rotation):
-        for tag in tags:
+    for tag in tags:
+        for i in range(rotation):
             x = tag[0]
             y = tag[1]
             tag[0] = -1*y
             tag[1] = x
-    for tag in tags:
         tag[2] -= 90*rotation
         tag[2] %= 360
         if tag[2] > 180:
@@ -70,7 +69,7 @@ def pos_update(distance, angle):
     selfpos[2] += angle
     selfpos %= 360
     if selfpos[2] > 180:
-            selfpos[2] -= 360
+        selfpos[2] -= 360
 
 markers = []
 gemlist = []
@@ -117,8 +116,6 @@ def analyse():
                             uniq_sheep.append(marker[sheep])
                             marker[sheep].distance = dist_calc(marker[sheep].distance, marker[sheep].rotation, marker[sheep].bearing)   #calculate new distance to centre of the box
 
-
-selfpos = [None]*3
 
 def check_wall():
     arenatags = r.see(lookfor= ARENA)
