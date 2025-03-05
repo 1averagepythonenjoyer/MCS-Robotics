@@ -3,6 +3,7 @@ import robot # type: ignore
 from time import sleep
 
 r = robot.Robot()
+selfpos = [0,-3,0]
 
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
@@ -21,7 +22,7 @@ wall_tags = [
     [-2.5, 3, 0],
     [-1.5, 3, 0],
     [-0.5, 3, 0],
-    [.0.5, 3, 0],
+    [0.5, 3, 0],
     [1.5, 3, 0],
     [2.5, 3, 0],
     [3, 2.5, 90],
@@ -85,7 +86,7 @@ def analyse():
     for marker in markers:
         #arena tags
         if (markers[marker].info.id >= 100 and markers[marker].info.id <= 123) or (markers[marker].info.id >= 50 and markers[marker].info.id <= 53):  #if any arena tags or lair tags
-            pos_update(markers[marker].distance, markers[marker].bearing, markers[marker].rotation, markers[marker].info.id)            
+            arena_update(markers[marker].distance, markers[marker].bearing, markers[marker].rotation, markers[marker].info.id)            
         
         if markers[marker].info.id == gem_value:  #priority is gems: if we see the gem then we go for that first, because points.
             gemlist.append(markers[marker])
@@ -121,7 +122,7 @@ def check_wall():
     arenatags = r.see(lookfor= ARENA)
 
 t = 127   #Turn rate (degrees per second at full speed) 
-twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
+#twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
 #^need value for this.
 v = 0.321  #speed (centimeters per second)
 
@@ -253,7 +254,7 @@ def move_next_pos(x,y):
         d_y = y-selfpos[1]
 
         d_angle = math.tan(d_x/d_y)
-        d_displacement = math.sqrt((d_x)^2 + (d_y)^2) 
+        d_displacement = math.sqrt(d_x**2 + d_y**2) 
 
         spin(d_angle)
         move(d_displacement)
