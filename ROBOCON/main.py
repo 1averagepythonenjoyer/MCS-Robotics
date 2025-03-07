@@ -1,18 +1,22 @@
+
 import math
 import robot # type: ignore
 from time import sleep
 
 r = robot.Robot()
-selfpos = [0,-3,0]
 
+R.gpio[0].mode = robot.INPUT #IR sensor pin: add more later
+
+selfpos = [0,-3,0]
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
-    for tag in tags:
-        for i in range(rotation):
+    for i in range(rotation):
+        for tag in tags:
             x = tag[0]
             y = tag[1]
             tag[0] = -1*y
             tag[1] = x
+    for tag in tags:
         tag[2] -= 90*rotation
         tag[2] %= 360
         if tag[2] > 180:
@@ -54,8 +58,10 @@ def compute_vector(dist, angle):
     return vector
 
 def arena_update(distance, bearing, rotation, id):
+    global selfpos
     id -= 100
     tag_normal = wall_tags[id][2]
+    global selfpos
     selfpos[2] = tag_normal + rotation - bearing
     vector_to_tag = compute_vector(distance, tag_normal + bearing)
     #print(vector_to_tag)
@@ -63,13 +69,14 @@ def arena_update(distance, bearing, rotation, id):
     selfpos[1] = wall_tags[id][1] - vector_to_tag[1]
 
 def pos_update(distance, angle):
+    global selfpos
     coords = compute_vector(distance, selfpos[2])
     selfpos[0] += coords[0]
     selfpos[1] += coords[1]
     selfpos[2] += angle
     selfpos %= 360
     if selfpos[2] > 180:
-        selfpos[2] -= 360
+            selfpos[2] -= 360
 
 markers = []
 gemlist = []
@@ -116,6 +123,10 @@ def analyse():
                             uniq_sheep.append(marker[sheep])
                             marker[sheep].distance = dist_calc(marker[sheep].distance, marker[sheep].rotation, marker[sheep].bearing)   #calculate new distance to centre of the box
 
+def check_prox(): #check proximity to box etc. 
+    close_enough = R.gpio[2].digital
+    if isclamped == 0: 
+      
 
 def check_wall():
     arenatags = r.see(lookfor= ARENA)
@@ -249,40 +260,39 @@ def main():
         move_to_sheep()
 
 def move_next_pos(x,y):
-        d_x = x-selfpos[0]
-        d_y = y-selfpos[1]
+    global selfpos
 
-        d_angle = math.tan(d_x/d_y)
-        d_displacement = math.sqrt(d_x**2 + d_y**2) 
 
-        spin(d_angle)
-        move(d_displacement)
+    d_x = x-selfpos[0]
+    d_y = y-selfpos[1]
+
+    d_angle = math.atan(d_y/d_x)
+    d_displacement = math.sqrt(d_x**2 + d_y**2)
+
+    spin(d_angle)
+    move(d_displacement)
+
+
+
 
 def test1():  #test function for 5th march 2025
     testpos = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
-    selfpos = [0,-3,0]  #x,y,orientation: what is orientation relative to though... we also need to define this relative to the camera of the brainbox 
+    #selfpos = [0,-3,0]  #x,y,orientation: what is orientation relative to though... we also need to define this relative to the camera of the brainbox 
 
     lairpos = [0,-3]
+    print(selfpos)
+
     move_next_pos(testpos[0][0], testpos[0][1]) #move to first test position
     sleep(1)
+    print(selfpos)
+
     move_next_pos(testpos[1][0], testpos[1][1])  #move to second test position
     sleep(1)
+    print(selfpos)
+
     analyse()  #read a tag
     move_next_pos(lairpos[0], lairpos[1])  #go back home
+    print(selfpos)
     
-
-
 test1()
-    
-        
-        
 
-
-
-    
-        
-        
-        
-    
-
-    
