@@ -1,11 +1,10 @@
-
 import math
 import robot # type: ignore
 from time import sleep
 
 r = robot.Robot()
 
-R.gpio[0].mode = robot.INPUT #IR sensor pin: add more later
+#R.gpio[0].mode = robot.INPUT #IR sensor pin: add more later
 
 selfpos = [0,-3,0]
 def rotate_tags(tags, zone):
@@ -74,7 +73,7 @@ def pos_update(distance, angle):
     selfpos[0] += coords[0]
     selfpos[1] += coords[1]
     selfpos[2] += angle
-    selfpos %= 360
+    selfpos[2] %= 360
     if selfpos[2] > 180:
             selfpos[2] -= 360
 
@@ -123,13 +122,9 @@ def analyse():
                             uniq_sheep.append(marker[sheep])
                             marker[sheep].distance = dist_calc(marker[sheep].distance, marker[sheep].rotation, marker[sheep].bearing)   #calculate new distance to centre of the box
 
-def check_prox(): #check proximity to box etc. 
-    close_enough = R.gpio[2].digital
-    if isclamped == 0: 
-      
 
-def check_wall():
-    arenatags = r.see(lookfor= ARENA)
+#def check_wall():
+#   arenatags = r.see(lookfor= ARENA)
 
 t = 127   #Turn rate (degrees per second at full speed) 
 #twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
@@ -265,8 +260,10 @@ def move_next_pos(x,y):
 
     d_x = x-selfpos[0]
     d_y = y-selfpos[1]
-
-    d_angle = math.atan(d_y/d_x)
+    if d_x != 0:
+        d_angle = math.atan(d_y/d_x)
+    else:
+        d_angle = 0
     d_displacement = math.sqrt(d_x**2 + d_y**2)
 
     spin(d_angle)
@@ -290,9 +287,7 @@ def test1():  #test function for 5th march 2025
     sleep(1)
     print(selfpos)
 
-    analyse()  #read a tag
     move_next_pos(lairpos[0], lairpos[1])  #go back home
     print(selfpos)
     
 test1()
-
