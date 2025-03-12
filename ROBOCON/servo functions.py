@@ -2,11 +2,13 @@ from gpiozero import AngularServo
 from time import sleep
 
 
+#Below are angles found on onshape simulation 
+
 clamp_pin = #pin for clamp servo (default is BCM)
 arm_pin = #pin for arm servo (default is BCM)
-lair_a = #angle needed to reach lair (for arm)
-pick_a = #angle needed to reach and pick up box (for arm)
-secure_a = #angle needed for clamp servo to secure the box in its grip
+lair_a = 0 #angle needed to reach lair (for arm)
+pick_a = 55#angle needed to reach and pick up box (for arm)
+secure_a = 2.823#angle needed for clamp servo to secure the box in its grip
 stor_a = #angle of arm so it can release and drop into box
 
 servo_a = AngularServo(clam_pin, min_angle = 0, max_angle = 180, min_pulse_width = 0.0005, max_pulse_width = 0.0025) #clamp
