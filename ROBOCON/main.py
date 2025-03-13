@@ -254,40 +254,48 @@ def main():
     elif sheep_or_gem == 1:
         move_to_sheep()
 
+def findangle(dx,dy):
+    if dx>0:
+        return math.degrees(math.atan(dy/dx))
+    else:
+        return 180 + math.degrees(math.atan(dy/dx))
+
 def move_next_pos(x,y):
     global selfpos
-
-
     d_x = x-selfpos[0]
     d_y = y-selfpos[1]
+
+    print("d_x: ", d_x)
+    print("d_y: ", d_y)
+
     if d_x != 0:
-        d_angle = math.atan(d_y/d_x)
+        d_angle = round(findangle(d_x,d_y) - selfpos[2], 4)
+        
     else:
         d_angle = 0
-    d_displacement = math.sqrt(d_x**2 + d_y**2)
-
-    spin(d_angle)
-    move(d_displacement)
-
-
-
-
+    print("d_angle: ", d_angle)
+    d_displacement = round(math.sqrt(d_x**2 + d_y**2), 4)
+    print("d_displacement: ", d_displacement)
+    pos_update(0, d_angle)
+    pos_update(d_displacement, 0)
+    
 def test1():  #test function for 5th march 2025
-    testpos = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
+    testpos = [[0, -1.5], [-1.5, 0]]
     #selfpos = [0,-3,0]  #x,y,orientation: what is orientation relative to though... we also need to define this relative to the camera of the brainbox 
 
     lairpos = [0,-3]
-    print(selfpos)
 
     move_next_pos(testpos[0][0], testpos[0][1]) #move to first test position
-    sleep(1)
-    print(selfpos)
+    
+    print(selfpos) #should be [0,-1.5,0]
 
     move_next_pos(testpos[1][0], testpos[1][1])  #move to second test position
-    sleep(1)
-    print(selfpos)
+    
+    print(selfpos)  #should be [-1.5,0]  
 
     move_next_pos(lairpos[0], lairpos[1])  #go back home
-    print(selfpos)
+    print(selfpos)#
+
+test1()
     
 test1()
