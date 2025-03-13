@@ -1,15 +1,13 @@
-import math
-
-selfpos = [None]*3
-
+selfpos = [0,-3,0]
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
-    for tag in tags:
-        for i in range(rotation):
+    for i in range(rotation):
+        for tag in tags:
             x = tag[0]
             y = tag[1]
             tag[0] = -1*y
             tag[1] = x
+    for tag in tags:
         tag[2] -= 90*rotation
         tag[2] %= 360
         if tag[2] > 180:
@@ -18,8 +16,8 @@ def rotate_tags(tags, zone):
 wall_tags = [
     [-2.5, 3, 0],
     [-1.5, 3, 0],
-    [-.0.5, 3, 0],
-    [.0.5, 3, 0],
+    [-0.5, 3, 0],
+    [0.5, 3, 0],
     [1.5, 3, 0],
     [2.5, 3, 0],
     [3, 2.5, 90],
@@ -50,7 +48,8 @@ def compute_vector(dist, angle):
     vector = [round(dist * math.cos(math.radians(angle_to_x_axis)), 5), round(dist * math.cos(math.radians(angle)), 5)]
     return vector
 
-def pos_update(distance, bearing, rotation, id):
+def arena_update(distance, bearing, rotation, id):
+    global selfpos
     id -= 100
     tag_normal = wall_tags[id][2]
     global selfpos
@@ -60,7 +59,12 @@ def pos_update(distance, bearing, rotation, id):
     selfpos[0] = wall_tags[id][0] - vector_to_tag[0]
     selfpos[1] = wall_tags[id][1] - vector_to_tag[1]
 
-#pos_update(2, 30, 60, 120)
-#print(selfpos)
-#rotate_tags(wall_tags, 3)
-#print(wall_tags)
+def pos_update(distance, angle):
+    global selfpos
+    coords = compute_vector(distance, selfpos[2])
+    selfpos[0] += coords[0]
+    selfpos[1] += coords[1]
+    selfpos[2] += angle
+    selfpos[2] %= 360
+    if selfpos[2] > 180:
+            selfpos[2] -= 360
