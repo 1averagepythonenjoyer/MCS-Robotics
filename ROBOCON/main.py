@@ -6,20 +6,18 @@ r = robot.Robot()
 
 #R.gpio[0].mode = robot.INPUT #IR sensor pin: add more later
 
-selfpos = [0,-3,0]
+selfpos = [0,-3,90]
+
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
-    for i in range(rotation):
-        for tag in tags:
+    for tag in tags:
+        for i in range(rotation):
             x = tag[0]
             y = tag[1]
             tag[0] = -1*y
             tag[1] = x
-    for tag in tags:
-        tag[2] -= 90*rotation
+        tag[2] += 90*rotation
         tag[2] %= 360
-        if tag[2] > 180:
-            tag[2] -= 360
 
 wall_tags = [
     [-2.5, 3, 0],
@@ -49,11 +47,7 @@ wall_tags = [
 ]
 
 def compute_vector(dist, angle):
-    if angle < 0:
-        angle_to_x_axis = -90+angle
-    else:
-        angle_to_x_axis = 90-angle
-    vector = [round(dist * math.cos(math.radians(angle_to_x_axis)), 5), round(dist * math.cos(math.radians(angle)), 5)]
+    vector = [round(dist * math.cos(math.radians(angle)), 4), round(dist * math.cos(math.radians(90-angle)), 4)]
     return vector
 
 def arena_update(distance, bearing, rotation, id):
@@ -74,8 +68,7 @@ def pos_update(distance, angle):
     selfpos[1] += coords[1]
     selfpos[2] += angle
     selfpos[2] %= 360
-    if selfpos[2] > 180:
-            selfpos[2] -= 360
+    selfpos[2] = round(selfpos[2], 4)
 
 markers = []
 gemlist = []
