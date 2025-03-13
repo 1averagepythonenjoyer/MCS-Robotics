@@ -1,3 +1,5 @@
+import math
+
 selfpos = [0,-3,0]
 def rotate_tags(tags, zone):
     rotation = (zone + 2) % 4
