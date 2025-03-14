@@ -3,6 +3,7 @@ import robot # type: ignore
 from time import sleep
 
 r = robot.Robot()
+team = r.zone()
 
 #R.gpio[0].mode = robot.INPUT #IR sensor pin: add more later
 
