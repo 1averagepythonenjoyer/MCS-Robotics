@@ -1,51 +1,79 @@
-#function find gem number from team value
 import math
-from motor import * #get rid of this once we collate all of the files 
+
+team = r.zone()
+
+# dictionary to store vals for each team
+team_values = {
+    robot.TEAM.RUBY: (24, 25, 50),    # (gem_id1, gem_id2, lairmarker_id)
+    robot.TEAM.JADE: (26, 27, 51),  #not sure if "robot.TEAM.RUBY" can be stored like this. 
+    robot.TEAM.TOPAZ: (28, 29, 52),
+    robot.TEAM.DIAMOND: (30, 30, 53),
+}
+
+def find_team_vals():
+    global team, gem_id1, gem_id2, lairmarker_id
+    #gets values from dictionary
+    gem_id1, gem_id2, lairmarker_id = team_values.get(team, (None, None, None))  #still sets them to none if it doesn't fit the 
+    
+
+markers = []
+gemlist = []  # most valuable. List of gem objects
+othergemlist = [] # second most valuable
+sheeplist = [] #third most valuable 
+
+def dist_calc(dist, rot, bear): #calculate dist. to centre of the box. Only requires one marker. 
+    return (dist/math.sin(90 + rot)) * (math.sin(90 - bear - rot))
 
 def analyse():
+    markers = r.see()
     
-    #priority goes to gems first, then sheep. For each sheep, priority goes to the closest one it sees 
-    if len(markers) == 0:
-        spin(30)
-        markers = r.see()
-    else:
-        pass
+    #priority goes to gems first. For each sheep, priority goes to the closest one it sees 
+
     for marker in markers:
+        #arena tags
+        if (marker.info.type == ARENA) or (marker.info.target_type == TARGET_TYPE.LAIR):  #if any arena tags or lair tags
+            arena_update(marker.distance, marker.bearing, marker.rotation, marker.info.id)        
+        
+        elif marker.info.target_type == TARGET_TYPE.GEM:  #priority is gems: if we see the gem then we go for that first, because points and enemy cant get them
+            #each gem will have two different codes
+            if marker.info.id == gem_id1 or marker.info.id == gem_id2: #if it is our gem
+                gemlist.append(marker) #record and add to list
 
-        if markers[marker].info.id (>= 100 and <= 123) or ( >= 50 and <=53) :  #if any arena tags or lair tags
-            pass #call dylan's function here later
-
-        if markers[marker].info.id == gem_value:  #priority is gems: if we see the gem then we go for that first, because points.
-            gemlist.append(markers[marker])
-
-
-
-            ############################################ check if gem is unique
-            seen_gem = set()
-            global uniq_gem
-            uniq_gem = []
-            
-            for gem in gemlist:
-                if marker[gem].info.id is not in gemlist:  #if not, calculate the distance to the centre of the gem. 
-                    seen_gem.add(marker[gem])
-                    uniq_gem.append(marker[gem])
-                    marker[gem].distance = (marker[gem].distance / math.sin(90 + marker[gem].rotation)) * (math.sin(180-marker[gem].bearing - marker[gem].rotation))   #calculate new distance to centre
-            
-            pass #add code to move to gem here.        
-            ############################################
-        else:
-            if markers[marker].info.id >= 0 and <= 19:
-                sheeplist.append(markers[marker])
+                ############################################ check if gem is unique
+                seen_ids = set()  # Track seen id values
+                uniq_gem = []  #inside the subroutine because we want to clear these values each time we take a new picture etc. 
                 
-                seen_sheep = set()
-                global uniq_sheep
-                uniq_sheep = [] #final list of unique sheep boxes
+                for gem in gemlist:
+                    gem_id = gem.info.id
+                    if gem_id not in seen_ids: #if not, calculate the distance to the centre of the gem. 
+                        seen_gem_ids.add(gem_id)  # Mark this gem as seen, based on id
+                        uniq_gem.append(gem)
+                        gem.distance = dist_calc(gem.distance, gem.rotation, gem.bearing)  # update distance
+                    
                 
-                for sheep in sheeplist:
-                    if marker[sheep].info.id is not in sheeplist:
-                        seen_sheep.add(marker[sheep])
-                        uniq_sheep.append(marker[sheep])
-                        marker[sheep].distance = (marker[sheep].distance / math.sin(90 + marker[sheep].rotation)) * (math.sin(180-marker[sheep].bearing - marker[sheep].rotation))   #calculate new distance to centre of the box
-                        
-                        
-    
+############################################
+            else:
+                othergemlist.append(marker) #add to other list. 
+                seen_other_gem_ids = set()
+                uniq_other_gem = []
+
+                for othergem in gemlist:
+                    othergem_id = othergem.info.id
+                    if othergem_id not in seen_other_gem_ids: #if not, calculate the distance to the centre of the gem. 
+                        seen_other_gem_ids.add(othergem_id)  # Mark this gem as seen, based on id
+                        uniq_other_gem.append(othergem)
+                        othergem.distance = dist_calc(othergem.distance, othergem.rotation, othergem.bearing)  # update distance
+
+
+        elif marker.info.target_type == TARGET_TYPE.SHEEP:
+            sheeplist.append(marker)
+                
+            seen_sheep_ids = set()
+            uniq_sheep = [] #final list of unique sheep boxes
+                
+            for sheep in sheeplist:
+                sheep_id = sheep.info.id
+                if sheep.info.id not in sheeplist:
+                    seen_sheep_ids.add(sheep_id)
+                    uniq_sheep.append(sheep)
+                    sheep.distance = dist_calc(sheep.distance, sheep.rotation, sheep.bearing)   #calculate new distance to centre of the box
