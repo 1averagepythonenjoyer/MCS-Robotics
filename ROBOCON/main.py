@@ -2,7 +2,7 @@ import math
 import robot # type: ignore
 from time import sleep
 
-r = robot.Robot()
+r = robot.Robot(max_motor_voltage=12)
 team = r.zone()
 
 #R.gpio[0].mode = robot.INPUT #IR sensor pin: add more later
@@ -116,85 +116,60 @@ def analyse():
                             uniq_sheep.append(marker[sheep])
                             marker[sheep].distance = dist_calc(marker[sheep].distance, marker[sheep].rotation, marker[sheep].bearing)   #calculate new distance to centre of the box
 
+Lm_multi = 0.956
+Rm_multi = 1
+Velocity = 0.97
 
-#def check_wall():
-#   arenatags = r.see(lookfor= ARENA)
+def move(distance, speed): # speed = 0-1
+    time = distance / Velocity / speed
+    time = time*(1+(1-speed)*0.15)
+    r.motors[0] = 100 * Lm_multi * speed # Left motor
+    r.motors[1] = 100 * Rm_multi * speed # Right motor 
+    sleep(time)
+    r.motors[0] = 0
+    r.motors[1] = 0
+    pos_update(distance, 0)
 
-t = 127   #Turn rate (degrees per second at full speed) 
-#twist_angle =  #Twist rate - speed robot turns 90 degrees with one motor stationary
-#^need value for this.
-v = 0.321  #speed (centimeters per second)
+t = 221
+reductionInSpeed = 0.7
 
-
-multi_L = 1.0 #left motor multiplier from 0 to 1 not including 0 but include 1
-if multi_L <= 0 or multi_L > 1:
-    exit()
-
-multi_R = 1.0 #right motor multiplier from 0 to 1 not including 0 but including 1
-if multi_R <= 0 or multi_R > 1:
-    exit()
-
-def twist(angle): #Objective of 'twist' is for movement of robot to collect box and move with the box. 
-                #If robot turns to sharply the box is not going to be with the robot
-    while angle >= 360:
-        angle -= 360  
-
-    if angle == 0:
-        exit()
-
-    if angle > 0:
-        r.motors[0] = 100 * multi_L
-        r.motors[1] = 0
-    else:
-        r.motors[0] = 0
-        r.motors[1] = 100 * multi_R
-
-    sleep((angle / 90) * twist_angle)
-
-def spin(angle): 
-    
-    spinT = (abs(angle) / t) + 0.05 # Calculate time needed to turn
-
+def spin(angle):
+    spinT = (abs(angle)/t) + 0.05
     while angle > 360:
         angle -= 360
+        if angle < 0:
+            r.motors[0] = 100*Lm_multi*reductionInSpeed
+            r.motors[1] = 100*Rm_multi*reductionInSpeed
+        else:
+            r.motors[0] = -100*Lm_multi*reductionInSpeed
+            r.motors[1] = 100*Rm_multi*reductionInSpeed
 
-    if angle < 0:  # rotate left
-        r.motors[0] =  100 * multi_L # Left motor
-        r.motors[1] =  -100 * multi_R # Right motor
-    else:  # rotate right
-        r.motors[0] =  -100 * multi_L # Left motor
-        r.motors[1] = 100 * multi_R  # Right motor
+        sleep(spinT)
+        r.motors[0] = 0
+        r.motors[1] = 0
+        pos_update(0, angle)
 
-    sleep(spinT)  
-    r.motors[0] = 0  
-    r.motors[1] = 0
-    pos_update(0, angle) #update orientation of robot 
+TwistRateRight90 = 147
 
 
-def move(distance):
-    if distance > 2:
-        distance = 2
-      
-    if distance < -2:
-        distance = -2  
-      
-    if distance == 0:
-        exit()
 
-    moveT = (distance / v) + 0.05  # Calculate time needed to move
-
-    if distance > 0:
-        r.motors[0] = 100 
-        r.motors[1] = 100
-    else:
-        r.motors[0] = -100
-        r.motors[1] = -100
-       
-    sleep(moveT) 
-    r.motors[0] = 0  
+def Right_twist90(): #twist 90 degrees to grab the box. 
+    twist90T = 90/TwistRateRight90
+    r.motors[0] = 0
+    r.motors[1] = 100*Rm_multi
+    sleep(twist90T)
+    r.motors[0] = 0
     r.motors[1] = 0
 
-    pos_update(distance, 0) #update position of the robot
+TwistRateRight270 = 162
+
+def Right_twist270():  #twist 270 to go back to starting orientation before picking up the box. We pick up the box, store, then move back
+    twist270T = 270/TwistRateRight270
+    r.motors[0] = 0
+    r.motors[1] = 100*Rm_multi
+    sleep(twist270T)
+    r.motors[0] = 0
+    r.motors[1] = 0
 
 
 default_positions = [[0, 1.5], [-1.5, 0], [1.5, 0], [0, -2]]
