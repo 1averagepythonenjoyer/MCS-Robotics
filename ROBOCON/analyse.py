@@ -1,4 +1,5 @@
 import math
+from operator import attrgetter  #function which will fetch the attribute from each object
 
 team = r.zone()
 
@@ -21,8 +22,13 @@ gemlist = []  # most valuable. List of gem objects
 othergemlist = [] # second most valuable
 sheeplist = [] #third most valuable 
 
+coord_memory = [] #stores coordinates of any boxes we have seen
+
 def dist_calc(dist, rot, bear): #calculate dist. to centre of the box. Only requires one marker. 
     return (dist/math.sin(90 + rot)) * (math.sin(90 - bear - rot))
+
+def coord_calc(dista, beari):
+    pass
 
 def analyse():
     markers = r.see()
@@ -77,3 +83,13 @@ def analyse():
                     seen_sheep_ids.add(sheep_id)
                     uniq_sheep.append(sheep)
                     sheep.distance = dist_calc(sheep.distance, sheep.rotation, sheep.bearing)   #calculate new distance to centre of the box
+
+    if len(uniq_other_gem) > 0:
+        uniq_other_gem.sort(key = attrgetter('dist'))  #sorts each list based on how far each marker is, from closest to furthest. 
+    if len(uniq_sheep) > 0:
+        uniq_sheep.sort(key = attrgetter('dist'))
+
+    
+
+
+    
