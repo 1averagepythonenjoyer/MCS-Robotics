@@ -4,16 +4,16 @@ team = r.zone()
 
 # dictionary to store vals for each team
 team_values = {
-    robot.TEAM.RUBY: (24, 25, 50),    # (gem_id1, gem_id2, lairmarker_id)
-    robot.TEAM.JADE: (26, 27, 51),  #not sure if "robot.TEAM.RUBY" can be stored like this. 
-    robot.TEAM.TOPAZ: (28, 29, 52),
-    robot.TEAM.DIAMOND: (30, 30, 53),
+    robot.TEAM.RUBY: (20, 50),    # (gem_id, lairmarker_id)
+    robot.TEAM.JADE: (21, 51),  #not sure if "robot.TEAM.RUBY" can be stored like this. 
+    robot.TEAM.TOPAZ: (22, 52),
+    robot.TEAM.DIAMOND: (23, 53),
 }
 
 def find_team_vals():
-    global team, gem_id1, gem_id2, lairmarker_id
+    global team, gem_id, lairmarker_id
     #gets values from dictionary
-    gem_id1, gem_id2, lairmarker_id = team_values.get(team, (None, None, None))  #still sets them to none if it doesn't fit the 
+    gem_id, lairmarker_id = team_values.get(team, (None, None))  #still sets them to none if it doesn't fit the 
     
 
 markers = []
@@ -31,21 +31,21 @@ def analyse():
 
     for marker in markers:
         #arena tags
-        if (marker.info.type == ARENA) or (marker.info.target_type == TARGET_TYPE.LAIR):  #if any arena tags or lair tags
+        if (marker.info.type == ARENA) or (marker.info.id  <= 53 and marker.info.id >= 50):  #if any arena tags or lair tags
             arena_update(marker.distance, marker.bearing, marker.rotation, marker.info.id)        
         
-        elif marker.info.target_type == TARGET_TYPE.GEM:  #priority is gems: if we see the gem then we go for that first, because points and enemy cant get them
+        elif marker.info.id <= 23 and marker.info.id >=20:  #priority is gems: if we see the gem then we go for that first, because points and enemy cant get them
             #each gem will have two different codes
-            if marker.info.id == gem_id1 or marker.info.id == gem_id2: #if it is our gem
+            if marker.info.id == gem_id: #if it is our gem
                 gemlist.append(marker) #record and add to list
 
                 ############################################ check if gem is unique
-                seen_ids = set()  # Track seen id values
+                seen_gem_ids = set()  # Track seen id values
                 uniq_gem = []  #inside the subroutine because we want to clear these values each time we take a new picture etc. 
                 
                 for gem in gemlist:
                     gem_id = gem.info.id
-                    if gem_id not in seen_ids: #if not, calculate the distance to the centre of the gem. 
+                    if gem_id not in seen_gem_ids: #if not, calculate the distance to the centre of the gem. 
                         seen_gem_ids.add(gem_id)  # Mark this gem as seen, based on id
                         uniq_gem.append(gem)
                         gem.distance = dist_calc(gem.distance, gem.rotation, gem.bearing)  # update distance
@@ -65,7 +65,7 @@ def analyse():
                         othergem.distance = dist_calc(othergem.distance, othergem.rotation, othergem.bearing)  # update distance
 
 
-        elif marker.info.target_type == TARGET_TYPE.SHEEP:
+        elif marker.info.id <= 11:  #if they are sheep
             sheeplist.append(marker)
                 
             seen_sheep_ids = set()
