@@ -101,11 +101,7 @@ def analyse():
         elif markers[0].info.id <= 11:
             sheeplist.append(markers[0])
             print("Sheep found!")
-    
-    # for i in range(len(gemlist)):
-    #     print(gemlist[i-1])
-    # print("othergemlist : ", othergemlist)
-    # print("sheeplist : ", sheeplist)
+
 
     # if len(uniq_other_gem) > 0:
     #     uniq_other_gem.sort(key = attrgetter('dist'))  #sorts each list based on how far each marker is, from closest to furthest. 
