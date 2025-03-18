@@ -15,7 +15,8 @@ def find_team_vals():
     global team, gem_id, lairmarker_id
     #gets values from dictionary
     gem_id, lairmarker_id = team_values.get(team, (None, None))  #still sets them to none if it doesn't fit the 
-    
+
+find_team_vals()
 
 markers = []
 gemlist = []  # most valuable. List of gem objects
