@@ -38,8 +38,8 @@ def analyse():
     markers = r.see()
     
     #priority goes to gems first. For each sheep, priority goes to the closest one it sees 
-    if len(markers) > 1:
-
+    if len(markers) > 1: #only sort through the list if the list has more than 1 value. 
+        print("more than 1 marker")
         for marker in markers:
             #arena tags
             if (marker.info.type == ARENA) or (marker.info.id  <= 53 and marker.info.id >= 50):  #if any arena tags or lair tags
@@ -77,15 +77,24 @@ def analyse():
                         uniq_sheep.append(sheep)
                         sheep.distance = dist_calc(sheep.distance, sheep.rotation, sheep.bearing)   #calculate new distance to centre of the box
     else:
-        if markers[0].info.id 
-
+        print("only 1 marker")
+        if markers[0].info.type == ARENA:
+            arena_update(marker.distance, marker.bearing, marker.rotation, marker.info.id)
+            print("Arena tag found")
+        elif markers[0].info.id == gem_id:
+            gemlist.append(markers[0])
+            print("Our Gem found!")
+        elif markers[0].info <= 23 and markers[0].info >=20:
+            othergemlist.append(markers[0])
+            print("Other Team's gem found!")
+        elif markers[0].info.id <= 11:
+            sheeplist.append(markers[0])
+            print("Sheep found!")
+    print("gemlist : ", gemlist)
+    print("othergemlist : ", othergemlist)
+    print("sheeplist : ", sheeplist)
 
     # if len(uniq_other_gem) > 0:
     #     uniq_other_gem.sort(key = attrgetter('dist'))  #sorts each list based on how far each marker is, from closest to furthest. 
     # if len(uniq_sheep) > 0:
     #     uniq_sheep.sort(key = attrgetter('dist'))
-
-    
-
-
-    
