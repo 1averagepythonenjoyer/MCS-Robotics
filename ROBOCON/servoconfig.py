@@ -24,9 +24,11 @@ def set_claw_servo_to_angle(angle):
     bus.write_byte_data(0x08, 4, value & 0xff)
 
 
-
-set_arm_servo_to_angle(3)
-sleep(2)
+try:
+    while True:
+        
+set_arm_servo_to_angle(3)  #remember to indent and change values
+sleep(2) 
 set_claw_servo_to_angle(10)
 sleep(2)
 set_claw_servo_to_angle(160)
@@ -39,3 +41,5 @@ set_arm_servo_to_angle(0)
 # set_arm_servo_to_angle(180)
 # sleep(2)
 # set_claw_servo_to_angle(0)
+except KeyboardInterrupt():
+    exit()
