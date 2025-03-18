@@ -2,7 +2,14 @@ import math
 #from operator import attrgetter  #function which will fetch the attribute from each object
 from time import sleep
 import robot
+import smbus2
+
+bus = smbus2.SMBus(1)
 r = robot.Robot(max_motor_voltage=12)
+
+r.servos[0].mode = robot.PWM_SERVO 
+r.servos[1].mode = robot.PWM_SERVO 
+
 
 team = r.zone
 
@@ -37,27 +44,26 @@ def dist_calc(dist, rot, bear): #calculate dist. to centre of the box. Only requ
 def analyse():
     markers_raw = r.see()
     for i in range(len(markers_raw)):
-        markers.append(markers_raw[i])
-
-    print(markers)
+        markers.append(markers_raw[i-1])
+        print(markers[i-1])
 
     
     #priority goes to gems first. For each sheep, priority goes to the closest one it sees 
     if len(markers) > 1: #only sort through the list if the list has more than 1 value. 
         print("more than 1 marker")
-        for marker in markers:
+        for j in range(len(markers)):
             #arena tags
-            if (marker.info.type == "MARKER_TYPE.ARENA") or (marker.info.id  <= 53 and marker.info.id >= 50):  #if any arena tags or lair tags
-                arena_update(marker.distance, marker.bearing, marker.rotation, marker.info.id)        
+            if (markers[i-1].info.type == "MARKER_TYPE.ARENA") or (markers[i-1].info.id  <= 53 and markers[i-1].info.id >= 50):  #if any arena tags or lair tags
+                arena_update(markers[i-1].dist, markers[i-1].bearing.y, markers[i-1].rotation.z, markers[i-1].info.id)        
         
-            elif marker.info.id <= 23 and marker.info.id >=20:  #priority is gems: if we see the gem then we go for that first, because points and enemy cant get them
+            elif markers[i-1].info.id <= 23 and markers[i-1].info.id >=20:  #priority is gems: if we see the gem then we go for that first, because points and enemy cant get them
                 #each gem will have two different codes
-                if marker.info.id == gem_id: #if it is our gem
-                    gemlist.append(marker.info) #record and add to list
+                if markers[i-1].info.id == gem_id: #if it is our gem
+                    gemlist.append(markers[i-1]) #record and add to list
                     
 ############################################
                 else:
-                    othergemlist.append(marker) #add to other list. 
+                    othergemlist.append(markers[i-1]) #add to other list. 
                     seen_other_gem_ids = set()
                     uniq_other_gem = []
 
@@ -66,11 +72,11 @@ def analyse():
                         if othergem_id not in seen_other_gem_ids: #if not, calculate the distance to the centre of the gem. 
                             seen_other_gem_ids.add(othergem_id)  # Mark this gem as seen, based on id
                             uniq_other_gem.append(othergem.info)
-                            othergem.distance = dist_calc(othergem.distance, othergem.rotation, othergem.bearing)  # update distance
+                            othergem.distance = dist_calc(othergem.dist, othergem.rotation.z, othergem.bearing.y)  # update distance
 
 
             elif marker.info.id <= 11:  #if they are sheep
-                sheeplist.append(marker)
+                sheeplist.append(markers[i-1])
                 
                 seen_sheep_ids = set()
                 uniq_sheep = [] #final list of unique sheep boxes
@@ -80,31 +86,33 @@ def analyse():
                     if sheep.info.id not in sheeplist:
                         seen_sheep_ids.add(sheep_id)
                         uniq_sheep.append(sheep.info)
-                        sheep.distance = dist_calc(sheep.distance, sheep.rotation, sheep.bearing)   #calculate new distance to centre of the box
+                        sheep.distance = dist_calc(sheep.dist, sheep.rotation.z, sheep.bearing.y)   #calculate new distance to centre of the box
     else:
         print("only 1 marker")
         if markers[0].info.type == "MARKER_TYPE.ARENA":
-            arena_update(marker.distance, marker.bearing, marker.rotation, marker.info.id)
+            arena_update(markers[0].dist, markers[0].bearing.y, marker.rotation.z, markers[0].info.id)
             print("Arena tag found")
         elif markers[0].info.id == gem_id:
-            gemlist.append(markers[0].info)
+            gemlist.append(markers[0])
             print("Our Gem found!")
         elif markers[0].info <= 23 and markers[0].info >=20:
-            othergemlist.append(markers[0].info)
+            othergemlist.append(markers[0])
             print("Other Team's gem found!")
         elif markers[0].info.id <= 11:
-            sheeplist.append(markers[0].info)
+            sheeplist.append(markers[0])
             print("Sheep found!")
-    print("gemlist : ", gemlist)
-    print("othergemlist : ", othergemlist)
-    print("sheeplist : ", sheeplist)
+    
+    # for i in range(len(gemlist)):
+    #     print(gemlist[i-1])
+    # print("othergemlist : ", othergemlist)
+    # print("sheeplist : ", sheeplist)
 
     # if len(uniq_other_gem) > 0:
     #     uniq_other_gem.sort(key = attrgetter('dist'))  #sorts each list based on how far each marker is, from closest to furthest. 
     # if len(uniq_sheep) > 0:
     #     uniq_sheep.sort(key = attrgetter('dist'))
 
-    Lm_multi = 0.956
+Lm_multi = 0.956
 Rm_multi = 1
 Velocity = 0.97
 
@@ -124,42 +132,85 @@ def spin(angle):
     spinT = (abs(angle)/t) + 0.05
     while angle > 360:
         angle -= 360
-        if angle < 0:
-            r.motors[0] = 100*Lm_multi*reductionInSpeed
-            r.motors[1] = 100*Rm_multi*reductionInSpeed
-        else:
-            r.motors[0] = -100*Lm_multi*reductionInSpeed
-            r.motors[1] = 100*Rm_multi*reductionInSpeed
+    if angle < 0:
+        r.motors[0] = 100*Lm_multi*reductionInSpeed
+        r.motors[1] = 100*Rm_multi*reductionInSpeed
+    else:
+        r.motors[0] = -100*Lm_multi*reductionInSpeed
+        r.motors[1] = 100*Rm_multi*reductionInSpeed
 
-        sleep(spinT)
+    sleep(spinT)
+    r.motors[0] = 0
+    r.motors[1] = 0
+
+TwistRateRight = 142
+TwistRateLeft = 147
+twist_multi = 0.5
+
+
+def twist(angle): #twist 90 degrees to grab the box. 
+    #positive angle: turn right
+    #negative angle: turn left
+    if angle < 0: 
+        twistTRight = abs((angle/TwistRateRight)/twist_multi)
+        r.motors[0] = 0
+        r.motors[1] = 100*Rm_multi*twist_multi
+        sleep(twistTRight)
         r.motors[0] = 0
         r.motors[1] = 0
+    elif angle > 0: 
+        twistTLeft = abs((angle/TwistRateLeft)/twist_multi)
+        r.motors[0] = 100*Lm_multi*twist_multi  #need to tune for twisting left
+        r.motors[1] = 0
+        sleep(twistTLeft)
+        r.motors[0] = 0
+        r.motors[1] = 0
+    else:
+        pass
 
-TwistRateRight90 = 147
+def set_arm_servo_to_angle(angle):
+#angle range = 1700 , 4600, 7500
+#mid value 70
+    value = 1700 + int(angle/180*5800)
+    bus.write_byte_data(0x08, 1, value >> 8)
+    bus.write_byte_data(0x08, 2, value & 0xff)
 
-def Right_twist90(): #twist 90 degrees to grab the box. 
-    twist90T = 90/TwistRateRight90
-    r.motors[0] = 0
-    r.motors[1] = 100*Rm_multi
-    sleep(twist90T)
-    r.motors[0] = 0
-    r.motors[1] = 0
-
-TwistRateRight270 = 162
-
-def Right_twist270():  #twist 270 to go back to starting orientation before picking up the box. We pick up the box, store, then move back
-    twist270T = 270/TwistRateRight270
-    r.motors[0] = 0
-    r.motors[1] = 100*Rm_multi
-    sleep(twist270T)
-    r.motors[0] = 0
-    r.motors[1] = 0
+def set_claw_servo_to_angle(angle):
+#angle range = 1700 , 4600, 7500
+#mid value 70 
+    value = 1700 + int(angle/180*5800)
+    bus.write_byte_data(0x08, 3, value >> 8)
+    bus.write_byte_data(0x08, 4, value & 0xff)
 
 
 
 analyse()
-if len(gemlist) >0:
-    spin(gemlist[0].bearing.y)
-    move(gemlist[0].dist)
+if len(gemlist) !=0:
 
-    
+    set_arm_servo_to_angle(70)
+    sleep(2)
+    twist(gemlist[0].bearing.y)
+    sleep(1)
+    move(gemlist[0].dist-0.05, 0.5)
+    sleep(2)
+    twist(-90)
+    sleep(1)
+    set_arm_servo_to_angle(0)
+    sleep(2)
+    set_claw_servo_to_angle(160)
+    sleep(2)
+    set_arm_servo_to_angle(180)
+    sleep(3)
+    set_claw_servo_to_angle(10)
+    sleep(1)
+    set_arm_servo_to_angle(70)
+    print("yay")
+
+
+
+# markers = r.see()
+# newmarker = []
+# for i in range(len(markers)):
+#     newmarker.append(markers[i-1])
+#     print(newmarker[i-1].bearing.y)
+
