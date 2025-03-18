@@ -1,7 +1,7 @@
 import math
 from operator import attrgetter  #function which will fetch the attribute from each object
 
-team = r.zone()
+team = r.zone
 
 # dictionary to store vals for each team
 team_values = {
