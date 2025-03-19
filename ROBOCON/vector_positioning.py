@@ -13,7 +13,7 @@ def rotate_tags(tags, zone):
         tag[2] += 90*rotation
         tag[2] %= 360
 
-wall_tags = [
+wall_tags = [ #default for zone 2
     [-2.5, 3, 90],
     [-1.5, 3, 90],
     [-0.5, 3, 90],
@@ -48,10 +48,10 @@ def arena_update(distance, bearing, rotation, id):
     global selfpos
     id -= 100
     tag_normal = wall_tags[id][2]
-    selfpos[2] = tag_normal + rotation - bearing
+    selfpos[2] = tag_normal + bearing - rotation
     selfpos[2] %= 360
-    vector_to_tag = compute_vector(distance, tag_normal + rotation)
-    #print(vector_to_tag)
+    vector_to_tag = compute_vector(distance, tag_normal - rotation)
+    print(vector_to_tag)
     selfpos[0] = wall_tags[id][0] - vector_to_tag[0]
     selfpos[1] = wall_tags[id][1] - vector_to_tag[1]
 
@@ -67,5 +67,5 @@ def pos_update(distance, angle):
 #rotate_tags(wall_tags,0)
 #print(wall_tags)
 #print(compute_vector(5, 210))
-#arena_update(0.05, 30, 50, 100)
+#arena_update(1, 50, 30, 123)
 #print(selfpos)
