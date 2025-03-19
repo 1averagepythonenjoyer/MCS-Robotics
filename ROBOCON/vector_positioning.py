@@ -44,6 +44,17 @@ def compute_vector(dist, angle):
     vector = [round(dist * math.cos(math.radians(angle)), 4), round(dist * math.cos(math.radians(90-angle)), 4)]
     return vector
 
+def arena_update(distance, bearing, rotation, id):
+    global selfpos
+    id -= 100
+    tag_normal = wall_tags[id][2]
+    selfpos[2] = tag_normal + rotation - bearing
+    selfpos[2] %= 360
+    vector_to_tag = compute_vector(distance, tag_normal + rotation)
+    #print(vector_to_tag)
+    selfpos[0] = wall_tags[id][0] - vector_to_tag[0]
+    selfpos[1] = wall_tags[id][1] - vector_to_tag[1]
+
 def pos_update(distance, angle):
     global selfpos
     coords = compute_vector(distance, selfpos[2])
