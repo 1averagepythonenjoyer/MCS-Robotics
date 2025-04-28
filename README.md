@@ -6,4 +6,4 @@ We took home first place. The code for the competition can be found in the /piwa
 Files with more obscure names were named because of the names of the challenges set by the competition (more info in the files)
 
 
-We are currently working on a project for ROBOCON 2025. 
+Our project an entry to ROBOCON 2025 ended with us winning the award for Best Engineering Innovation, missing out on the win due to bad luck with our robot getting stuck with another one. 
