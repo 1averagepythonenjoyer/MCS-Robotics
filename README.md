@@ -7,3 +7,4 @@ Files with more obscure names were named because of the names of the challenges 
 
 
 Our project an entry to ROBOCON 2025 ended with us winning the award for Best Engineering Innovation, missing out on the win due to bad luck with our robot getting stuck with another one. 
+Code files (not up to date) and CAD files can be found in the ROBOCON folder
