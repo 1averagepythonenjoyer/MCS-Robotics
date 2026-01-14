@@ -1,6 +1,3 @@
-
-
-
 //teleop vs autoop for manual vs auto (selects itself)
 package org.firstinspires.ftc.teamcode;
 
