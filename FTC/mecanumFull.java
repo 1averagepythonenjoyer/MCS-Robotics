@@ -1,3 +1,7 @@
+//OTHER MECANUM FILE ORIGINALLY ON GITHUB DOUBLE CHECK IF THIS WILL WORK
+
+
+
 //teleop vs autoop for manual vs auto (selects itself)
 package org.firstinspires.ftc.teamcode;
 
@@ -20,7 +24,7 @@ public class mecanumFull extends LinearOpMode {
     private DcMotor backRight;
 
 
-    int ROBOT_WHEEL_TO_WHEEL_WIDTH_MM;
+    double ROBOT_WHEEL_TO_WHEEL_WIDTH_MM;
     double max_velocity_tps;
     double self_x;
     float forwardBack;
@@ -38,23 +42,24 @@ public class mecanumFull extends LinearOpMode {
 
     /*set and calculate motor values */
     private void INIT_ROBOT_SPECS() {
-        int wheel_max_rpm;
-        int COUNTS_PER_MOTOR_REV;
-        int DRIVE_GEAR_REDUCTION;
-        int WHEEL_DIAMETER_MM;
+        double wheel_max_rpm;
+        double COUNTS_PER_MOTOR_REV;
+        double DRIVE_GEAR_REDUCTION;
+        double WHEEL_DIAMETER_MM;
         double WHEEL_CIRCUMFERENCE_MM;
-        int COUNTS_PER_WHEEL_REV;
+        double COUNTS_PER_WHEEL_REV;
 
-        ROBOT_WHEEL_TO_WHEEL_WIDTH_MM = 395;
-        // Measured from centre of wheel. Very rough I have no idea if this is accurate or not ¯\_(ツ)_/¯
-        // after 20:1 gear reduction
-        wheel_max_rpm = 300;
-        // Useful encoder data
-        COUNTS_PER_MOTOR_REV = 28;
-        DRIVE_GEAR_REDUCTION = 20;
-        WHEEL_DIAMETER_MM = 65;
+        ROBOT_WHEEL_TO_WHEEL_WIDTH_MM = 405.85;
+        //gobilda specs
+        wheel_max_rpm = 312.0;
+        COUNTS_PER_MOTOR_REV = 28.0;
+
+        DRIVE_GEAR_REDUCTION = (1.0 + (46.0 / 17.0)) * (1.0 + (46.0 / 11.0)); //needs .0 otherwise java automatically rounds
+
+        WHEEL_DIAMETER_MM = 104.0;
         WHEEL_CIRCUMFERENCE_MM = WHEEL_DIAMETER_MM * Math.PI;
-        COUNTS_PER_WHEEL_REV = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+
+        COUNTS_PER_WHEEL_REV = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION; // ~537.689
         COUNTS_PER_MM = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE_MM;
         max_velocity_tps = (wheel_max_rpm / 60.0) * COUNTS_PER_WHEEL_REV;
     }
@@ -81,18 +86,19 @@ public class mecanumFull extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-
-        // Put initialization blocks here.
-        // Motor and wheel data (constants)
         INIT_START_COORDS();
         INIT_ROBOT_SPECS();
         MOTOR_SETTINGS_ENCODER();
+
         waitForStart();
+
         if (opModeIsActive()) {
-            // Put run blocks here.
             slow_mode_multi = 1;
+
             while (opModeIsActive()) {
                 MECANUM_DRIVE_VELOCITY();
+                // This will now show correctly because we fixed the logic below
+                telemetry.addData("Slow Mode Active", gamepad1.left_bumper);
                 telemetry.update();
             }
         }
@@ -137,12 +143,9 @@ public class mecanumFull extends LinearOpMode {
 
     /*TeleOp Manual Control Function */
     private void MECANUM_DRIVE_VELOCITY() {
-        float leftFrontVelo;
-        float rightFrontVelo;
-        float leftBackVelo;
-        float rightBackVelo;
+        float leftFrontVelo, rightFrontVelo, leftBackVelo, rightBackVelo;
         float max_motor_val;
-
+        float deadzone = 0.1f;
 
         // Determining movement based on gamepad inputs
         forwardBack = gamepad1.left_stick_y;
@@ -150,6 +153,9 @@ public class mecanumFull extends LinearOpMode {
         strafe = gamepad1.right_stick_x;
         turn = gamepad1.left_stick_x;
 
+        if (Math.abs(forwardBack) < deadzone) forwardBack = 0;
+        if (Math.abs(strafe) < deadzone) strafe = 0;
+        if (Math.abs(turn) < deadzone) turn = 0;
 
         leftFrontVelo = (forwardBack + strafe) + turn;
         leftBackVelo = (forwardBack - strafe) + turn;
@@ -158,20 +164,10 @@ public class mecanumFull extends LinearOpMode {
 
 
 
-
-
-
-
-
-
-
-
-        if (gamepad1.left_bumper){
-            slow_mode_multi = 2;
-        }
-
-        else if (!gamepad1.left_bumper){
-            slow_mode_multi = 1;
+        if (gamepad1.left_bumper) {
+            slow_mode_multi = 2; // Divides speed by 2
+        } else {
+            slow_mode_multi = 1; // Normal speed
         }
 
 
