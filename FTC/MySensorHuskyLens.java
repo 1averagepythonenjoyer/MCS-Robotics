@@ -49,6 +49,12 @@ public class MySensorHuskyLens extends LinearOpMode {
     private final int READ_PERIOD = 1;
 
     private HuskyLens huskyLens;
+    // Optical Constants for HuskyLens (OV2640)
+    // F_PX = (F_mm * ImageWidth_px) / SensorWidth_mm
+    // F_PX = (4.6 * 320) / 3.52 = 418.18
+    final double FOCAL_LENGTH_PX = 418.18; 
+    final double REAL_TAG_WIDTH_MM = 100.0; // 10cm DECODE tags
+    final int SCREEN_CENTER_X = 160;
     
     public double[] computeVector(int dist, int angle)
     {
@@ -84,7 +90,25 @@ public class MySensorHuskyLens extends LinearOpMode {
                     telemetry.addData("Pattern", ids[blocks[i].id-1]);
                 }
                 else if (blocks[i].id == 4 || blocks[i].id == 5) {
-                    double[] vector_to_tag = computeVector()
+                    // --- DISTANCE CALCULATION ---
+                    // formula: Z = (W_real * f_pixel) / W_pixel
+                    double distance_mm = (REAL_TAG_WIDTH_MM * FOCAL_LENGTH_PX) / blocks[i].width;
+            
+                    // --- BEARING CALCULATION ---
+                    // formula: theta = atan(offset / f)
+                    double offset_px = blocks[i].x - SCREEN_CENTER_X;
+                    double bearing_deg = Math.toDegrees(Math.atan2(offset_px, FOCAL_LENGTH_PX));
+            
+                    // --- TELEMETRY ---
+                    telemetry.addData("Tag ID", tag.id);
+                    telemetry.addData("Distance (mm)", "%.1f", distance_mm);
+                    telemetry.addData("Bearing (deg)", "%.1f", bearing_deg);
+                    
+                    // Save these to global variables?
+                    // target_distance = distance_mm;
+                    // target_bearing = bearing_deg;
+                    double[] vector_to_tag = computeVector(distance_mm, bearing_deg)
+                    telemetry.addData("Vector to tag:", vector_to_tag)
                 }
             }
 
