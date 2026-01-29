@@ -13,6 +13,12 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "Sensor: HuskyLens", group = "Sensor")
 
+public double[] computeVector(int dist, int angle)
+    {
+        double[] vector = {dist * Math.cos(Math.toRadians(angle)), dist * Math.cos(Math.toRadians(90-angle))};
+        return vector;
+    }
+    
 public class MySensorHuskyLens extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
@@ -23,13 +29,7 @@ public class MySensorHuskyLens extends LinearOpMode {
     // F_PX = (4.6 * 320) / 3.52 = 418.18
     final double FOCAL_LENGTH_PX = 418.18; 
     final double REAL_TAG_WIDTH_MM = 100.0; // 10cm DECODE tags
-    final int SCREEN_CENTER_X = 160;
-    
-    public double[] computeVector(int dist, int angle)
-    {
-        double[] vector = {dist * Math.cos(Math.toRadians(angle)), dist * Math.cos(Math.toRadians(90-angle))};
-        return vector;
-    }
+    final int SCREEN_CENTER_X = 160
     
     @Override
     public void runOpMode()
