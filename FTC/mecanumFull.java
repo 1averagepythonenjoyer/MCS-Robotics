@@ -1,8 +1,3 @@
-//OTHER MECANUM FILE ORIGINALLY ON GITHUB DOUBLE CHECK IF THIS WILL WORK
-
-
-
-//teleop vs autoop for manual vs auto (selects itself)
 package org.firstinspires.ftc.teamcode;
 
 
