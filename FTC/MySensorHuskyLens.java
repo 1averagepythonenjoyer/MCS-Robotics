@@ -13,13 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "Sensor: HuskyLens", group = "Sensor")
 
-public double[] computeVector(int dist, int angle)
+
+    
+public class MySensorHuskyLens extends LinearOpMode {
+    public double[] computeVector(double dist, double angle)
     {
         double[] vector = {dist * Math.cos(Math.toRadians(angle)), dist * Math.cos(Math.toRadians(90-angle))};
         return vector;
     }
-    
-public class MySensorHuskyLens extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
 
@@ -29,7 +30,7 @@ public class MySensorHuskyLens extends LinearOpMode {
     // F_PX = (4.6 * 320) / 3.52 = 418.18
     final double FOCAL_LENGTH_PX = 418.18; 
     final double REAL_TAG_WIDTH_MM = 100.0; // 10cm DECODE tags
-    final int SCREEN_CENTER_X = 160
+    final int SCREEN_CENTER_X = 160;
     
     @Override
     public void runOpMode()
@@ -69,15 +70,15 @@ public class MySensorHuskyLens extends LinearOpMode {
                     double bearing_deg = Math.toDegrees(Math.atan2(offset_px, FOCAL_LENGTH_PX));
             
                     // --- TELEMETRY ---
-                    telemetry.addData("Tag ID", tag.id);
+                    telemetry.addData("Tag ID", blocks[i].id);
                     telemetry.addData("Distance (mm)", "%.1f", distance_mm);
                     telemetry.addData("Bearing (deg)", "%.1f", bearing_deg);
                     
                     // Save these to global variables?
                     // target_distance = distance_mm;
                     // target_bearing = bearing_deg;
-                    double[] vector_to_tag = computeVector(distance_mm, bearing_deg)
-                    telemetry.addData("Vector to tag:", vector_to_tag)
+                    double[] vector_to_tag = computeVector(distance_mm, bearing_deg);
+                    telemetry.addData("Vector to tag:", vector_to_tag);
                 }
             }
 
