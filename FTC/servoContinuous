@@ -1,0 +1,27 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+
+@Autonomous(name = "hgfgdhjk (Blocks to Java)")
+public class servoContinuous extends LinearOpMode {
+
+  private Servo s1;
+  @Override
+  public void runOpMode() {
+    s1 = hardwareMap.get(Servo.class, "s1AsServo");
+
+    // Put initialization blocks here.
+    waitForStart();
+    if (opModeIsActive()) {
+      // Put run blocks here.
+      s1.setPwmEnable();
+      s1.setDirection(Servo.Direction.REVERSE);
+      while (opModeIsActive()) {
+        // Put loop blocks here.
+        telemetry.update();
+      }
+    }
+  }
+}
