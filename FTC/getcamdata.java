@@ -1,5 +1,3 @@
-//wrap the stuff inside "while (opModeisActive){} into a function called "getcamdata()" please
-//********************************************************************************************//
 
 
 package org.firstinspires.ftc.teamcode;
