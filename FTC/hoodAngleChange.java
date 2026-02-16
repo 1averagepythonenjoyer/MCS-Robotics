@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 
 
-@TeleOp(name = "meow")
+@TeleOp(name = "hoodAngleChangeTest")
 public class hoodAngleChange extends LinearOpMode {
     private CRServo s1;
 
