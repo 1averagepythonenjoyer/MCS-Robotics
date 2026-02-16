@@ -15,11 +15,11 @@ public class SwitchChecking extends LinearOpMode {
         hoodSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         waitForStart();
-//        if (opModeIsActive()) return;
 
         telemetry.addLine("Loop start.");
         while (opModeIsActive()) {
             telemetry.addData("Switch State", hoodSwitch.getState());
+            telemetry.update();
         }
         telemetry.addLine("Loop end.");
     }
