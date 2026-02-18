@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name = "storageKickers")
+@TeleOp(name = "storageKicker")
 public class storageKickers extends LinearOpMode {
 
     private Servo storageServo1;
@@ -70,6 +70,8 @@ public class storageKickers extends LinearOpMode {
             storageServo2.setPosition(startingServoPosition);
             storageServo3.setPosition(startingServoPosition);
 
+            ElapsedTime stopwatch = new ElapsedTime();       //Important set stopwatch
+
 
             waitForStart();
 
@@ -77,7 +79,6 @@ public class storageKickers extends LinearOpMode {
             while (opModeIsActive()) {
 
 
-                ElapsedTime timer = new ElapsedTime();
 
 
                 switch (currentState) {
@@ -96,20 +97,21 @@ public class storageKickers extends LinearOpMode {
 
                     case SERVO1_UP:
                         storageServo1.setPosition(startingServoPosition + 0.3);  // extend kicker - to push ball up
-                        timer.reset();
+                        stopwatch.reset();
                         currentState = SequenceState.SERVO1_WAIT_UP;
                         break;
 
                     case SERVO1_WAIT_UP:
-                        if (timer.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {  // Stay up for some period of time
+                        if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {  // Stay up for some period of time
                             storageServo1.setPosition(startingServoPosition);   //retract kicker
                             currentState = SequenceState.SERVO1_WAIT_DOWN;
+                            stopwatch.reset();
                         }
-                        timer.reset();
+
                         break;
 
                     case SERVO1_WAIT_DOWN:
-                        if (timer.seconds() >= DELAY_BETWEEN_KICKS) {       // going down for some period of time before next servo is launched
+                        if (stopwatch.seconds() >= DELAY_BETWEEN_KICKS) {       // going down for some period of time before next servo is launched
                             if (!sequenceActive) {
                                 currentState = SequenceState.IDLE;
                             } else {
@@ -121,20 +123,21 @@ public class storageKickers extends LinearOpMode {
 
                     case SERVO2_UP:
                         storageServo2.setPosition(startingServoPosition + 0.3);
-                        timer.reset();
+                        stopwatch.reset();
                         currentState = SequenceState.SERVO2_WAIT_UP;
                         break;
 
                     case SERVO2_WAIT_UP:
-                        if (timer.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {
+                        if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {
                             storageServo2.setPosition(startingServoPosition);
                             currentState = SequenceState.SERVO2_WAIT_DOWN;
+                            stopwatch.reset();
                         }
-                        timer.reset();
+
                         break;
 
                     case SERVO2_WAIT_DOWN:
-                        if (timer.seconds() >= DELAY_BETWEEN_KICKS) { // going down for some period of time before next servo is launched
+                        if (stopwatch.seconds() >= DELAY_BETWEEN_KICKS) { // going down for some period of time before next servo is launched
                             if (!sequenceActive) {
                                 currentState = SequenceState.IDLE;
                             } else {
@@ -147,20 +150,21 @@ public class storageKickers extends LinearOpMode {
                     case SERVO3_UP:
                         storageServo3.setPosition(startingServoPosition + 0.3);
 
-                        timer.reset();
+                        stopwatch.reset();
                         currentState = SequenceState.SERVO3_WAIT_UP;
                         break;
 
                     case SERVO3_WAIT_UP:
-                        if (timer.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {
+                        if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {
                             storageServo3.setPosition(startingServoPosition);
                             currentState = SequenceState.SERVO3_WAIT_DOWN;
+                            stopwatch.reset();
                         }
-                        timer.reset();
+
                         break;
 
                     case SERVO3_WAIT_DOWN:
-                        if (timer.seconds() >= DELAY_BETWEEN_KICKS) { // going down for some period of time before next servo is launched
+                        if (stopwatch.seconds() >= DELAY_BETWEEN_KICKS) { // going down for some period of time before next servo is launched
 
                             currentState = SequenceState.IDLE;   // either way this is the end of the sequence so must be idle
                             sequenceActive = false;
