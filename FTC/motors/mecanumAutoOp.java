@@ -93,22 +93,21 @@ public class mecanumAutoOp extends LinearOpMode {
         telemetry.addData("Status", "Initialized. Waiting for Start...");
         telemetry.update();
 
+        PathChain path = follower.pathBuilder()
+                .addPath(new BezierLine(new Pose(0, 0, 0), new Pose(100, 0, 0))).build();
+        follower.followPath(path);
+
         waitForStart();
 
         if (opModeIsActive()) {
-            PathChain path = follower.pathBuilder()
-                    .addPath(new BezierLine(new Pose(0, 0, 0), new Pose(100, 0, 0))).build();
-            follower.followPath(path);
             while (opModeIsActive() && follower.isBusy()) {
-                
                  follower.update();
 
-                 telemetry.addData("X", follower.getPose().getX());
-                 telemetry.addData("Y", follower.getPose().getY());
-                 telemetry.addData("Heading", follower.getPose().getHeading());
-                
-                telemetry.addData("Slow Mode Active", gamepad1.left_bumper);
-                telemetry.update();
+                 Pose pose = follower.getPose();
+                 telemetry.addData("X", pose.getX());
+                 telemetry.addData("Y", pose.getY());
+                 telemetry.addData("Heading°", Math.toRadians(pose.getHeading()));
+                 telemetry.update();
             }
             follower.breakFollowing();
         }
