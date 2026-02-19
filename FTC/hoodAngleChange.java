@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class hoodAngleChange extends LinearOpMode {
 
     private CRServo hoodServo;
-    private DigitalChannel hoodSwitch;
+    //private DigitalChannel hoodSwitch;
     private DcMotor flywheel;                                                  // Comment this to test without flywheel
 
     enum launchState {
@@ -31,9 +31,9 @@ public class hoodAngleChange extends LinearOpMode {
     launchState currentState = launchState.Idle;
 
     // function to check switch to return bool
-    public boolean switchStatus() {
-        return !hoodSwitch.getState();
-    }
+    //public boolean switchStatus() {
+        //return !hoodSwitch.getState();
+    //}
 
     @Override
     public void runOpMode() {
@@ -41,13 +41,13 @@ public class hoodAngleChange extends LinearOpMode {
         hoodServo = hardwareMap.get(CRServo.class, "s1AsServo");
         flywheel = hardwareMap.get(DcMotor.class, "flywheel");                   // Comment this to test without flywheel
 
-        hoodSwitch = hardwareMap.get(DigitalChannel.class, "hoodSwitch");
-        hoodSwitch.setMode(DigitalChannel.Mode.INPUT);
+        //hoodSwitch = hardwareMap.get(DigitalChannel.class, "hoodSwitch");
+        //hoodSwitch.setMode(DigitalChannel.Mode.INPUT);
 
-        final double TIME_FACTOR = 0.002;                                       // Tune this factor!!    - factor to calculate how far to move the hood Servo
+        final double TIME_FACTOR = 0.2;                                       // Tune this factor!!    - factor to calculate how far to move the hood Servo
         final double FLYWHEEL_SPINNING_PERIOD = 5.0;                            // Tune this factor!!    - Period of time in seconds during which the ball will be pushed to the flywheel and launched
-        final double DEFAULT_HOOD_SERVO_POWER =   0.8 ;                         // Tune this factor!!
-        final double DEFAULT_FLYWHEEL_POWER =   0.8 ;                           // Tune this factor!!
+        final double DEFAULT_HOOD_SERVO_POWER =   1.0;                         // Tune this factor!!
+        final double DEFAULT_FLYWHEEL_POWER =   0.7;                           // Tune this factor!!
         double ANGLE_TO_ROTATE = 10;                    //in degrees            // This value needs to be adapted to be calculated using input from the camera's april tag info
 
 
@@ -57,29 +57,28 @@ public class hoodAngleChange extends LinearOpMode {
         hoodServo.setDirection(CRServo.Direction.FORWARD);
 
         telemetry.addLine("Initialized. Waiting for start...");
-        telemetry.update();
 
         waitForStart();
 
 
 
-
+        if (opModeIsActive()){
 
         while (opModeIsActive()) {
 
             switch (currentState) {
 
                 case Idle:
-                    if (gamepad2.x) {                                             //only for testing - IDEALLY replaced by a function that calculates angle automatically
+                    if (gamepad1.x) {                                             //only for testing - IDEALLY replaced by a function that calculates angle automatically
                         currentState = launchState.Power_Servo_And_Flywheel;
                         ANGLE_TO_ROTATE = 3;
-                    } else if (gamepad2.y) {
+                    } else if (gamepad1.y) {
                         currentState = launchState.Power_Servo_And_Flywheel;
                         ANGLE_TO_ROTATE = 7;
-                    } else if (gamepad2.a) {
+                    } else if (gamepad1.a) {
                         currentState = launchState.Power_Servo_And_Flywheel;
                         ANGLE_TO_ROTATE = 11;
-                    } else if (gamepad2.b) {
+                    } else if (gamepad1.b) {
                         currentState = launchState.Power_Servo_And_Flywheel;
                         ANGLE_TO_ROTATE = 15;                                                //MAXIMUM ANGLE
                     }
@@ -99,14 +98,12 @@ public class hoodAngleChange extends LinearOpMode {
                     telemetry.addData("Target Time", TIME_FACTOR * ANGLE_TO_ROTATE);
                     telemetry.addData("Status", "Shooting!");
 
-                    telemetry.update();
-
                     currentState = launchState.Stop_Servo;
                     break;
 
                 case Stop_Servo:
 
-                    if (stopwatch.seconds() >=  TIME_FACTOR * ANGLE_TO_ROTATE) {
+                    if (stopwatch.seconds() >=  TIME_FACTOR * ANGLE_TO_ROTATE){
                         hoodServo.setPower(0);
                         currentState = launchState.Stop_Flywheel;
 
@@ -119,26 +116,30 @@ public class hoodAngleChange extends LinearOpMode {
 
                     if (stopwatch.seconds() >= FLYWHEEL_SPINNING_PERIOD) {                          //NOTE: (FLYWHEEL_SPINNING_PERIOD) must be much greater than (TIME_FACTOR * ANGLE_TO_ROTATE)
                         flywheel.setPower(0);                                                           // Comment this to test without flywheel
-                        currentState = launchState.Retract_Servo;
-                    }
-                    break;
-
-                case Retract_Servo:
-                    // If the switch is not pressed, move backwards to find home
-                    if (!switchStatus()) {
-                        hoodServo.setPower(-0.5);
-
-                        telemetry.addData("Status", "Retracting (Finding Zero)");
-                    }
-                    // If the switch is pressed, stop
-                    else {
-                        hoodServo.setPower(0);
-
-                        telemetry.addData("Status", "Ready to Aim the Hood");
                         currentState = launchState.Idle;
                     }
                     break;
+
+                // case Retract_Servo:
+                //     // If the switch is not pressed, move backwards to find home
+                //     if (!switchStatus()) {
+                //         hoodServo.setPower(-0.5);
+
+                //         telemetry.addData("Status", "Retracting (Finding Zero)");
+                //     }
+                //     // If the switch is pressed, stop
+                //     else {
+                //         hoodServo.setPower(0);
+
+                //         telemetry.addData("Status", "Ready to Aim the Hood");
+                //         currentState = launchState.Idle;
+                //     }
+                //     break;
             }
+            telemetry.update();
         }
+        
+    }
+    
     }
 }
