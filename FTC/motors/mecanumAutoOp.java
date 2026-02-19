@@ -5,14 +5,12 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
-import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,6 +27,10 @@ public class mecanumAutoOp extends LinearOpMode {
         .rightRearMotorName("backRight")
         .leftRearMotorName("backLeft")
         .leftFrontMotorName("frontLeft")
+        .leftFrontMotorDirection(DcMotorEx.Direction.FORWARD)
+        .leftRearMotorDirection(DcMotorEx.Direction.REVERSE)
+        .rightFrontMotorDirection(DcMotorEx.Direction.FORWARD)
+        .rightRearMotorDirection(DcMotorEx.Direction.FORWARD);
 
     public static PinpointConstants localiserConstants = new PinpointConstants()
             .forwardPodY(-168)
@@ -39,14 +41,12 @@ public class mecanumAutoOp extends LinearOpMode {
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .yawScalar(-1);
-//    private PinpointLocalizer localiser = new PinpointLocalizer(hardwareMap, localiserConstants);
 
     private DcMotorEx frontLeft;
     private DcMotorEx frontRight;
     private DcMotorEx backLeft;
     private DcMotorEx backRight;
 
-    // // TODO: declare pedro follower
      private Follower follower;
 
     double max_velocity_tps;
@@ -61,16 +61,6 @@ public class mecanumAutoOp extends LinearOpMode {
                 .mecanumDrivetrain(driveConstants)
                 .pinpointLocalizer(localiserConstants)
                 .build();
-    }
-
-    private void INIT_ROBOT_SPECS() {
-        // goBilda specs
-        double wheel_max_rpm = 312.0;
-        double COUNTS_PER_MOTOR_REV = 28.0;
-        double DRIVE_GEAR_REDUCTION = (1.0 + (46.0 / 17.0)) * (1.0 + (46.0 / 11.0)); // 19.2032...
-        
-        double COUNTS_PER_WHEEL_REV = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION; // ~537.689
-        max_velocity_tps = (wheel_max_rpm / 60.0) * COUNTS_PER_WHEEL_REV;
     }
 
     private void INIT_HARDWARE() {
@@ -91,21 +81,13 @@ public class mecanumAutoOp extends LinearOpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-
         createFollower(hardwareMap);
     }
 
     @Override
     public void runOpMode() {
-        INIT_ROBOT_SPECS();
         INIT_HARDWARE();
 
-        follower.setStartingPose(new Pose(0, 0, 0));
         follower.setStartingPose(new Pose(0, 0, 0));
 
         telemetry.addData("Status", "Initialized. Waiting for Start...");
@@ -117,12 +99,10 @@ public class mecanumAutoOp extends LinearOpMode {
             PathChain path = follower.pathBuilder()
                     .addPath(new BezierLine(new Pose(0, 0, 0), new Pose(100, 0, 0))).build();
             follower.followPath(path);
-            while (opModeIsActive()) {
+            while (opModeIsActive() && follower.isBusy()) {
                 
-                // // TODO (Pedro): Call follower.update every loop to keep Pinpoint tracking alive
                  follower.update();
 
-                // // TODO (Pedro): Print actual Pinpoint coordinates to telemetry
                  telemetry.addData("X", follower.getPose().getX());
                  telemetry.addData("Y", follower.getPose().getY());
                  telemetry.addData("Heading", follower.getPose().getHeading());
