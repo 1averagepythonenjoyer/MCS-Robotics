@@ -136,6 +136,8 @@ public class hoodAngleChange extends LinearOpMode {
                 //     }
                 //     break;
             }
+            
+            telemetry.addData("Stopwatch","%.3f", stopwatch.seconds())   // apparently you dont need to convert the double to a string
             telemetry.update();
         }
         
