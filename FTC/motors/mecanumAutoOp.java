@@ -10,6 +10,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +19,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "AutoOp: Base (Pedro Prepped)")
+@Autonomous(name = "AutoOp: Base (Pedro Prepped)")
 public class mecanumAutoOp extends LinearOpMode {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(5);
@@ -28,10 +29,6 @@ public class mecanumAutoOp extends LinearOpMode {
         .rightRearMotorName("backRight")
         .leftRearMotorName("backLeft")
         .leftFrontMotorName("frontLeft")
-        .leftFrontMotorDirection(DcMotorEx.Direction.REVERSE)
-        .leftRearMotorDirection(DcMotorEx.Direction.REVERSE)
-        .rightFrontMotorDirection(DcMotorEx.Direction.FORWARD)
-        .rightRearMotorDirection(DcMotorEx.Direction.FORWARD) ;
 
     public static PinpointConstants localiserConstants = new PinpointConstants()
             .forwardPodY(-168)
@@ -109,6 +106,7 @@ public class mecanumAutoOp extends LinearOpMode {
         INIT_HARDWARE();
 
         follower.setStartingPose(new Pose(0, 0, 0));
+        follower.setStartingPose(new Pose(0, 0, 0));
 
         telemetry.addData("Status", "Initialized. Waiting for Start...");
         telemetry.update();
@@ -132,6 +130,7 @@ public class mecanumAutoOp extends LinearOpMode {
                 telemetry.addData("Slow Mode Active", gamepad1.left_bumper);
                 telemetry.update();
             }
+            follower.breakFollowing();
         }
     }
 }
