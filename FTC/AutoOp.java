@@ -1,4 +1,3 @@
-package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -285,7 +284,8 @@ public class AutoOp extends OpMode {
 
     public void turretLogic() {
 //            AprilTagDetection curID = new AprilTagDetection();
-        double deltaTime = turretTimer.getElapsedTime();
+        double deltaTime = turretTimer.getElapsedTimeSeconds();
+        turretTimer.resetTimer();
 
 //            double error = goalX - curID.ftcPose.bearing;
         double error = goalX - 0.1; // Placeholder
@@ -307,7 +307,5 @@ public class AutoOp extends OpMode {
 
         turretMotor.setPower(power);
         lastError = error;
-
-        turretTimer.resetTimer();
     }
 }
