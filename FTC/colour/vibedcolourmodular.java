@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 /**
  * Modular Ball Color Detector - can be easily integrated into any OpMode
  * Detects purple/green balls in 3 storage slots with debouncing
+ * ACTUALLY USEFUL FUNCTION IS IN LINE 110
  */
 public class BallColorDetectorModule {
     
@@ -68,6 +69,49 @@ public class BallColorDetectorModule {
      */
     public String getSlot3Color() {
         return state3.getStableReading();
+    }
+    
+    /**
+     * EASY MODE: Get slot 1 color only if stable, otherwise returns null
+     * Usage: String color = getSlot1IfStable();
+     *        if (color != null) { /* safe to use */ }
+     */
+    public String getSlot1IfStable() {
+        return state1.isStable() ? state1.getStableReading() : null;
+    }
+    
+    /**
+     * EASY MODE: Get slot 2 color only if stable, otherwise returns null
+     */
+    public String getSlot2IfStable() {
+        return state2.isStable() ? state2.getStableReading() : null;
+    }
+    
+    /**
+     * EASY MODE: Get slot 3 color only if stable, otherwise returns null
+     */
+    public String getSlot3IfStable() {
+        return state3.isStable() ? state3.getStableReading() : null;
+    }
+    
+    /**
+     * SUPER EASY MODE: Get all colors only if ALL are stable, otherwise returns null
+     * This is the safest way to read - you know all readings are reliable
+     * 
+     * Usage: 
+     *   String[] colors = getAllColorsIfStable();
+     *   if (colors != null) {
+     *       // All readings are stable and safe to use!
+     *       String slot1 = colors[0];
+     *       String slot2 = colors[1];
+     *       String slot3 = colors[2];
+     *   }
+     */
+    public String[] getAllColorsIfStable() {
+        if (allSlotsStable()) {
+            return getAllColors();
+        }
+        return null;
     }
     
     /**
