@@ -49,7 +49,7 @@ public class StateMachineStandalone extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public enum PathState {
-        DRIVE_STARTPOS_SHOOTPOS,
+        DRIVE_START_POS_TO_SHOOT_POS,
         SHOOT_PRELOAD,
     }
     PathState pathState;
@@ -57,7 +57,7 @@ public class StateMachineStandalone extends OpMode {
     private final Pose shootPose = new Pose(68.57275902211875, 74.71944121071013, Math.toRadians((135)));
     private PathChain driveStartPosShootPos;
 
-    public void builtPaths() {
+    public void buildPaths() {
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
@@ -66,7 +66,7 @@ public class StateMachineStandalone extends OpMode {
 
     public void statePathUpdate() {
         switch(pathState) {
-            case DRIVE_STARTPOS_SHOOTPOS:
+            case DRIVE_START_POS_TO_SHOOT_POS:
                 follower.followPath(driveStartPosShootPos, true);
                 setPathState(PathState.SHOOT_PRELOAD);
                 break;
@@ -106,8 +106,6 @@ public class StateMachineStandalone extends OpMode {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        createFollower(hardwareMap);
     }
 
 
@@ -118,13 +116,13 @@ public class StateMachineStandalone extends OpMode {
 
     @Override
     public void init() {
-        pathState = PathState.DRIVE_STARTPOS_SHOOTPOS;
+        pathState = PathState.DRIVE_START_POS_TO_SHOOT_POS;
         pathTimer = new Timer();
         opModeTimer = new Timer();
         createFollower(hardwareMap);
         INIT_HARDWARE();
 
-        builtPaths();
+        buildPaths();
         follower.setPose(startPose);
     }
 
