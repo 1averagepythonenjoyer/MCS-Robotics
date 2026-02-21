@@ -253,15 +253,14 @@ public class BallColorDetector {
         private BallColor stableColor      = BallColor.UNKNOWN;
 
         void addReading(BallColor reading) {
-            // Fix 2: ignore null readings from hardware hiccups — do not update any state
+            // Fix 2: ignore null readings from hardware — do not update any state
             if (reading == null) return;
 
             if (reading == lastReading) {
-                // Enum comparison with == is correct and preferred — no .equals() needed
                 consecutiveCount++;
             } else {
                 // Fix 1: reading changed — reset streak AND immediately unlatch stableColor
-                // so a removed ball is never reported as still present
+                // so a removed ball is never reported as still present and UNKNOWN
                 lastReading      = reading;
                 consecutiveCount = 1;
                 stableColor      = BallColor.UNKNOWN;
@@ -272,7 +271,7 @@ public class BallColorDetector {
             }
         }
 
-        // String conversion happens only here at the public boundary
+        // Only converts string at public boundary
         String getStableReading() { return stableColor.name(); }
 
         // Used internally by isStorageFull() and isStorageEmpty() to avoid String conversion
