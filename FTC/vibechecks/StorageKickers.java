@@ -117,7 +117,7 @@ public class StorageKickers {
         switch (number) {
             case 1:  return storageServo1;
             case 2:  return storageServo2;
-            default: return storageServo3;
+            case 3:  return storageServo3;
         }
     }
 
