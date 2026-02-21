@@ -22,7 +22,7 @@ public class ShooterHood {
     private static final double DEFAULT_HOOD_SERVO_POWER = 1.0;
     private static final double HOMING_SERVO_POWER       = 0.5; // slower for homing
     private static final double DEFAULT_FLYWHEEL_POWER   = 0.7;
-    private static final double HOMING_TIMEOUT_SECONDS   = 5.0; // safety cutoff
+    private static final double HOMING_TIMEOUT_SECONDS   = 0.220; // safety cutoff
 
     // ── Servo time cap ────────────────────────────────────────────────────────
     // 0.220 seconds is the full travel time of the hood servo.
@@ -111,13 +111,11 @@ public class ShooterHood {
                 break;
 
             case RETRACT_SERVO:
-                // Drive hood back down in reverse until limit switch is pressed
                 hoodServo.setPower(-HOMING_SERVO_POWER);
                 // Position retreats at HOMING_SERVO_POWER units per second
                 servoPosition = Math.max(
                         retractStartPosition - stopwatch.seconds() * HOMING_SERVO_POWER,
                         0.0);
-
                 if (servoPosition <= 0.0) {
                     // Position reached zero — we're home
                     hoodServo.setPower(0);
