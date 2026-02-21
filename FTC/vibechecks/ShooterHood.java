@@ -20,7 +20,7 @@ public class ShooterHood {
     private static final double TIME_FACTOR              = 0.2;
     private static final double FLYWHEEL_SPINNING_PERIOD = 5.0;
     private static final double DEFAULT_HOOD_SERVO_POWER = 1.0;
-    private static final double HOMING_SERVO_POWER       = 0.5; // slower for homing
+    private static final double HOMING_SERVO_POWER       = 1.0; // slower for homing
     private static final double DEFAULT_FLYWHEEL_POWER   = 0.7;
     private static final double HOMING_TIMEOUT_SECONDS   = 0.220; // safety cutoff
 
