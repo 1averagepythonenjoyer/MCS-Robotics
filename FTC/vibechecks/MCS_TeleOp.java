@@ -93,7 +93,7 @@ public class MCS_TeleOp extends LinearOpMode {
                 .mecanumDrivetrain(driveConstants)
                 .pinpointLocalizer(localiserConstants)
                 .build();
-        follower.setPose(new Pose(0, 0, 0));
+        follower.setPose(new Pose(0, 0, 0));  // this needs to be changed depending on our starting position in pedro pathing.
 
         // Home the hood before the match starts
         hood.homeBlocking();
