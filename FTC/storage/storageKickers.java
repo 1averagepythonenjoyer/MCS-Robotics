@@ -54,7 +54,7 @@ public class storageKickers extends LinearOpMode {
         storageServo2 = hardwareMap.get(Servo.class, "storageServo2");
         storageServo3 = hardwareMap.get(Servo.class, "storageServo3");
 
-        waitForStart();
+ 
 
 
 
