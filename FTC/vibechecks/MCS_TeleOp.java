@@ -96,7 +96,7 @@ public class MCS_TeleOp extends LinearOpMode {
         follower.setPose(new Pose(0, 0, 0));  // this needs to be changed depending on our starting position in pedro pathing.
 
         // Home the hood before the match starts
-        hood.homeBlocking();
+        //hood.homeBlocking(); ==NO LONGER USING BUTTON DONT NEED THIS CHECK IMPORTS
 
         telemetry.addData("Status", "Initialized — waiting for start");
         telemetry.update();
