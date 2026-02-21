@@ -54,23 +54,28 @@ public class storageKickers extends LinearOpMode {
         storageServo2 = hardwareMap.get(Servo.class, "storageServo2");
         storageServo3 = hardwareMap.get(Servo.class, "storageServo3");
 
- 
-
+    
+        storageServo3.setDirection(Servo.Direction.REVERSE);
 
 
 
 
             double startingServoPosition = 0;
-            double DELAY_KICKER_STAYING_UP_TIME = 0.3;
-            double DELAY_BETWEEN_KICKS = 1;
+            double DELAY_KICKER_STAYING_UP_TIME = 2;
+            double DELAY_BETWEEN_KICKS = 2; 
+            
+            double startingServo1Pos = 0.21;
+            double startingServo2Pos = 0.08;
+            double startingServo3Pos = 0.3;
 
             boolean sequenceActive = false;
+            double rotateFactor = 0.38;
 
 
             //    set servos to start positions
-            storageServo1.setPosition(startingServoPosition);
-            storageServo2.setPosition(startingServoPosition);
-            storageServo3.setPosition(startingServoPosition);
+            storageServo1.setPosition(startingServo1Pos);
+            storageServo2.setPosition(startingServo2Pos);
+            storageServo3.setPosition(startingServo3Pos);
 
             ElapsedTime stopwatch = new ElapsedTime();       //Important set stopwatch
 
@@ -85,31 +90,31 @@ public class storageKickers extends LinearOpMode {
 
                 switch (currentState) {
                     case IDLE:           // Check for Controller Inputs
-                        if (gamepad1.a) {                           //cross
+                        if (gamepad1.dpad_left) {                           //cross
                             currentState = SequenceState.SERVO1_UP;
-                        } else if (gamepad1.b) {                    //circle
+                        } else if (gamepad1.dpad_up) {                    //circle
                             currentState = SequenceState.SERVO2_UP;
-                        } else if (gamepad1.x) {                    //square
+                        } else if (gamepad1.dpad_right) {                    //square
                             currentState = SequenceState.SERVO3_UP;
-                        } else if (gamepad1.y) {                    //triangle
+                        } else if (gamepad1.dpad_down) {                    //triangle
                             currentState = SequenceState.SERVO1_UP;
                             sequenceActive = true;
                         }
                         break;
 
                     case SERVO1_UP:
-                        storageServo1.setPosition(startingServoPosition + 0.3);  // extend kicker - to push ball up
+                        storageServo1.setPosition(startingServo1Pos + rotateFactor);  // extend kicker - to push ball up
                         stopwatch.reset();
                         currentState = SequenceState.SERVO1_WAIT_UP;
-                        telemetry.addLine("Servo kicking up");
+                        telemetry.addLine("Servo 1 kicking up");
 
                         break;
 
                     case SERVO1_WAIT_UP:
                         if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {  // Stay up for some period of time
-                            storageServo1.setPosition(startingServoPosition);   //retract kicker
+                            storageServo1.setPosition(startingServo1Pos);   //retract kicker
                             currentState = SequenceState.SERVO1_WAIT_DOWN;
-                            telemetry.addLine("Servo going down");
+                            telemetry.addLine("Servo 1 going down");
 
                             stopwatch.reset();
                         }
@@ -128,18 +133,18 @@ public class storageKickers extends LinearOpMode {
 
 
                     case SERVO2_UP:
-                        storageServo2.setPosition(startingServoPosition + 0.3);
+                        storageServo2.setPosition(startingServo2Pos + rotateFactor);
                         stopwatch.reset();
                         currentState = SequenceState.SERVO2_WAIT_UP;
-                        telemetry.addLine("Servo kicking up");
+                        telemetry.addLine("Servo 2 kicking up");
 
                         break;
 
                     case SERVO2_WAIT_UP:
                         if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {
-                            storageServo2.setPosition(startingServoPosition);
+                            storageServo2.setPosition(startingServo2Pos);
                             currentState = SequenceState.SERVO2_WAIT_DOWN;
-                            telemetry.addLine("Servo going down");
+                            telemetry.addLine("Servo 2 going down");
 
                             stopwatch.reset();
                         }
@@ -158,8 +163,8 @@ public class storageKickers extends LinearOpMode {
 
 
                     case SERVO3_UP:
-                        storageServo3.setPosition(startingServoPosition + 0.3);
-                        telemetry.addLine("Servo kicking up");
+                        storageServo3.setPosition(startingServo3Pos + rotateFactor);
+                        telemetry.addLine("Servo 3 kicking up");
 
                         stopwatch.reset();
                         currentState = SequenceState.SERVO3_WAIT_UP;
@@ -167,10 +172,10 @@ public class storageKickers extends LinearOpMode {
 
                     case SERVO3_WAIT_UP:
                         if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP_TIME) {
-                            storageServo3.setPosition(startingServoPosition);
+                            storageServo3.setPosition(startingServo3Pos);
                             currentState = SequenceState.SERVO3_WAIT_DOWN;
                             stopwatch.reset();
-                            telemetry.addLine("Servo going down");
+                            telemetry.addLine("Servo 3 going down");
 
                         }
 
@@ -186,7 +191,9 @@ public class storageKickers extends LinearOpMode {
 
 
                 }
-
+                
+            telemetry.update();
+        
 
             }
         }
