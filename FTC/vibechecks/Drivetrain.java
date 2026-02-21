@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Drivetrain {
 
-    private DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    private final DcMotorEx frontLeft, frontRight, backLeft, backRight;  //changed all of these to final
 
     // goBilda specs
     private static final double WHEEL_MAX_RPM        = 312.0;
@@ -21,21 +21,23 @@ public class Drivetrain {
         backLeft   = hwMap.get(DcMotorEx.class, "backLeft");
         backRight  = hwMap.get(DcMotorEx.class, "backRight");
 
-        // Pedro pathing handles localization — motors must NOT fight its PID
+        // Pedro pathing handles localization — motors must NOT fight its PID, so it must be done using setpower.
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //prevents wheelspin when power is cut.
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        // frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        // backLeft.setDirection(DcMotor.Direction.REVERSE);
+        // frontRight.setDirection(DcMotor.Direction.FORWARD);
+        // backRight.setDirection(DcMotor.Direction.FORWARD);
+
+        //these are already defined in pedropathing constants.
     }
 
     /**
@@ -46,21 +48,22 @@ public class Drivetrain {
     public void drive(float forwardBack, float strafe, float turn, boolean slowMode) {
         final float DEADZONE = 0.1f;
 
-        if (Math.abs(forwardBack) < DEADZONE) forwardBack = 0;
+        if (Math.abs(forwardBack) < DEADZONE) forwardBack = 0; //input deadzones
         if (Math.abs(strafe)      < DEADZONE) strafe      = 0;
         if (Math.abs(turn)        < DEADZONE) turn        = 0;
 
-        float lf = (forwardBack + strafe) + turn;
+        float lf = (forwardBack + strafe) + turn;  //steering values
         float lb = (forwardBack - strafe) + turn;
         float rf =  forwardBack - strafe  - turn;
         float rb = (forwardBack + strafe) - turn;
 
         // Normalize so no value exceeds 1.0
-        float max = Math.max(Math.max(Math.abs(lf), Math.abs(rf)),
-                             Math.max(Math.abs(lb), Math.abs(rb)));
+        float max = Math.max(Math.max(Math.abs(lf), Math.abs(rf)), Math.max(Math.abs(lb), Math.abs(rb)));
         if (max < 1f) max = 1f;
 
-        float scale = 1f / (max * (slowMode ? 2 : 1));
+        float scale = 1f / (max * (slowMode ? 2 : 1));  //if slowmode is true, use 2 (i.e. power halved), false use 1 (i.e. no power change)
+        // Scale all wheel powers together if any exceed ±1.
+        // Keeps their ratios the same so the robot moves in the commanded direction instead of drifting.
 
         frontLeft.setPower(lf * scale);
         frontRight.setPower(rf * scale);
@@ -76,3 +79,4 @@ public class Drivetrain {
         backRight.setPower(0);
     }
 }
+
