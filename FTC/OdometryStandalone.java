@@ -34,6 +34,7 @@ public class OdometryStandalone extends OpMode {
         odometry.resetPosAndIMU();
         Pose2D startPos = new Pose2D(DistanceUnit.MM, 0.0, 0.0, AngleUnit.DEGREES, 0.0);
         odometry.setPosition(startPos);
+        odometry.setYawScalar(-1.0);
     }
 
     @Override
