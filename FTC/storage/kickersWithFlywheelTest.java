@@ -1,11 +1,9 @@
 
-// For my darling dearest precious cherished favourite Calvin -
 // This very simple program uses buttons a, b and x to control 'kick' each servo 90 degrees, and uses button y to trigger all 3 'kicks' in sequence
 // There are three (double type) tunable variables:
 // startingServoPosition = 0;             number from 0 to 1, which is the resting position of the servo
 // DELAY_KICKER_STAYING_UP_TIME = 0.3;    number of seconds that the kicker stays up until it is instructed to retract
 // DELAY_BETWEEN_KICKS = 1;               number of seconds allotted for the servo that is up, to move down to resting position before the next servo can 'kick' (to prevent collisions between 'kicks')
-// P.S. Also this is kinda random, but could you send me the photos you took of the bitcoin thing with the gyro     (^ω^)
 
 
 package org.firstinspires.ftc.teamcode;
