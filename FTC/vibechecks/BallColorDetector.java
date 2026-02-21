@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
  */
 public class BallColorDetector {
 
-    // Internal type-safe color representation — never exposed publicly
+    // Internal type-safe color representation — returned as a string for external telemetry and communication
     private enum BallColor { PURPLE, GREEN, EMPTY, UNKNOWN }
 
     // Sensors
