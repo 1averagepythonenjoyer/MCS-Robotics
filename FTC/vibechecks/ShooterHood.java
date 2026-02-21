@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,7 +9,6 @@ public class ShooterHood {
 
     private CRServo        hoodServo;
     private DcMotor        flywheel;
-    private DigitalChannel hoodSwitch;
 
     // ── Physical constants — fill in after calibration ───────────────────────
     private static final double GOAL_HEIGHT_MM    = 0.0;  // TODO: measure
@@ -26,10 +24,10 @@ public class ShooterHood {
     private static final double DEFAULT_FLYWHEEL_POWER   = 0.7;
     private static final double HOMING_TIMEOUT_SECONDS   = 5.0; // safety cutoff
 
-    // ── Angle safety cap ──────────────────────────────────────────────────────
-    // 11 degrees is the physical maximum the hood can rotate to.
-    // Any angle above this is silently clamped down to MAX_HOOD_ANGLE.
-    private static final double MAX_HOOD_ANGLE = 11.0;
+    // ── Servo time cap ────────────────────────────────────────────────────────
+    // 0.220 seconds is the full travel time of the hood servo.
+    // Any time above this is silently clamped down to MAX_SERVO_TIME.
+    private static final double MAX_SERVO_TIME = 0.220;
 
     // ── Calibration table — fill in from your calibration sheet ──────────────
     // Distances in mm, corrections in degrees. Must be in ascending distance order.
@@ -46,46 +44,27 @@ public class ShooterHood {
         RETRACT_SERVO          // homing back to zero after every shot
     }
 
-    private LaunchState       currentState  = LaunchState.IDLE;
-    private final ElapsedTime stopwatch     = new ElapsedTime();
-    private double            angleToRotate = 0;
+    private LaunchState       currentState         = LaunchState.IDLE;
+    private final ElapsedTime stopwatch            = new ElapsedTime();
+    private double            timeToRotate         = 0;
+    // servoPosition: current hood position in seconds of full-power travel
+    // 0.0 = highest position, MAX_SERVO_TIME (0.220) = lowest position
+    private double            servoPosition        = 0.0;
+    private double            retractStartPosition = 0.0;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
     public ShooterHood(HardwareMap hwMap) {
-        hoodServo  = hwMap.get(CRServo.class,        "s1AsServo");
-        flywheel   = hwMap.get(DcMotor.class,        "flywheel");
-        hoodSwitch = hwMap.get(DigitalChannel.class, "hoodSwitch");
+        hoodServo  = hwMap.get(CRServo.class, "s1AsServo");
+        flywheel   = hwMap.get(DcMotor.class, "flywheel");
 
         hoodServo.setDirection(CRServo.Direction.FORWARD);
         hoodServo.setPower(0);
-
-        hoodSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Flywheel brakes immediately when power is set to zero
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setPower(0);
     }
-
-    // ── Homing ────────────────────────────────────────────────────────────────
-
-    /**
-     * Blocking home — call ONCE before waitForStart() in your OpMode init.
-     * Runs the hood in reverse until the limit switch is pressed (or timeout).
-     * After this returns, the hood is at zero and ready to fire.
-     */
-    public void homeBlocking() {
-        ElapsedTime timeout = new ElapsedTime();
-        hoodServo.setPower(-HOMING_SERVO_POWER);
-
-        while (!switchPressed() && timeout.seconds() < HOMING_TIMEOUT_SECONDS) {
-            // spin until switch closes or we hit the timeout safety cutoff
-        }
-
-        hoodServo.setPower(0);
-        currentState = LaunchState.IDLE;
-    }
-
     // ── Main update loop ──────────────────────────────────────────────────────
 
     /**
@@ -101,6 +80,7 @@ public class ShooterHood {
             case POWER_SERVO_AND_FLYWHEEL:
                 // Start servo and flywheel simultaneously, then move to STOP_SERVO
                 // so the stopwatch is checked on the next loop iteration
+                retractStartPosition = servoPosition;
                 stopwatch.reset();
                 hoodServo.setPower(DEFAULT_HOOD_SERVO_POWER);
                 flywheel.setPower(DEFAULT_FLYWHEEL_POWER);
@@ -109,7 +89,11 @@ public class ShooterHood {
 
             case STOP_SERVO:
                 // Wait until the hood has rotated the required angle
-                if (stopwatch.seconds() >= TIME_FACTOR * angleToRotate) {
+                // Position advances at DEFAULT_HOOD_SERVO_POWER units per second
+                servoPosition = Math.min(
+                        retractStartPosition + stopwatch.seconds() * DEFAULT_HOOD_SERVO_POWER,
+                        MAX_SERVO_TIME);
+                if (stopwatch.seconds() >= timeToRotate) {
                     hoodServo.setPower(0);
                     currentState = LaunchState.STOP_FLYWHEEL;
                 }
@@ -120,6 +104,7 @@ public class ShooterHood {
                 // NOTE: FLYWHEEL_SPINNING_PERIOD must be >> TIME_FACTOR * angleToRotate
                 if (stopwatch.seconds() >= FLYWHEEL_SPINNING_PERIOD) {
                     flywheel.setPower(0); // ZeroPowerBehavior.BRAKE kicks in immediately
+                    retractStartPosition = servoPosition;
                     currentState = LaunchState.RETRACT_SERVO;
                     stopwatch.reset();
                 }
@@ -128,14 +113,19 @@ public class ShooterHood {
             case RETRACT_SERVO:
                 // Drive hood back down in reverse until limit switch is pressed
                 hoodServo.setPower(-HOMING_SERVO_POWER);
+                // Position retreats at HOMING_SERVO_POWER units per second
+                servoPosition = Math.max(
+                        retractStartPosition - stopwatch.seconds() * HOMING_SERVO_POWER,
+                        0.0);
 
-                if (switchPressed()) {
-                    // Switch hit — we're home
+                if (servoPosition <= 0.0) {
+                    // Position reached zero — we're home
                     hoodServo.setPower(0);
                     currentState = LaunchState.IDLE;
                 } else if (stopwatch.seconds() > HOMING_TIMEOUT_SECONDS) {
-                    // Safety: switch never triggered — stop anyway to avoid damage
+                    // Safety: position never reached zero — stop anyway to avoid damage
                     hoodServo.setPower(0);
+                    servoPosition = 0.0;
                     currentState = LaunchState.IDLE;
                 }
                 break;
@@ -146,13 +136,13 @@ public class ShooterHood {
 
     /**
      * Trigger a launch at a manually specified hood angle (degrees).
-     * Angle is clamped to MAX_HOOD_ANGLE (11°) automatically.
+     * Angle is clamped to MAX_SERVO_TIME (0.220) automatically.
      * Ignored if a launch is already in progress.
      */
     public void triggerLaunch(double angleDeg) {
         if (currentState == LaunchState.IDLE) {
-            angleToRotate = clampAngle(angleDeg);
-            currentState  = LaunchState.POWER_SERVO_AND_FLYWHEEL;
+            timeToRotate = clampTime(angleDeg * TIME_FACTOR);
+            currentState = LaunchState.POWER_SERVO_AND_FLYWHEEL;
         }
     }
 
@@ -165,7 +155,7 @@ public class ShooterHood {
         if (currentState == LaunchState.IDLE) {
             double geoAngle   = Math.toDegrees(Math.atan2(VERTICAL_RISE, distanceMm));
             double correction = interpolateCorrection(distanceMm);
-            angleToRotate     = clampAngle(geoAngle + correction);
+            timeToRotate      = clampTime((geoAngle + correction) * TIME_FACTOR);
             currentState      = LaunchState.POWER_SERVO_AND_FLYWHEEL;
         }
     }
@@ -181,22 +171,20 @@ public class ShooterHood {
         return currentState;
     }
 
+    /** Returns the current servo position in seconds of full-power travel
+     *  (0.0 = highest, MAX_SERVO_TIME = lowest). */
+    public double getServoPosition() {
+        return servoPosition;
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     /**
-     * Reads the limit switch.
-     * Rev digital channels return FALSE when the circuit is closed (switch pressed).
+     * Clamps servo time to [0, MAX_SERVO_TIME].
+     * Any value above 0.220 seconds is silently reduced to 0.220.
      */
-    private boolean switchPressed() {
-        return !hoodSwitch.getState();
-    }
-
-    /**
-     * Clamps hood angle to [0, MAX_HOOD_ANGLE].
-     * Any value above 11 degrees is silently reduced to 11.
-     */
-    private double clampAngle(double angleDeg) {
-        return Math.max(0, Math.min(angleDeg, MAX_HOOD_ANGLE));
+    private double clampTime(double timeSec) {
+        return Math.max(0, Math.min(timeSec, MAX_SERVO_TIME));
     }
 
     private double interpolateCorrection(double distanceMm) {
