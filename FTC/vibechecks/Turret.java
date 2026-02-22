@@ -68,7 +68,12 @@ public class Turret {
             holdPosition();
             return;
         }
-        if (turretMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Must be in RUN_USING_ENCODER before calling setVelocity —
+        // holdPosition() switches to RUN_TO_POSITION, so restore mode here.
+        if (turretMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
+            turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
         double velocity = gamepadInput * VELOCITY_COEFFICIENT * MAX_TICKS_PER_SECOND;
         turretMotor.setVelocity(velocity);
