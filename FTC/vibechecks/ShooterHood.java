@@ -181,7 +181,7 @@ public class ShooterHood {
 
     /**
      * Nudges the hood servo while a button is held.
-     * Pass a positive power to move up, negative to move down.
+     * Pass positive power to move up, negative to move down.
      * Ignored if a launch sequence is in progress.
      * Call with power = 0 when button is released to stop the servo.
      */
