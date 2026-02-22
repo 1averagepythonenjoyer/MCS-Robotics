@@ -68,6 +68,8 @@ public class Turret {
             return;
         }
 
+        if (turretMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         double velocity = gamepadInput * VELOCITY_COEFFICIENT * MAX_TICKS_PER_SECOND;
         turretMotor.setVelocity(velocity);
     }
