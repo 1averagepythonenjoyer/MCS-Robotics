@@ -28,6 +28,7 @@ public class Turret {
     private double kD             = 0.0000;
     private double angleTolerance = 0.2; // degrees — within this, treat as aligned
     private double lastError      = 0;
+    private double lastBearing    = 0; // stored every updateAuto() call for isAligned() check
     private static final double MAX_POWER = 0.6;
 
     private final ElapsedTime timer = new ElapsedTime();
@@ -67,7 +68,6 @@ public class Turret {
             holdPosition();
             return;
         }
-
         if (turretMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double velocity = gamepadInput * VELOCITY_COEFFICIENT * MAX_TICKS_PER_SECOND;
@@ -107,7 +107,8 @@ public class Turret {
             turretMotor.setPower(power);
         }
 
-        lastError = error;
+        lastError   = error;
+        lastBearing = bearingDeg;
         return power;
     }
 
@@ -119,6 +120,14 @@ public class Turret {
         turretMotor.setTargetPosition(turretMotor.getCurrentPosition());
         turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turretMotor.setPower(MAX_POWER);
+    }
+
+    /**
+     * Returns true if the turret is centred on the target within angleTolerance.
+     * Use in TeleOp to detect when auto-align is complete and disengage.
+     */
+    public boolean isAligned() {
+        return Math.abs(lastBearing) < angleTolerance;
     }
 
     /**
@@ -135,6 +144,17 @@ public class Turret {
     public boolean isAtLimit() {
         int pos = turretMotor.getCurrentPosition();
         return pos >= SOFT_LIMIT_COUNTS || pos <= -SOFT_LIMIT_COUNTS;
+    }
+
+    /**
+     * Returns the turret to the forward position (0°) using RUN_TO_POSITION.
+     * Call once to trigger — motor holds position when done automatically.
+     * Used when no navigation tag is visible during auto-align.
+     */
+    public void returnToCenter() {
+        turretMotor.setTargetPosition(0);
+        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretMotor.setPower(MAX_POWER);
     }
 
     /** Full stop — releases hold. */
