@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name = "MCS TeleOp", group = "MCS")
-public class MCS_TeleOp extends LinearOpMode {
+public class MCS_TeleOp_Vibed extends LinearOpMode {
 
     // ── Pedro constants — must match MCS_AutoOp exactly ──────────────────────
     private final FollowerConstants followerConstants = new FollowerConstants()
@@ -40,7 +40,7 @@ public class MCS_TeleOp extends LinearOpMode {
             .distanceUnit(DistanceUnit.MM)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .yawScalar(-1);
 
@@ -60,7 +60,7 @@ public class MCS_TeleOp extends LinearOpMode {
     private Turret                  turret;
     private ShooterHood             hood;
     private StorageKickers          kickers;
-    private BallColorDetectorModule colorSensor;
+//    private BallColorDetectorModule colorSensor;  color sensors are fucked :(
 
     // ── Intake ────────────────────────────────────────────────────────────────
     private DcMotor intakeMotor;
@@ -82,7 +82,7 @@ public class MCS_TeleOp extends LinearOpMode {
         turret      = new Turret(hardwareMap);
         hood        = new ShooterHood(hardwareMap);
         kickers     = new StorageKickers(hardwareMap);
-        colorSensor = new BallColorDetectorModule(hardwareMap);
+        //colorSensor = new BallColorDetectorModule(hardwareMap);
 
         // Intake
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
@@ -110,7 +110,7 @@ public class MCS_TeleOp extends LinearOpMode {
             turret.updateManual(gamepad2.right_stick_x);
             hoodLogic();
             kickerLogic();
-            colorSensor.update();
+            //colorSensor.update();
             telemetryUpdate();
         }
     }
@@ -161,10 +161,10 @@ public class MCS_TeleOp extends LinearOpMode {
 
         if (navState == NavState.MANUAL) {
             drivetrain.drive(
-                    -gamepad1.left_stick_y,
-                     gamepad1.right_stick_x,
-                     gamepad1.left_stick_x,
-                     gamepad1.left_bumper);
+                    gamepad1.left_stick_y,
+                    gamepad1.right_stick_x,
+                    gamepad1.left_stick_x,
+                    gamepad1.left_bumper);
         } else if (!follower.isBusy()) {
             // Pedro finished — hand control back automatically
             navState = NavState.MANUAL;
@@ -231,9 +231,9 @@ public class MCS_TeleOp extends LinearOpMode {
         telemetry.addData("Hood state",  hood.getState());
         telemetry.addData("Kicker busy", kickers.isBusy());
         telemetry.addLine("── Storage ───────────────────────");
-        telemetry.addData("Slot 1",      colorSensor.getSlot1Color());
-        telemetry.addData("Slot 2",      colorSensor.getSlot2Color());
-        telemetry.addData("Slot 3",      colorSensor.getSlot3Color());
+//        telemetry.addData("Slot 1",      colorSensor.getSlot1Color());
+//        telemetry.addData("Slot 2",      colorSensor.getSlot2Color());
+//        telemetry.addData("Slot 3",      colorSensor.getSlot3Color());
         telemetry.update();
     }
 }
