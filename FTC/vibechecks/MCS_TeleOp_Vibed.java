@@ -223,8 +223,8 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
                 // No tag visible — return turret to forward
                 turret.returnToCenter();
             }
-            // Auto-align complete — turret is centred on target, disengage
-            if (turret.isAligned()) {
+            // Auto-align complete — only disengage if a tag was actually found and centred
+            if (tagFound && turret.isAligned()) {
                 turretMode = TurretMode.MANUAL;
             }
         } else {
