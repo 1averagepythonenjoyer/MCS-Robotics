@@ -223,6 +223,10 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
                 // No tag visible — return turret to forward
                 turret.returnToCenter();
             }
+            // Auto-align complete — turret is centred on target, disengage
+            if (turret.isAligned()) {
+                turretMode = TurretMode.MANUAL;
+            }
         } else {
             // MANUAL — d-pad left/right for slow nudge, right stick for fine control
             if (gamepad2.dpad_right) {
