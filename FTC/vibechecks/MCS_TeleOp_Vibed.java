@@ -13,8 +13,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.List;
 
 @TeleOp(name = "MCS TeleOp", group = "MCS")
 public class MCS_TeleOp_Vibed extends LinearOpMode {
@@ -48,19 +51,19 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
     private final Pose shootPose = new Pose(68.57275902211875, 74.71944121071013, Math.toRadians(135));
     private final Pose parkPose  = new Pose(0, 0, 0); // TODO: fill in park coordinates
 
-    // ── Hood angle constants — fill in after calibration ─────────────────────
-    private static final double HOOD_ANGLE_SHOOT_POSE = 0.0;  // TODO: calibrate
-    private static final double DPAD_UP_ANGLE         = 11.0; // max
-    private static final double DPAD_RIGHT_ANGLE      =  8.0;
-    private static final double DPAD_DOWN_ANGLE       =  5.0;
-    private static final double DPAD_LEFT_ANGLE       =  3.0;
+    // ── Hood nudge power ──────────────────────────────────────────────────────
+    private static final double HOOD_NUDGE_POWER = 0.3; // slow movement for manual hood adjustment
+
+    // ── Flywheel pre-spin time before kicking ─────────────────────────────────
+    private static final double FLYWHEEL_PRESPIN_SECONDS = 1.0;
 
     // ── Subsystems ────────────────────────────────────────────────────────────
-    private Drivetrain              drivetrain;
-    private Turret                  turret;
-    private ShooterHood             hood;
-    private StorageKickers          kickers;
-//    private BallColorDetectorModule colorSensor;  color sensors are fucked :(
+    private Drivetrain      drivetrain;
+    private Turret          turret;
+    private ShooterHood     hood;
+    private StorageKickers  kickers;
+    private HuskyLensReader camera;
+    // private BallColorDetectorModule colorSensor; // disabled — wrong hardware
 
     // ── Intake ────────────────────────────────────────────────────────────────
     private DcMotor intakeMotor;
@@ -73,30 +76,35 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
     private enum NavState { MANUAL, NAVIGATING_TO_SHOOT, NAVIGATING_TO_PARK }
     private NavState navState = NavState.MANUAL;
 
+    // ── Turret mode ───────────────────────────────────────────────────────────
+    private enum TurretMode { MANUAL, AUTO_ALIGN }
+    private TurretMode turretMode = TurretMode.MANUAL;
+
+    // ── Kicker + flywheel prespin state machine ───────────────────────────────
+    private enum KickState { IDLE, WAITING_FOR_PRESPIN, KICKING }
+    private KickState   kickState  = KickState.IDLE;
+    private int         kickTarget = 0; // 0 = kickAll, 1/2/3 = individual servo
+    private ElapsedTime kickTimer  = new ElapsedTime();
+
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     public void runOpMode() {
-        // Init subsystems
         drivetrain  = new Drivetrain(hardwareMap);
         turret      = new Turret(hardwareMap);
         hood        = new ShooterHood(hardwareMap);
         kickers     = new StorageKickers(hardwareMap);
-        //colorSensor = new BallColorDetectorModule(hardwareMap);
+        camera      = new HuskyLensReader(hardwareMap, "huskydyppy");
+        // colorSensor = new BallColorDetectorModule(hardwareMap);
 
-        // Intake
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Pedro follower — keeps Pinpoint tracking alive during TeleOp
         follower = new FollowerBuilder(followerConstants, hardwareMap)
                 .mecanumDrivetrain(driveConstants)
                 .pinpointLocalizer(localiserConstants)
                 .build();
-        follower.setPose(new Pose(0, 0, 0));  // this needs to be changed depending on our starting position in pedro pathing.
-
-        // Home the hood before the match starts
-        //hood.homeBlocking(); ==NO LONGER USING BUTTON DONT NEED THIS CHECK IMPORTS
+        follower.setPose(new Pose(0, 0, 0)); // TODO: set correct starting pose
 
         telemetry.addData("Status", "Initialized — waiting for start");
         telemetry.update();
@@ -107,10 +115,10 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
 
             navLogic();
             intakeLogic();
-            turret.updateManual(gamepad2.right_stick_x);
+            turretLogic();
             hoodLogic();
             kickerLogic();
-            //colorSensor.update();
+            // colorSensor.update();
             telemetryUpdate();
         }
     }
@@ -124,13 +132,12 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
     // Left bumper       — slow mode
     // Right trigger     — intake forward
     // Left trigger      — intake reverse (unjam)
-    // Y                 — auto-drive to shootPose + arm hood immediately
+    // Y                 — auto-drive to shootPose (turret auto-aligns on arrival)
     // B                 — auto-drive to parkPose
     // A                 — cancel Pedro, return to manual drive
     // ═════════════════════════════════════════════════════════════════════════
 
     private void navLogic() {
-        // Y — drive to shoot position and arm the hood at the same time
         if (gamepad1.y && navState == NavState.MANUAL) {
             Pose current = follower.getPose();
             shootPath = follower.pathBuilder()
@@ -139,10 +146,8 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
                     .build();
             follower.followPath(shootPath, true);
             navState = NavState.NAVIGATING_TO_SHOOT;
-            hood.triggerLaunch(HOOD_ANGLE_SHOOT_POSE); // arm hood immediately on button press
         }
 
-        // B — drive to park position
         if (gamepad1.b && navState == NavState.MANUAL) {
             Pose current = follower.getPose();
             parkPath = follower.pathBuilder()
@@ -153,7 +158,6 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
             navState = NavState.NAVIGATING_TO_PARK;
         }
 
-        // A — cancel Pedro and take back manual control
         if (gamepad1.a && navState != NavState.MANUAL) {
             follower.breakFollowing();
             navState = NavState.MANUAL;
@@ -161,12 +165,16 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
 
         if (navState == NavState.MANUAL) {
             drivetrain.drive(
-                    gamepad1.left_stick_y,
+                    -gamepad1.left_stick_y,  // negated — FTC gamepad Y axis is inverted
                     gamepad1.right_stick_x,
                     gamepad1.left_stick_x,
                     gamepad1.left_bumper);
         } else if (!follower.isBusy()) {
-            // Pedro finished — hand control back automatically
+            // Pedro finished navigating
+            if (navState == NavState.NAVIGATING_TO_SHOOT) {
+                // Arrived at shoot position — enable turret auto-align
+                turretMode = TurretMode.AUTO_ALIGN;
+            }
             navState = NavState.MANUAL;
         }
     }
@@ -184,36 +192,110 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
     // ═════════════════════════════════════════════════════════════════════════
     // DRIVER 2 — TURRET + HOOD + KICKERS
     //
-    // Right stick X     — manual turret left / right
-    // Right trigger     — fire at calibrated shoot pose angle
-    // D-pad up          — manual override: fire at 11° (max)
-    // D-pad right       — manual override: fire at 8°
-    // D-pad down        — manual override: fire at 5°
-    // D-pad left        — manual override: fire at 3°
-    // A                 — kick storage servo 1
-    // B                 — kick storage servo 2
-    // X                 — kick storage servo 3
-    // Y                 — kick all 3 in sequence (1 → 2 → 3)
+    // D-pad up          — nudge hood up slowly (hold)
+    // D-pad down        — nudge hood down slowly (hold)
+    // D-pad right       — nudge turret right slowly (hold)
+    // D-pad left        — nudge turret left slowly (hold)
+    // Right bumper      — cancel turret auto-align, return to manual
+    // Y                 — flywheel prespin + kick servo 1
+    // B                 — flywheel prespin + kick servo 2
+    // X                 — flywheel prespin + kick servo 3
+    // A                 — flywheel prespin + kick all three (1 → 2 → 3)
     // ═════════════════════════════════════════════════════════════════════════
 
+    private void turretLogic() {
+        // Right bumper cancels auto-align at any time
+        if (gamepad2.right_bumper) {
+            turretMode = TurretMode.MANUAL;
+        }
+
+        if (turretMode == TurretMode.AUTO_ALIGN) {
+            List<HuskyLensReader.TagData> tags = camera.read();
+            boolean tagFound = false;
+            for (HuskyLensReader.TagData tag : tags) {
+                if (tag.type == HuskyLensReader.TagData.TagType.NAVIGATION) {
+                    turret.updateAuto(tag.bearingDeg);
+                    tagFound = true;
+                    break;
+                }
+            }
+            if (!tagFound) {
+                // No tag visible — return turret to forward
+                turret.returnToCenter();
+            }
+        } else {
+            // MANUAL — d-pad left/right for slow nudge, right stick for fine control
+            if (gamepad2.dpad_right) {
+                turret.updateManual(0.4f);
+            } else if (gamepad2.dpad_left) {
+                turret.updateManual(-0.4f);
+            } else {
+                turret.updateManual(gamepad2.right_stick_x);
+            }
+        }
+    }
+
     private void hoodLogic() {
-        if (!hood.isBusy()) {
-            if      (gamepad2.right_trigger > 0.5) { hood.triggerLaunch(HOOD_ANGLE_SHOOT_POSE); }
-            else if (gamepad2.dpad_up)             { hood.triggerLaunch(DPAD_UP_ANGLE);         }
-            else if (gamepad2.dpad_right)          { hood.triggerLaunch(DPAD_RIGHT_ANGLE);      }
-            else if (gamepad2.dpad_down)           { hood.triggerLaunch(DPAD_DOWN_ANGLE);       }
-            else if (gamepad2.dpad_left)           { hood.triggerLaunch(DPAD_LEFT_ANGLE);       }
+        // D-pad up/down nudges hood while held — ignored during launch sequence
+        if (gamepad2.dpad_up) {
+            hood.nudge(HOOD_NUDGE_POWER);
+        } else if (gamepad2.dpad_down) {
+            hood.nudge(-HOOD_NUDGE_POWER);
+        } else {
+            hood.nudge(0); // stop servo when button released
         }
         hood.update();
     }
 
     private void kickerLogic() {
-        if (!kickers.isBusy()) {
-            if      (gamepad2.a) { kickers.kickOne(1); }
-            else if (gamepad2.b) { kickers.kickOne(2); }
-            else if (gamepad2.x) { kickers.kickOne(3); }
-            else if (gamepad2.y) { kickers.kickAll();  }
+        switch (kickState) {
+
+            case IDLE:
+                if (!kickers.isBusy()) {
+                    if (gamepad2.y) {
+                        kickTarget = 1;
+                        hood.startFlywheel();
+                        kickTimer.reset();
+                        kickState = KickState.WAITING_FOR_PRESPIN;
+                    } else if (gamepad2.b) {
+                        kickTarget = 2;
+                        hood.startFlywheel();
+                        kickTimer.reset();
+                        kickState = KickState.WAITING_FOR_PRESPIN;
+                    } else if (gamepad2.x) {
+                        kickTarget = 3;
+                        hood.startFlywheel();
+                        kickTimer.reset();
+                        kickState = KickState.WAITING_FOR_PRESPIN;
+                    } else if (gamepad2.a) {
+                        kickTarget = 0; // 0 = kickAll
+                        hood.startFlywheel();
+                        kickTimer.reset();
+                        kickState = KickState.WAITING_FOR_PRESPIN;
+                    }
+                }
+                break;
+
+            case WAITING_FOR_PRESPIN:
+                if (kickTimer.seconds() >= FLYWHEEL_PRESPIN_SECONDS) {
+                    if (kickTarget == 0) {
+                        kickers.kickAll();
+                    } else {
+                        kickers.kickOne(kickTarget);
+                    }
+                    kickState = KickState.KICKING;
+                }
+                break;
+
+            case KICKING:
+                // Once kickers finish, stop the flywheel
+                if (!kickers.isBusy()) {
+                    hood.stopFlywheel();
+                    kickState = KickState.IDLE;
+                }
+                break;
         }
+
         kickers.update();
     }
 
@@ -222,18 +304,18 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
     private void telemetryUpdate() {
         Pose pose = follower.getPose();
         telemetry.addLine("── Driver 1 ──────────────────────");
-        telemetry.addData("Nav state",   navState);
-        telemetry.addData("Slow mode",   gamepad1.left_bumper);
-        telemetry.addData("X",           "%.1f", pose.getX());
-        telemetry.addData("Y",           "%.1f", pose.getY());
-        telemetry.addData("Heading°",    "%.1f", Math.toDegrees(pose.getHeading()));
+        telemetry.addData("Nav state",    navState);
+        telemetry.addData("Slow mode",    gamepad1.left_bumper);
+        telemetry.addData("X",            "%.1f", pose.getX());
+        telemetry.addData("Y",            "%.1f", pose.getY());
+        telemetry.addData("Heading°",     "%.1f", Math.toDegrees(pose.getHeading()));
         telemetry.addLine("── Driver 2 ──────────────────────");
-        telemetry.addData("Hood state",  hood.getState());
-        telemetry.addData("Kicker busy", kickers.isBusy());
-        telemetry.addLine("── Storage ───────────────────────");
-//        telemetry.addData("Slot 1",      colorSensor.getSlot1Color());
-//        telemetry.addData("Slot 2",      colorSensor.getSlot2Color());
-//        telemetry.addData("Slot 3",      colorSensor.getSlot3Color());
+        telemetry.addData("Turret mode",  turretMode);
+        telemetry.addData("Turret angle", "%.1f°", turret.getAngleDeg());
+        telemetry.addData("Turret limit", turret.isAtLimit());
+        telemetry.addData("Hood state",   hood.getState());
+        telemetry.addData("Kick state",   kickState);
+        telemetry.addData("Kicker busy",  kickers.isBusy());
         telemetry.update();
     }
 }
