@@ -255,7 +255,7 @@ public class MCS_TeleOp_Vibed extends LinearOpMode {
         switch (kickState) {
 
             case IDLE:
-                if (!kickers.isBusy()) {
+                if (!kickers.isBusy() && !hood.isBusy()) {
                     if (gamepad2.y) {
                         kickTarget = 1;
                         hood.startFlywheel();
