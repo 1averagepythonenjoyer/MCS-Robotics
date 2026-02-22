@@ -7,33 +7,34 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ShooterHood {
 
-    private CRServo        hoodServo;
-    private DcMotor        flywheel;
+    private final CRServo        hoodServo;
+    private final DcMotor        flywheel;
 
-    // ── Physical constants — fill in after calibration ───────────────────────
-    private static final double GOAL_HEIGHT_MM    = 0.0;  // TODO: measure
-    private static final double SHOOTER_HEIGHT_MM = 0.0;  // TODO: measure
-    private static final double VERTICAL_RISE     = GOAL_HEIGHT_MM - SHOOTER_HEIGHT_MM;
+//    // ── Physical constants — fill in after calibration ───────────────────────
+//    private static final double GOAL_HEIGHT_MM    = 984.5;  // TODO: measure
+//    private static final double SHOOTER_HEIGHT_MM = ;  // TODO: measure
+//    private static final double VERTICAL_RISE     = GOAL_HEIGHT_MM - SHOOTER_HEIGHT_MM;
 
     // ── Tunable factors ───────────────────────────────────────────────────────
     // TIME_FACTOR: seconds per degree of hood rotation. Tune until correct.
     private static final double TIME_FACTOR              = 0.2;
-    private static final double FLYWHEEL_SPINNING_PERIOD = 5.0;
+    private static final double MAX_HOOD_ANGLE           = 11.0;
+    private static final double FLYWHEEL_SPINNING_PERIOD = 5.0;   //check this
     private static final double DEFAULT_HOOD_SERVO_POWER = 1.0;
-    private static final double HOMING_SERVO_POWER       = 1.0; // slower for homing
+    private static final double HOMING_SERVO_POWER       = 1.0;
     private static final double DEFAULT_FLYWHEEL_POWER   = 0.7;
-    private static final double HOMING_TIMEOUT_SECONDS   = 0.220; // safety cutoff
 
     // ── Servo time cap ────────────────────────────────────────────────────────
-    // 0.220 seconds is the full travel time of the hood servo.
+    // 2.20 seconds is the full travel time of the hood servo.
     // Any time above this is silently clamped down to MAX_SERVO_TIME.
-    private static final double MAX_SERVO_TIME = 0.220;
+    private static final double MAX_SERVO_TIME          = MAX_HOOD_ANGLE * TIME_FACTOR;
+    private static final double HOMING_TIMEOUT_SECONDS  = MAX_SERVO_TIME; // safety cutoff
 
-    // ── Calibration table — fill in from your calibration sheet ──────────────
-    // Distances in mm, corrections in degrees. Must be in ascending distance order.
-    private static final double[] CAL_DISTANCES   = { 500, 750, 1000, 1250, 1500, 1750, 2000 };
-    private static final double[] CAL_CORRECTIONS = { 0.0, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0 };
-    // ↑ Replace 0.0 values with your measured corrections after calibration
+//    // ── Calibration table — fill in from your calibration sheet ──────────────
+//    // Distances in mm, corrections in degrees. Must be in ascending distance order.
+//    private static final double[] CAL_DISTANCES   = { 500, 750, 1000, 1250, 1500, 1750, 2000 };
+//    private static final double[] CAL_CORRECTIONS = { 0.0, 0.0,  0.0,  0.0,  0.0,  0.0,  0.0 };
+//    // ↑ Replace 0.0 values with your measured corrections after calibration
 
     // ── State machine ─────────────────────────────────────────────────────────
     public enum LaunchState {
@@ -48,15 +49,15 @@ public class ShooterHood {
     private final ElapsedTime stopwatch            = new ElapsedTime();
     private double            timeToRotate         = 0;
     // servoPosition: current hood position in seconds of full-power travel
-    // 0.0 = highest position, MAX_SERVO_TIME (0.220) = lowest position
+    // 0.0 = highest position, MAX_SERVO_TIME = lowest position
     private double            servoPosition        = 0.0;
     private double            retractStartPosition = 0.0;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
     public ShooterHood(HardwareMap hwMap) {
-        hoodServo  = hwMap.get(CRServo.class, "s1AsServo");
-        flywheel   = hwMap.get(DcMotor.class, "flywheel");
+        hoodServo = hwMap.get(CRServo.class, "s1AsServo");
+        flywheel  = hwMap.get(DcMotor.class, "flywheel");
 
         hoodServo.setDirection(CRServo.Direction.FORWARD);
         hoodServo.setPower(0);
@@ -65,6 +66,7 @@ public class ShooterHood {
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setPower(0);
     }
+
     // ── Main update loop ──────────────────────────────────────────────────────
 
     /**
@@ -82,8 +84,8 @@ public class ShooterHood {
                 // so the stopwatch is checked on the next loop iteration
                 retractStartPosition = servoPosition;
                 stopwatch.reset();
-                hoodServo.setPower(DEFAULT_HOOD_SERVO_POWER);
                 flywheel.setPower(DEFAULT_FLYWHEEL_POWER);
+                hoodServo.setPower(DEFAULT_HOOD_SERVO_POWER);
                 currentState = LaunchState.STOP_SERVO;
                 break;
 
@@ -134,7 +136,7 @@ public class ShooterHood {
 
     /**
      * Trigger a launch at a manually specified hood angle (degrees).
-     * Angle is clamped to MAX_SERVO_TIME (0.220) automatically.
+     * Angle is clamped to MAX_SERVO_TIME automatically.
      * Ignored if a launch is already in progress.
      */
     public void triggerLaunch(double angleDeg) {
@@ -144,19 +146,14 @@ public class ShooterHood {
         }
     }
 
-    /**
-     * Trigger a launch calculated from HuskyLens distance.
-     * Computes geometric angle + interpolated correction, clamps, then fires.
-     * Ignored if a launch is already in progress.
-     */
-    public void triggerLaunchForDistance(double distanceMm) {
-        if (currentState == LaunchState.IDLE) {
-            double geoAngle   = Math.toDegrees(Math.atan2(VERTICAL_RISE, distanceMm));
-            double correction = interpolateCorrection(distanceMm);
-            timeToRotate      = clampTime((geoAngle + correction) * TIME_FACTOR);
-            currentState      = LaunchState.POWER_SERVO_AND_FLYWHEEL;
-        }
-    }
+//    public void triggerLaunchForDistance(double distanceMm) {
+//        if (currentState == LaunchState.IDLE) {
+//            double geoAngle   = Math.toDegrees(Math.atan2(VERTICAL_RISE, distanceMm));
+//            double correction = interpolateCorrection(distanceMm);
+//            timeToRotate      = clampTime((geoAngle + correction) * TIME_FACTOR);
+//            currentState      = LaunchState.POWER_SERVO_AND_FLYWHEEL;
+//        }
+//    }
 
     // ── Manual flywheel control ───────────────────────────────────────────────
 
@@ -211,27 +208,26 @@ public class ShooterHood {
 
     /**
      * Clamps servo time to [0, MAX_SERVO_TIME].
-     * Any value above 0.220 seconds is silently reduced to 0.220.
      */
     private double clampTime(double timeSec) {
         return Math.max(0, Math.min(timeSec, MAX_SERVO_TIME));
     }
 
-    private double interpolateCorrection(double distanceMm) {
-        if (distanceMm <= CAL_DISTANCES[0])
-            return CAL_CORRECTIONS[0];
-
-        int last = CAL_DISTANCES.length - 1;
-        if (distanceMm >= CAL_DISTANCES[last])
-            return CAL_CORRECTIONS[last];
-
-        for (int i = 0; i < last; i++) {
-            if (distanceMm >= CAL_DISTANCES[i] && distanceMm < CAL_DISTANCES[i + 1]) {
-                double t = (distanceMm - CAL_DISTANCES[i])
-                         / (CAL_DISTANCES[i + 1] - CAL_DISTANCES[i]);
-                return CAL_CORRECTIONS[i] + t * (CAL_CORRECTIONS[i + 1] - CAL_CORRECTIONS[i]);
-            }
-        }
-        return 0.0;
-    }
+//    private double interpolateCorrection(double distanceMm) {
+//        if (distanceMm <= CAL_DISTANCES[0])
+//            return CAL_CORRECTIONS[0];
+//
+//        int last = CAL_DISTANCES.length - 1;
+//        if (distanceMm >= CAL_DISTANCES[last])
+//            return CAL_CORRECTIONS[last];
+//
+//        for (int i = 0; i < last; i++) {
+//            if (distanceMm >= CAL_DISTANCES[i] && distanceMm < CAL_DISTANCES[i + 1]) {
+//                double t = (distanceMm - CAL_DISTANCES[i])
+//                        / (CAL_DISTANCES[i + 1] - CAL_DISTANCES[i]);
+//                return CAL_CORRECTIONS[i] + t * (CAL_CORRECTIONS[i + 1] - CAL_CORRECTIONS[i]);
+//            }
+//        }
+//        return 0.0;
+//    }
 }
