@@ -9,11 +9,15 @@ public class StorageKickers {
     private Servo storageServo1, storageServo2, storageServo3;
     private ElapsedTime stopwatch = new ElapsedTime();
 
-    // Tunable constants
-    private static final double STARTING_POSITION          = 0.0;
-    private static final double KICK_AMOUNT                = 0.3;
-    private static final double DELAY_KICKER_STAYING_UP    = 0.3; // seconds
-    private static final double DELAY_BETWEEN_KICKS        = 1.0; // seconds
+    // ── Per-servo starting positions — tuned from field testing ──────────────
+    private static final double STARTING_POSITION_1 = 0.21;
+    private static final double STARTING_POSITION_2 = 0.08;
+    private static final double STARTING_POSITION_3 = 0.3;
+
+    // ── Kick amount and timings — tuned from field testing ───────────────────
+    private static final double KICK_AMOUNT             = 0.38; // rotateFactor from test
+    private static final double DELAY_KICKER_STAYING_UP = 2.0;  // seconds
+    private static final double DELAY_BETWEEN_KICKS     = 2.0;  // seconds
 
     private enum SequenceState {
         IDLE,
@@ -26,7 +30,7 @@ public class StorageKickers {
     // Which servo is currently active (1, 2, or 3). 0 = none.
     private int activeServo = 0;
 
-    // Queue of servos to kick in order. Filled by kickOne() or kickAll().
+    // Queue of servos to kick in order. Filled by kickOne(), kickAll(), or kickInOrder().
     private int[] queue      = new int[0];
     private int   queueIndex = 0;
 
@@ -35,9 +39,12 @@ public class StorageKickers {
         storageServo2 = hwMap.get(Servo.class, "storageServo2");
         storageServo3 = hwMap.get(Servo.class, "storageServo3");
 
-        storageServo1.setPosition(STARTING_POSITION);
-        storageServo2.setPosition(STARTING_POSITION);
-        storageServo3.setPosition(STARTING_POSITION);
+        // Servo 3 is physically reversed
+        storageServo3.setDirection(Servo.Direction.REVERSE);
+
+        storageServo1.setPosition(STARTING_POSITION_1);
+        storageServo2.setPosition(STARTING_POSITION_2);
+        storageServo3.setPosition(STARTING_POSITION_3);
     }
 
     /**
@@ -47,10 +54,9 @@ public class StorageKickers {
         switch (state) {
 
             case IDLE:
-                // Start next queued kick if one exists
                 if (queueIndex < queue.length) {
                     activeServo = queue[queueIndex];
-                    getServo(activeServo).setPosition(STARTING_POSITION + KICK_AMOUNT);
+                    getServo(activeServo).setPosition(getStartingPosition(activeServo) + KICK_AMOUNT);
                     stopwatch.reset();
                     state = SequenceState.SERVO_WAIT_UP;
                 }
@@ -58,7 +64,7 @@ public class StorageKickers {
 
             case SERVO_WAIT_UP:
                 if (stopwatch.seconds() >= DELAY_KICKER_STAYING_UP) {
-                    getServo(activeServo).setPosition(STARTING_POSITION);
+                    getServo(activeServo).setPosition(getStartingPosition(activeServo));
                     stopwatch.reset();
                     state = SequenceState.SERVO_WAIT_DOWN;
                 }
@@ -75,7 +81,7 @@ public class StorageKickers {
 
     /**
      * Queue a single servo kick. servoNumber = 1, 2, or 3.
-     * Safe to call from TeleOp button press — ignored if already busy.
+     * Ignored if already busy.
      */
     public void kickOne(int servoNumber) {
         if (state == SequenceState.IDLE) {
@@ -86,7 +92,7 @@ public class StorageKickers {
 
     /**
      * Queue all three servos in sequence (1 → 2 → 3).
-     * Safe to call from TeleOp button press — ignored if already busy.
+     * Ignored if already busy.
      */
     public void kickAll() {
         if (state == SequenceState.IDLE) {
@@ -96,14 +102,26 @@ public class StorageKickers {
     }
 
     /**
+     * Queue a custom kick order produced by MotifResolver.
+     * Pass the resolved int array e.g. kickInOrder(new int[]{ 2, 1, 3 })
+     * Ignored if already busy.
+     */
+    public void kickInOrder(int[] order) {
+        if (state == SequenceState.IDLE) {
+            queue      = order;
+            queueIndex = 0;
+        }
+    }
+
+    /**
      * Blocking version for use in Autonomous.
      * Kicks all three servos in sequence and waits for completion.
-     * Call from Auto OpMode — do NOT call from TeleOp loop.
+     * Do NOT call from TeleOp loop.
      */
     public void kickAllBlocking() {
-        kickServoBlocking(storageServo1);
-        kickServoBlocking(storageServo2);
-        kickServoBlocking(storageServo3);
+        kickServoBlocking(storageServo1, STARTING_POSITION_1);
+        kickServoBlocking(storageServo2, STARTING_POSITION_2);
+        kickServoBlocking(storageServo3, STARTING_POSITION_3);
     }
 
     /** True if a kick sequence is currently in progress. */
@@ -111,24 +129,34 @@ public class StorageKickers {
         return state != SequenceState.IDLE || queueIndex < queue.length;
     }
 
-    // ── Private helpers ──────────────────────────────────────────────────────
+    // ── Private helpers ───────────────────────────────────────────────────────
 
     private Servo getServo(int number) {
         switch (number) {
             case 1:  return storageServo1;
             case 2:  return storageServo2;
             case 3:  return storageServo3;
+            default: return storageServo1; // safety fallback
         }
     }
 
-    private void kickServoBlocking(Servo servo) {
+    private double getStartingPosition(int number) {
+        switch (number) {
+            case 1:  return STARTING_POSITION_1;
+            case 2:  return STARTING_POSITION_2;
+            case 3:  return STARTING_POSITION_3;
+            default: return STARTING_POSITION_1; // safety fallback
+        }
+    }
+
+    private void kickServoBlocking(Servo servo, double startingPosition) {
         ElapsedTime t = new ElapsedTime();
 
-        servo.setPosition(STARTING_POSITION + KICK_AMOUNT);
+        servo.setPosition(startingPosition + KICK_AMOUNT);
         t.reset();
         while (t.seconds() < DELAY_KICKER_STAYING_UP) { /* wait */ }
 
-        servo.setPosition(STARTING_POSITION);
+        servo.setPosition(startingPosition);
         t.reset();
         while (t.seconds() < DELAY_BETWEEN_KICKS) { /* wait */ }
     }
