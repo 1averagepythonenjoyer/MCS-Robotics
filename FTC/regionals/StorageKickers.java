@@ -30,7 +30,7 @@ public class StorageKickers {
     // Which servo is currently active (1, 2, or 3). 0 = none.
     private int activeServo = 0;
 
-    // Queue of servos to kick in order. Filled by kickOne(), kickAll(), or kickInOrder().
+    // Queue of servos to kick in order.
     private int[] queue = new int[0];
     private int queueIndex = 0;
 
@@ -90,16 +90,30 @@ public class StorageKickers {
         }
     }
 
-    /**
-     * Queue all three servos in sequence (1 → 2 → 3).
-     * Ignored if already busy.
-     */
-    public void kickAll() {
-        if (state == SequenceState.IDLE) {
-            queue = new int[]{1, 2, 3};
-            queueIndex = 0;
-        }
-    }
+//    /**
+//     * Queue all three servos in sequence (1 → 2 → 3).
+//     * Ignored if already busy.
+//     */
+//    public void kick_one_two_three() {
+//        if (state == SequenceState.IDLE) {
+//            queue = new int[]{1, 2, 3};
+//            queueIndex = 0;
+//        }
+//    }
+//    public void kick_two_one_three(){
+//        if (state == SequenceState.IDLE) {
+//            queue = new int[]{2, 1, 3};
+//            queueIndex = 0;
+//        }
+//    }
+//
+//    public void kick_three_two_one(){
+//        if (state == SequenceState.IDLE) {
+//            queue = new int[]{3, 2, 1};
+//            queueIndex = 0;
+//        }
+//    }
+
 
     /**
      * Queue a custom kick order produced by MotifResolver.
