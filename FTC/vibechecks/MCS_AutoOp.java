@@ -44,9 +44,39 @@ public class MCS_AutoOp extends OpMode {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .yawScalar(-1);
 
+    // ── Geometry constants ────────────────────────────────────────────────────
+    // Field: 6 tiles × 5 tiles = 192" × 160" = 4876.8 mm × 4064 mm
+    // Origin: field centre. 1 tile = 812.8 mm. Ball radius = 63.5 mm.
+    //
+    // All ball lines share x = ±1625.6 mm (2 tile borders from centre).
+    // y steps by 1 tile (812.8 mm) starting at +406.4 mm (half tile above centre):
+    //   L1/R1  y = +406.4 mm
+    //   L2/R2  y =  -406.4 mm
+    //   L3/R3  y = -1219.2 mm
+    //
+    // Intake pose x = tile-border edge of the line:
+    //   right edge for left half  → x = -1625.6 mm, heading 180°
+    //   left  edge for right half → x = +1625.6 mm, heading   0°
+
+    private static final double BALL_RADIUS_MM = 63.5;
+
     // ── Poses ─────────────────────────────────────────────────────────────────
     private final Pose startPose = new Pose(21.46682188591386, 119.64610011641443, Math.toRadians(135));
     private final Pose shootPose = new Pose(68.57275902211875,  74.71944121071013, Math.toRadians(135));
+
+    // Left half — intake faces left (heading 180°)
+    private final Pose intakeL1 = new Pose(-1625.6,  +406.4, Math.toRadians(180)); // top
+    private final Pose intakeL2 = new Pose(-1625.6,  -406.4, Math.toRadians(180)); // mid
+    private final Pose intakeL3 = new Pose(-1625.6, -1219.2, Math.toRadians(180)); // bot
+
+    // Right half — intake faces right (heading 0°)
+    private final Pose intakeR1 = new Pose(+1625.6,  +406.4, Math.toRadians(0));   // top
+    private final Pose intakeR2 = new Pose(+1625.6,  -406.4, Math.toRadians(0));   // mid
+    private final Pose intakeR3 = new Pose(+1625.6, -1219.2, Math.toRadians(0));   // bot
+
+    // ── Active intake pose (set before init completes) ────────────────────────
+    // TODO: select the desired cluster for this run
+    private final Pose intakePose = intakeL1;
 
     // ── Hood angle — fill in after calibration ────────────────────────────────
     private static final double HOOD_ANGLE_SHOOT_POSE = 0.0; // TODO: calibrate
@@ -55,9 +85,11 @@ public class MCS_AutoOp extends OpMode {
     private ShooterHood    hood;
     private StorageKickers kickers;
     private Turret         turret;
+    private Intake         intake;
 
     // ── Pedro ─────────────────────────────────────────────────────────────────
     private Follower  follower;
+    private PathChain driveToIntakePos;
     private PathChain driveToShootPos;
 
     // ── Timers ────────────────────────────────────────────────────────────────
@@ -66,9 +98,11 @@ public class MCS_AutoOp extends OpMode {
 
     // ── Path state machine ────────────────────────────────────────────────────
     private enum PathState {
-        DRIVE_TO_SHOOT_POS, // drive from start to shoot pose
-        SHOOT,              // wait for hood to finish firing
-        KICK_STORAGE,       // kick all 3 storage servos
+        DRIVE_TO_INTAKE_POS, // drive from start to intake position
+        INTAKE,              // run intake until complete
+        DRIVE_TO_SHOOT_POS,  // drive from intake position to shoot position
+        SHOOT,               // wait for hood to finish firing + retracting
+        KICK_STORAGE,        // kick all 3 storage servos
         DONE
     }
     private PathState pathState;
@@ -84,6 +118,7 @@ public class MCS_AutoOp extends OpMode {
         hood    = new ShooterHood(hardwareMap);
         kickers = new StorageKickers(hardwareMap);
         turret  = new Turret(hardwareMap);
+        intake  = new Intake(hardwareMap);
 
         // Pedro follower
         follower = new FollowerBuilder(followerConstants, hardwareMap)
@@ -92,22 +127,28 @@ public class MCS_AutoOp extends OpMode {
                 .build();
         follower.setPose(startPose);
 
-        // Build path
-        driveToShootPos = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
+        // Build paths
+        driveToIntakePos = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, intakePose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), intakePose.getHeading())
                 .build();
 
-        pathState = PathState.DRIVE_TO_SHOOT_POS;
+        driveToShootPos = follower.pathBuilder()
+                .addPath(new BezierLine(intakePose, shootPose))
+                .setLinearHeadingInterpolation(intakePose.getHeading(), shootPose.getHeading())
+                .build();
+
+        pathState = PathState.DRIVE_TO_INTAKE_POS;
 
         telemetry.addData("Status", "Initialized — waiting for start");
+        telemetry.addData("Intake target", intakePose);
         telemetry.update();
     }
 
     @Override
     public void start() {
         opModeTimer.resetTimer();
-        setPathState(PathState.DRIVE_TO_SHOOT_POS);
+        setPathState(PathState.DRIVE_TO_INTAKE_POS);
     }
 
     @Override
@@ -115,11 +156,13 @@ public class MCS_AutoOp extends OpMode {
         follower.update();
         hood.update();
         kickers.update();
+        intake.update();
 
         pathingLogic();
 
         telemetry.addData("Path state",   pathState);
         telemetry.addData("Hood state",   hood.getState());
+        telemetry.addData("Intake busy",  intake.isBusy());
         telemetry.addData("Kicker busy",  kickers.isBusy());
         telemetry.addData("X",            "%.1f", follower.getPose().getX());
         telemetry.addData("Y",            "%.1f", follower.getPose().getY());
@@ -132,6 +175,22 @@ public class MCS_AutoOp extends OpMode {
 
     private void pathingLogic() {
         switch (pathState) {
+
+            case DRIVE_TO_INTAKE_POS:
+                follower.followPath(driveToIntakePos, true);
+                setPathState(PathState.INTAKE);
+                break;
+
+            case INTAKE:
+                // Once the robot has stopped, trigger intake and wait for it to finish
+                if (!follower.isBusy()) {
+                    if (!intake.isBusy()) {
+                        intake.startIntake();
+                    } else if (intake.isComplete()) {
+                        setPathState(PathState.DRIVE_TO_SHOOT_POS);
+                    }
+                }
+                break;
 
             case DRIVE_TO_SHOOT_POS:
                 // Start driving and arm the hood at the same time
