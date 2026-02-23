@@ -192,7 +192,7 @@ public class MCS_TeleOp extends LinearOpMode {
         }
 
         if (autoOpState == AutoOpState.Move) {
-            drivetrain.drive(-1.0f, 0.0f, 0.0f, false);
+            drivetrain.drive(1.0f, 0.0f, 0.0f, false);
             if (autoOpMoveTimer.getElapsedTimeSeconds() >= 0.5) {
                 autoOpState = AutoOpState.Done;
 //                autoOpMoveTimer = null; // claude will hate me for this but fuck you claude
