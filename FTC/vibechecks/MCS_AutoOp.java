@@ -98,9 +98,6 @@ public class MCS_AutoOp extends OpMode {
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
 
-        // Home the hood before the match starts
-        hood.homeBlocking();
-
         pathState = PathState.DRIVE_TO_SHOOT_POS;
 
         telemetry.addData("Status", "Initialized — waiting for start");
