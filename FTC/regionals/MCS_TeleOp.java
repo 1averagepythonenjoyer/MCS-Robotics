@@ -8,6 +8,7 @@ import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -85,6 +86,22 @@ public class MCS_TeleOp extends LinearOpMode {
     private int         kickTarget = 0;
     private ElapsedTime kickTimer  = new ElapsedTime();
 
+    // ── AutoOp at start spaghetti constants ───────────────────────────────
+
+    private AutoOpState autoOpState = AutoOpState.s1;
+
+    private Timer autoOpMoveTimer = new Timer();
+
+    private final float autoOpMoveTime = 0.5f;
+
+    enum AutoOpState {
+        s1,
+        s2,
+        s3,
+        Move,
+        Done,
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
@@ -160,7 +177,7 @@ public class MCS_TeleOp extends LinearOpMode {
             navState = NavState.MANUAL;
         }
 
-        if (navState == NavState.MANUAL) {
+        if (navState == NavState.MANUAL && autoOpState != AutoOpState.Move) {
             drivetrain.drive(
                     -gamepad1.left_stick_y,
                     gamepad1.right_stick_x,
@@ -172,6 +189,14 @@ public class MCS_TeleOp extends LinearOpMode {
                 turret.resetAutoState();
             }
             navState = NavState.MANUAL;
+        }
+
+        if (autoOpState == AutoOpState.Move) {
+            drivetrain.drive(-1.0f, 0.0f, 0.0f, false);
+            if (autoOpMoveTimer.getElapsedTimeSeconds() >= 0.5) {
+                autoOpState = AutoOpState.Done;
+//                autoOpMoveTimer = null; // claude will hate me for this but fuck you claude
+            }
         }
     }
 
@@ -198,7 +223,7 @@ public class MCS_TeleOp extends LinearOpMode {
     // B                 — flywheel prespin + kick servo 2
     // X                 — flywheel prespin + kick servo 3
     // A                 — flywheel prespin + kick all three (1 → 2 → 3)
-    // ═════════════════════════════════════════════════════════════════════════
+    // ════════════════════════════════════════════════════════════════════════
 
     private void turretLogic() {
         // Right bumper cancels auto-align at any time
@@ -250,17 +275,17 @@ public class MCS_TeleOp extends LinearOpMode {
 
             case IDLE:
                 if (!kickers.isBusy() && !hood.isBusy()) {
-                    if (gamepad2.y) {
+                    if (gamepad2.y || autoOpState == AutoOpState.s1) {
                         kickTarget = 1;
                         hood.startFlywheel();
                         kickTimer.reset();
                         kickState = KickState.WAITING_FOR_PRESPIN;
-                    } else if (gamepad2.b) {
+                    } else if (gamepad2.b || autoOpState == AutoOpState.s2) {
                         kickTarget = 2;
                         hood.startFlywheel();
                         kickTimer.reset();
                         kickState = KickState.WAITING_FOR_PRESPIN;
-                    } else if (gamepad2.x) {
+                    } else if (gamepad2.x || autoOpState == AutoOpState.s3) {
                         kickTarget = 3;
                         hood.startFlywheel();
                         kickTimer.reset();
@@ -289,6 +314,18 @@ public class MCS_TeleOp extends LinearOpMode {
                 if (!kickers.isBusy()) {
                     hood.stopFlywheel();
                     kickState = KickState.IDLE;
+                    switch (autoOpState) {
+                        case s1:
+                            autoOpState = AutoOpState.s2;
+                            break;
+                        case s2:
+                            autoOpState = AutoOpState.s3;
+                            break;
+                        case s3:
+                            autoOpState = AutoOpState.Move;
+                            autoOpMoveTimer.resetTimer();
+                            break;
+                    }
                 }
                 break;
         }
