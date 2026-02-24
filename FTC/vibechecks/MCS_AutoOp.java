@@ -46,23 +46,20 @@ public class MCS_AutoOp extends OpMode {
 
     private static final double BALL_RADIUS_MM = 63.5;
 
+    private final string ALLIANCE = "red";
     // ── Poses ─────────────────────────────────────────────────────────────────
     private final Pose startPose = new Pose(21.46682188591386, 119.64610011641443, Math.toRadians(135));
     private final Pose shootPose = new Pose(68.57275902211875,  74.71944121071013, Math.toRadians(135));
 
     // Left half — intake faces left (heading 180°)
-    private final Pose intakeL1 = new Pose(37,  112, Math.toRadians(180)); // top
-    private final Pose intakeL2 = new Pose(37,  80, Math.toRadians(180)); // mid
-    private final Pose intakeL3 = new Pose(37,  48, Math.toRadians(180)); // bot
+    private final Pose intakeL1 = new Pose(40,  112, Math.toRadians(180)); // top
+    private final Pose intakeL2 = new Pose(40,  80, Math.toRadians(180)); // mid
+    private final Pose intakeL3 = new Pose(40,  48, Math.toRadians(180)); // bot
 
     // Right half — intake faces right (heading 0°)
-    private final Pose intakeR1 = new Pose(155,  112, Math.toRadians(0));   // top
-    private final Pose intakeR2 = new Pose(155,  80, Math.toRadians(0));   // mid
-    private final Pose intakeR3 = new Pose(155,  48, Math.toRadians(0));   // bot
-
-    // ── Active intake pose (set before init completes) ────────────────────────
-    // TODO: select the desired cluster for this run
-    private final Pose intakePose = intakeL1;
+    private final Pose intakeR1 = new Pose(152,  112, Math.toRadians(0));   // top
+    private final Pose intakeR2 = new Pose(152,  80, Math.toRadians(0));   // mid
+    private final Pose intakeR3 = new Pose(152,  48, Math.toRadians(0));   // bot
 
     // ── Hood angle — fill in after calibration ────────────────────────────────
     private static final double HOOD_ANGLE_SHOOT_POSE = 0.0; // TODO: calibrate
@@ -93,6 +90,13 @@ public class MCS_AutoOp extends OpMode {
     }
     private PathState pathState;
 
+    private Pose intakePose;
+    if (ALLIANCE == "red") {
+        intakePose = intakeR2;
+    } 
+    elif (ALLIANCE == "blue") {
+        intakePose = intakeL2;
+    }
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
