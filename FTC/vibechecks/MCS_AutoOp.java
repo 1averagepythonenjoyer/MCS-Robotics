@@ -44,20 +44,6 @@ public class MCS_AutoOp extends OpMode {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .yawScalar(-1);
 
-    // ── Geometry constants ────────────────────────────────────────────────────
-    // Field: 6 tiles × 5 tiles = 192" × 160" = 4876.8 mm × 4064 mm
-    // Origin: field centre. 1 tile = 812.8 mm. Ball radius = 63.5 mm.
-    //
-    // All ball lines share x = ±1625.6 mm (2 tile borders from centre).
-    // y steps by 1 tile (812.8 mm) starting at +406.4 mm (half tile above centre):
-    //   L1/R1  y = +406.4 mm
-    //   L2/R2  y =  -406.4 mm
-    //   L3/R3  y = -1219.2 mm
-    //
-    // Intake pose x = tile-border edge of the line:
-    //   right edge for left half  → x = -1625.6 mm, heading 180°
-    //   left  edge for right half → x = +1625.6 mm, heading   0°
-
     private static final double BALL_RADIUS_MM = 63.5;
 
     // ── Poses ─────────────────────────────────────────────────────────────────
@@ -65,14 +51,14 @@ public class MCS_AutoOp extends OpMode {
     private final Pose shootPose = new Pose(68.57275902211875,  74.71944121071013, Math.toRadians(135));
 
     // Left half — intake faces left (heading 180°)
-    private final Pose intakeL1 = new Pose(-1625.6,  +406.4, Math.toRadians(180)); // top
-    private final Pose intakeL2 = new Pose(-1625.6,  -406.4, Math.toRadians(180)); // mid
-    private final Pose intakeL3 = new Pose(-1625.6, -1219.2, Math.toRadians(180)); // bot
+    private final Pose intakeL1 = new Pose(37,  112, Math.toRadians(180)); // top
+    private final Pose intakeL2 = new Pose(37,  80, Math.toRadians(180)); // mid
+    private final Pose intakeL3 = new Pose(37,  48, Math.toRadians(180)); // bot
 
     // Right half — intake faces right (heading 0°)
-    private final Pose intakeR1 = new Pose(+1625.6,  +406.4, Math.toRadians(0));   // top
-    private final Pose intakeR2 = new Pose(+1625.6,  -406.4, Math.toRadians(0));   // mid
-    private final Pose intakeR3 = new Pose(+1625.6, -1219.2, Math.toRadians(0));   // bot
+    private final Pose intakeR1 = new Pose(155,  112, Math.toRadians(0));   // top
+    private final Pose intakeR2 = new Pose(155,  80, Math.toRadians(0));   // mid
+    private final Pose intakeR3 = new Pose(155,  48, Math.toRadians(0));   // bot
 
     // ── Active intake pose (set before init completes) ────────────────────────
     // TODO: select the desired cluster for this run
