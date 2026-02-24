@@ -46,6 +46,13 @@ public class intake {
         }
     }
 
+    public boolean isBusy() {
+        if (state != IntakeState.IDLE) {
+            return true
+        }
+        return false
+    }
+    
     public IntakeState getState() {
         return state;
     }
