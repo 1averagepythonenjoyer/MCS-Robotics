@@ -100,7 +100,7 @@ public class MCS_AutoOp extends OpMode {
         if (ALLIANCE == "red") {
             intakePose = intakeR2;
         } 
-        elif (ALLIANCE == "blue") {
+        else if (ALLIANCE == "blue") {
             intakePose = intakeL2;
         }
         // Init subsystems
