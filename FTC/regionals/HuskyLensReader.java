@@ -12,7 +12,7 @@ public class HuskyLensReader {
     // Optical constants for HuskyLens (OV2640)
     // F_PX = (F_mm * ImageWidth_px) / SensorWidth_mm = (4.6 * 320) / 3.52
     private static final double FOCAL_LENGTH_PX   = 418.18;
-    private static final double REAL_TAG_WIDTH_MM  = 165.0; // 16.6cm DECODE tags - see https://ftc-resources.firstinspires.org/ftc/game/manual page 73
+    private static final double REAL_TAG_WIDTH_MM  = 16.50; // inch DECODE tags - see https://ftc-resources.firstinspires.org/ftc/game/manual page 73
     private static final int    SCREEN_CENTER_X    = 160;
     private static final String[] PATTERN_IDS      = { "gpp", "pgp", "ppg" };
 
@@ -24,9 +24,9 @@ public class HuskyLensReader {
         public TagType type;
         public int     id;
         public String  pattern;     // PATTERN tags only (IDs 1-3)
-        public double  distanceMm;  // NAVIGATION tags only (IDs 4-5)
+        public double  distance;  // NAVIGATION tags only (IDs 4-5) unit inches
         public double  bearingDeg;
-        public double[] vector;     // [X, Y] in mm
+        public double[] vector;     // [X, Y] in inches
 
         @Override
         public String toString() {
@@ -70,10 +70,10 @@ public class HuskyLensReader {
 
             } else if (block.id == 4 || block.id == 5) {
                 tag.type       = TagData.TagType.NAVIGATION;
-                tag.distanceMm = (REAL_TAG_WIDTH_MM * FOCAL_LENGTH_PX) / block.width;
+                tag.distance = (REAL_TAG_WIDTH_MM * FOCAL_LENGTH_PX) / block.width / 25.4;
                 double offsetPx = block.x - SCREEN_CENTER_X;
                 tag.bearingDeg = Math.toDegrees(Math.atan2(offsetPx, FOCAL_LENGTH_PX));
-                tag.vector     = computeVector(tag.distanceMm, tag.bearingDeg);
+                tag.vector     = computeVector(tag.distance, tag.bearingDeg);
 
             } else {
                 tag.type = TagData.TagType.UNKNOWN;
