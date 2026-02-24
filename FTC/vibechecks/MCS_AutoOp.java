@@ -91,19 +91,18 @@ public class MCS_AutoOp extends OpMode {
     private PathState pathState;
 
     private Pose intakePose;
-    if (ALLIANCE == "red") {
-        intakePose = intakeR2;
-    } 
-    elif (ALLIANCE == "blue") {
-        intakePose = intakeL2;
-    }
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     public void init() {
         pathTimer   = new Timer();
         opModeTimer = new Timer();
-
+        if (ALLIANCE == "red") {
+            intakePose = intakeR2;
+        } 
+        elif (ALLIANCE == "blue") {
+            intakePose = intakeL2;
+        }
         // Init subsystems
         hood    = new ShooterHood(hardwareMap);
         kickers = new StorageKickers(hardwareMap);
